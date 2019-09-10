@@ -1,6 +1,9 @@
 #!/bin/sh
 
-DIFF=$(sudo diff -y update-gateway/version-update.txt /home/pi/backup/backup_version.txt)
+DIFF=$(sudo diff update-gateway/version-update.txt /home/pi/backup/backup_version.txt)
+
+
+echo $DIFF
 
 if [ "$DIFF" != "" ]
 then
