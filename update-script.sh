@@ -1,15 +1,20 @@
 #!/bin/sh
 
-echo "updating the gateway" >> update_log.log;
+DIFF = $(diff version-update.txt /home/pi/backup/backup_version.txt)
+if ["$DIFF" != ""]
+then
 
-sudo cp -rf /home/pi/enocean-gateway /home/pi/backup 
-sudo cp -rf enocean-gateway /home/pi
+	echo "updating the gateway" >> update_log.log;
 
-echo "updating script and routine" >> update_log.log;
+	sudo cp -rf /home/pi/enocean-gateway /home/pi/backup 
+	sudo cp -rf enocean-gateway /home/pi
 
-sudo cp -rf /var/www/html/nanosense /home/pi/backup
-sudo cp -rf nanosense /var/www/html
+	echo "updating script and routine" >> update_log.log;
 
-echo "updating web-interface" >> update_log.log;
+	sudo cp -rf /var/www/html/nanosense /home/pi/backup
+	sudo cp -rf nanosense /var/www/html
 
-#sudo rm -rf update-gateway
+	echo "updating web-interface" >> update_log.log;
+
+	sudo echo $(cat version-update.txt) > /home/pi/backup/backup_version.txt
+fi
