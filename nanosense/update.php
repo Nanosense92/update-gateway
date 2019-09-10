@@ -16,10 +16,7 @@ exec ('sudo sh update-gateway/update-script.sh', $script);
 if ($ret != 0) {
 	exec('echo "update failed" > update_log.log');
 }
-else {
-	exec('echo "update successfully installed" >> update_log.log');
-}
-echo exec ("sudo rm -rf update-gateway");
+exec ("sudo rm -rf update-gateway");
 
 header("Location:main.php");
 
