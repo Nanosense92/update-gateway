@@ -1,7 +1,8 @@
 #!/bin/sh
 
-DIFF=$(diff update-gateway/version-update.txt /home/pi/backup/backup_version.txt)
-if ["$DIFF" != ""]
+DIFF=$(sudo diff -y update-gateway/version-update.txt /home/pi/backup/backup_version.txt)
+
+if [ "$DIFF" != "" ]
 then
 
 	echo "updating the gateway" >> update_log.log;
