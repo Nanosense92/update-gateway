@@ -1,1 +1,1 @@
-445edbd0fdf46b3b596d9140a5d38edd3ae2c271  update-gateway/update.tar
+4e4f4a1b5c594e6c1e3aeae51f7b38bd3042017c  update-gateway/update.tar
