@@ -103,6 +103,7 @@
                 echo "<span style=color:#DCDCDC font-weight: bold;> < (le scan peut durer quelques minutes)</span>";
 
 
+            
             } // else 
 
 
@@ -132,15 +133,42 @@
 
     } // else
 
-    
+    echo "<br>existing devices in db<br>";    
 
 ?>
 
-"existing devices in db"
+
 
 <?php
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+function print_web($obj) {
+
+    echo "<br> <span style=color:blue;> ";
+    echo "<pre>";
+    echo "val display -> | $obj | type " . gettype($obj);
+    if (gettype($obj) == "array") {
+        echo "<br>";
+        var_dump($obj);
+        echo "<br>";
+    }
+    echo "</pre>";
+    echo "<br>  </span>";
+}
+
+/*
+print db_result() {
+    $dbconnect  = load_db();
+    $x = $dbconnect->query("SELECT id FROM eqLogic");
+    $x = $dbconnect->query("SELECT `name` FROM eqLogic");
+    $x = $dbconnect->query("SELECT `name` FROM eqLogic");
+
+    
+
+    close_db($dbconnect);
+}*/
+
 function load_db() {
     $dbconnect = mysqli_connect("localhost", "jeedom", "85522aa27894d77", "jeedom");
     if ($dbconnect->connect_errno) {
@@ -157,109 +185,54 @@ function close_db($dbconnect) {
 function fetch_name_logicid_eqLogic() {
 
     $dbconnect  = load_db();
-    $x = $dbconnect->query("SELECT `name`,logicalId FROM eqLogic");
+    $x = $dbconnect->query("SELECT `name` FROM eqLogic");
+
+    $tab = array();
+    while ($tmp = $x->fetch_assoc()) {
+        array_push($tab, $tmp['name']);
+    }
     close_db($dbconnect);
-    return $x;
+    return $tab;
 }
 
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------
+function spawn_buttons() {
 
-
+    $data = fetch_name_logicid_eqLogic();
+    foreach($data as $d) {
+    echo "<script>spawn_button(\"$d\");</script>";
+    }
+}
 
 
 ?>
 
 <script>
-    function spawn_buttonS(modbus_cache) 
-    {    
-        for (key in modbus_cache) {
-            var v = modbus_cache[key];
-            spawn_button(key + v);
-        }
-    }
+function spawn_button(name) 
+{
+    var button = document.createElement("button");
+    button.innerHTML = name;
 
-    function spawn_button(name) 
-    {
-        var button = document.createElement("button");
-        button.innerHTML = name;
+    
+    var body = document.getElementsByTagName("body")[0];
+    body.appendChild(button);
 
-        // 2. Append somewhere
-        var body = document.getElementsByTagName("body")[0];
-        body.appendChild(button);
-
-        // 3. Add event handler
-        button.addEventListener ("click", function() {
-            // window.location.href = 'modbus/formulaire.php?device_chosen=' + name;
-            window.open(
-            'formulaire.php?device_chosen=' + name,
-            '_blank' // <- This is what makes it open in a new window.
-            );
-
-            //sessionStorage.setItem("device_chosen", String(name));
-        });
-    }
+    button.addEventListener ("click", function() {
+        
+        window.open(
+        'formulaire.php?device_chosen=' + name,
+        '_blank' 
+        );        
+    });
+}
 </script>
 
+<?php //END FUNCTIONS-----------------------------------------------------------------------------------------------------------------------------------------------------------?>
 
 
 <?php
-   
-//LOAD SESSION
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//load form db all the info and fill the fields
-
-/*
-function load_db() {
-    $dbconnect = mysqli_connect("localhost", "jeedom", "85522aa27894d77", "jeedom");
-    if ($dbconnect->connect_errno) {
-        printf("Connection to 'jeedom' database failed");
-        exit;
-    }
-    return $dbconnect;
-}
-
-function fetch_eqLogic($dbconnect) {
-	return $dbconnect->query("SELECT `name`,logicalId FROM eqLogic");
-}
-
-
-
-$dbconnect = load_db();
-
-foreach (fetch_eqLogic($dbconnect) as $key => $value){
-    
-    $logid = $value['logicalId'];
-    $name = $value['name'];
-    echo "<script>spawn_button(\"$name\");</script>";
-
-}
-*/
-
-
-
-
-
-
-/*
-    //echo "<script type='text/javascript'>alert('Scan des appareils connectés en cours Veuillez patienter svp');</script>";
-    exec("sudo /usr/bin/python3.5 /home/pi/modbus-gateway/scan.py scan 2 2>&1", $output, $return_value);
-
-    if ($return_value == 42) {
-        echo nl2br("Aucun appareil n'a été détecté\nAbandon de la configuration Modbus\nVeuillez vérifier les branchements et alimentations des appareils");
-        exit(1);
-    }
-    
-
-
-
-    $xfile = "/home/pi/modbus-gateway/modbus__cache/cache_modbus.ini"; 
-    $modbus_cache = parse_ini_file($xfile, true);
-    
-    $kk = json_encode($modbus_cache);
-
-    echo "<script>spawn_buttonS($kk);</script>";
-*/
-
+spawn_buttons();
 ?>
+
+
 
 

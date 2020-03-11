@@ -3,34 +3,25 @@
 <html>
 <head>
     <script src="jkwery.js"></script>
-        
-    <style>
-        .ask_nb_scans {color: red; font-weight: bold;}
-        .error {color: #FF0000;}
-    </style>
 
 </head>
-<body style="background-color:white;"> 
+<body style="background-color:#333333;"> 
 <!-- 212121 -->
-
+    <link rel="stylesheet" href="css/main.css">
 
 
 
 <script>
-    function alert_and_launch_scan(nb_scans)
+    function alert_and_launch_scan()
     {
         setTimeout(function() { alert('Scan des appareils connectés en cours\nVeuillez patienter svp'); }, 1);
-        console.log(nb_scans);
-        var site = "scan.php?nb_scans=" + nb_scans;
-
-        window.location.replace(site);
+        window.location.replace('scan.php');
         //window.location.replace('lol.php');
     }
 
 
     function chepatest()
     {
-        console.log("UNLUCKY");
         var input_val = document.getElementById('pet-select').value;
         //window.location.replace('load.php?file=' + input_val);
 
@@ -50,16 +41,11 @@
     // RETURN THE NUMBER ENTERED BY THE USER, OR FALSE IF THE USER INPUT IS NOT A POSITIVE NUMBER
     function test_input_nb_scans($nb_scan_to_check)
     {
-        /*$p = str_split($nb_scan_to_check , ',')
-        foreach ($p as $x) {
-
-        }
-         
         if ( preg_match("#^[1-9][0-9]{0,3}$#", $nb_scan_to_check) === 1 ) {
             return (int)$nb_scan_to_check;
-        }*/
-        return (int)$nb_scan_to_check;
-        //return FALSE;
+        }
+    
+        return FALSE;
     }
 
     
@@ -67,40 +53,56 @@
     
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ( isset($_POST['nb_scans']) ) {
-            //$nb_scans = test_input_nb_scans($_POST['nb_scans']);
-            $nb_scans = $_POST['nb_scans'];//ex EMPTY or nothing
-
+            $nb_scans = test_input_nb_scans($_POST['nb_scans']);
             if ($nb_scans === FALSE) {
                 //echo "ERROR";
                 $nb_scansErr = "Veuillez entrer un nombre positif (le nombre d'appareils modbus que vous souhaitez configurer)";
 
-                echo "<span class=\"ask_nb_scans\">
-                        <form id=\"idform_nb_scans\" method=\"post\" action=\"" . htmlspecialchars($_SERVER["PHP_SELF"]) . "\">
-                            Entrez le nombre de sondes à détecter :
-                            <input type=\"text\" name=\"nb_scans\" value=\"1\">
-                            <span class=\"error\">*" . $nb_scansErr . "</span>
-                            <input type=\"submit\" name=\"submit\" value=\"Valider\">
+                echo "<form id=\"idform_nb_scans\" method=\"post\" action=\"" . htmlspecialchars($_SERVER["PHP_SELF"]) . "\">
+                            <span class=simple_text> Entrez le nombre de sondes à détecter : </span>
+                            <input class=input_field type=\"text\" name=\"nb_scans\" value=\"\">
+                            <span class=error_text>*" . $nb_scansErr . "</span>
+                            <input class=button_valider type=\"submit\" name=\"submit\" value=\"Valider\">
                         </form>
-                    </span>";
+                    ";
 
             }
             else {
-                
-                if ($nb_scans == "") {
-                    $x = "tout";
-                }
-                else {
-                    $x = $nb_scans;
-                }
-                echo "<span style=\"color:red\"> En cliquant sur 'Scan', vous cherchez $x";
+
+                echo "<span style=\"color:red\"> En cliquant sur 'Scan', vous preparez la confuguration de $nb_scans appareil";
                 echo ($nb_scans > 1) ? ("s") : ("") ; 
                 echo "</span><br>";
                 
                 // SCAN BUTTON
-                
                 echo "<span style=color:#DCDCDC font-weight: bold;> Pour scanner les appareils Modbus connectés à la passerelle > </span>";
-                echo "<button onclick=alert_and_launch_scan(\"$nb_scans\")>Scan</button> ";
+                echo "<button onclick=\"alert_and_launch_scan()\">Scan</button> ";
                 echo "<span style=color:#DCDCDC font-weight: bold;> < (le scan peut durer quelques minutes)</span>";
+
+
+                // LOAD FILE BUTTON
+                echo "<div id=id_div><br><br><span style=color:#DCDCDC font-weight: bold;>Pour utiliser le fichier de configuration sauvegardé sur la passerelle > </span>";
+                //<div id=identifiant_de_ma_div>Votre contenu est placé ici</div>
+              //  echo "<button onclick=\"display_scrolling_menu()\">Charger une configuration sauvegardée</button>";
+                
+
+                // FIND ALL THE SAVED FILES
+                $scandir_ret = scandir("/home/pi/modbus-gateway/user__cache");
+                //var_dump($scandir_ret);
+
+            //    echo "AVANT";
+                echo "<select name=\"choosing_ini\" id=\"pet-select\">";
+                foreach ($scandir_ret as $key => $value) {
+                    if ($value[0] != '.') {
+                        echo "<option value=\"$value\">$value</option>";
+                    }
+                }
+                echo "</select>";
+                
+                echo "<button onclick=\"chepatest()\">Charger</button> ";
+            
+              
+              
+                echo "<span style=color:#DCDCDC font-weight: bold;> < (opération rapide)</span></div>";
 
 
             } // else 
@@ -119,14 +121,13 @@
     }  // if ($_SERVER["REQUEST_METHOD"] == "POST")
     else {
         // FORM THAT ASKS FOR THE NUMBER OF DEVICES TO SCAN
-        echo "<span class=\"ask_nb_scans\">
-        <form id=\"idform_nb_scans\" method=\"post\" action=\"" . htmlspecialchars($_SERVER["PHP_SELF"]) . "\">
-            Entrez le nombre de sondes à détecter :
-            <input type=\"text\" name=\"nb_scans\" value=\"1\">
-            <span class=\"error\">*" . $nb_scansErr . "</span>
-            <input type=\"submit\" name=\"submit\" value=\"Valider\">
-        </form>
-    </span>";
+        echo "<form id=\"idform_nb_scans\" method=\"post\" action=\"" . htmlspecialchars($_SERVER["PHP_SELF"]) . "\">
+                    <span class=simple_text> Entrez le nombre de sondes à détecter : </span>
+                    <input class=input_field type=\"text\" name=\"nb_scans\" value=\"\">
+                    <span class=error_text>*" . $nb_scansErr . "</span>
+                    <input class=button_valider type=\"submit\" name=\"submit\" value=\"Valider\">
+                </form>
+            ";
 
 
 
@@ -137,37 +138,6 @@
 ?>
 
 "existing devices in db"
-
-<?php
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------
-function load_db() {
-    $dbconnect = mysqli_connect("localhost", "jeedom", "85522aa27894d77", "jeedom");
-    if ($dbconnect->connect_errno) {
-        printf("Connection to 'jeedom' database failed");
-        exit;
-    }
-    return $dbconnect;
-}
-
-function close_db($dbconnect) {
-    mysqli_close($dbconnect);  	
-}
-
-function fetch_name_logicid_eqLogic() {
-
-    $dbconnect  = load_db();
-    $x = $dbconnect->query("SELECT `name`,logicalId FROM eqLogic");
-    close_db($dbconnect);
-    return $x;
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-?>
 
 <script>
     function spawn_buttonS(modbus_cache) 
@@ -262,4 +232,6 @@ foreach (fetch_eqLogic($dbconnect) as $key => $value){
 
 ?>
 
+</body>
+</html>
 

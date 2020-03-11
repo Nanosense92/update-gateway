@@ -16,6 +16,13 @@
         echo "<br>  </span>";
     }
 
+    function display_python_output($output) {
+        foreach ($output as $o) {
+            //echo "<br>" . $o . "<br>";
+            echo $o . "<br>";
+        }
+    }
+
     
     function load_db() {
         $dbconnect = mysqli_connect("localhost", "jeedom", "85522aa27894d77", "jeedom");
@@ -39,13 +46,9 @@
         $id = $idq->fetch_array(MYSQLI_BOTH);
     
         if (empty($id['logicalId']) === false) {
-            echo "KEY EXISTS";
             $ret = "found";
         } 
-        else {
-            echo "KEY DONT EXIST";
-        }
-
+        
         close_db($dbconnect);
         return $ret;
     }
@@ -65,6 +68,16 @@
         close_db($dbconnect);
     }
 
+    function delete_device_from_eqLogic($slave_id) {
+        $dbconnect = load_db();
+        $dbconnect->query("DELETE FROM eqLogic WHERE logicalId=$slave_id");	
+        echo $dbconnect->error;
+        close_db($dbconnect);
+    }
+
+    
+
+    /*
     function update_device_in_eqLogic($dev) {
         $dbconnect = load_db();
 
@@ -82,7 +95,7 @@
         echo "this->" . $dbconnect->error;
 
         close_db($dbconnect);
-    }
+    }*/
 
     function add_device_to_cmd($dev) {
 
@@ -146,21 +159,23 @@
     
         close_db($dbconnect);
     }
+
+    function launch_scan_python_script($scan_nb) {
+
+        exec("sudo /usr/bin/python3.5 /home/pi/modbus-gateway/scan.py scan $scan_nb 2>&1", $output, $return_value);
+        display_python_output($output);
+        $xfile = "/home/pi/modbus-gateway/modbus__cache/cache_modbus.ini"; 
+        $modbus_cache = parse_ini_file($xfile, true);
+        print_web($modbus_cache);
+
+        return $modbus_cache;
+    }
+
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         
         $scan_nb = $_GET['nb_scans'];
-        echo "fdsfadsfasdfsd" . $scan_nb;
-        exec("sudo /usr/bin/python3.5 /home/pi/modbus-gateway/scan.py scan $scan_nb 2>&1", $output, $return_value);
-        print_web($return_value);
-        //check retu val
-        
-        print_web($output);
-        
-        $xfile = "/home/pi/modbus-gateway/modbus__cache/cache_modbus.ini"; 
-        $modbus_cache = parse_ini_file($xfile, true);
-        print_web($modbus_cache);
-       
+        $modbus_cache = launch_scan_python_script($scan_nb);
         foreach ($modbus_cache as $key => $value)  {
             print_web($key);
             //print_web($value);
@@ -169,13 +184,10 @@
             
             if (check_idslave_db($slave_id) === "found") {
                 echo "xUPDATE";
-                update_device_in_eqLogic($value);
+                delete_device_from_eqLogic($slave_id);
             } 
-            else {
-                echo "xADD";
-                add_device_to_eqLogic($value);
-                add_device_to_cmd($value);
-            }
+            add_device_to_eqLogic($value);
+            add_device_to_cmd($value);
         }
 
 
@@ -183,7 +195,7 @@
 ?>
 
 <script>
-window.location.replace("main.php");
+//window.location.replace("main.php");
 </script>
 
 
