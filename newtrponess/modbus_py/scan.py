@@ -5,6 +5,7 @@ from subprocess import PIPE, Popen
 from pymodbus.repl.client import ModbusSerialClient as MbClient
 import os
 from datetime import datetime
+from gate import *
 import configparser
 import ast
 import mysql.connector
@@ -42,7 +43,7 @@ class Data:
 
 class Probe:
  
-    def __init__(self):
+    def __init__(self, g):
 
         if self.get_connected_usb() == []:
             print("Nothin is connected")
@@ -62,6 +63,7 @@ class Probe:
             print("ERROR : python db failed to connect")
             sys.exit(43)
                             
+        self.gate = g
 
         self.data_file = './modbus__cache/data.ini'
         self.cache_file_name = 'cache_modbus.ini'
@@ -109,6 +111,7 @@ class Probe:
                     print('RTU  id ',slave_id,res_rtu['registers'], end='')
                     self.add_device(usb_name, res_rtu['registers'], slave_id, 'rtu')
                     found = True                
+                    
 
                 elif 'registers' in res_ascii.keys():
                     print('ASCII id ',slave_id,res_ascii['registers'], end='')
@@ -127,6 +130,8 @@ class Probe:
                 print("{}={}".format(k,v), sep='\n', file=notfound_file)
             
         self.save_cache()#for when probe not in bd
+        g.insert_missing_devices(self.devices)
+        g.insert_missing_cmds()
         self.probe_data_to_ini()#put values in ini
 
     
@@ -135,7 +140,7 @@ class Probe:
         cur = self.db.cursor()
         cur.execute("SELECT name FROM eqLogic WHERE logicalId={}".format(str(slave_id)))
         eqLogic = cur.fetchall()
-        alias = eqLogic[0] #[() , ()] 
+        alias = eqLogic
         return alias         
                 
     def add_device(self, usb_name, reg, slave_id, mode):
@@ -145,8 +150,9 @@ class Probe:
         device_name = str(slave_id) + '_' + device_type + '_usb' + usb_nb
         alias = self.get_db_alias_from_slaveid(slave_id)
         if alias != []:
-            device_name = alias[0]
+            device_name = alias[0][0]
 
+        print("device_name : ", device_name)
         n = device_name
         self.devices[n] = Device(None)
         self.devices[n].name = device_name
@@ -193,14 +199,17 @@ class Probe:
             we store all devices in cache
             it deletes cache content
         """
-        
-        print('SAVING IN CACHE')
-        p = configparser.ConfigParser()
-        for name,device in self.devices.items():
-            p.add_section(name)
-            p[name] = device.__dict__.copy()
-        with open(self.cache_file,'w+') as cache_file:
-            p.write(cache_file)
+        try:
+            print('SAVING IN CACHE')
+            p = configparser.ConfigParser()
+            for name,device in self.devices.items():
+                p.add_section(str(name))
+                p[name] = device.__dict__.copy()
+            with open(self.cache_file,'w+') as cache_file:
+                p.write(cache_file)
+        except Exception:
+            print("configparser empty")
+            sys.exit(0)
 
     def probe_data_to_ini(self):
         #self.cache_file = ifile
@@ -212,6 +221,7 @@ class Probe:
             datas = self.parse_datas(device)
             for data in datas:
                 #add to file
+                print("xxxxxxxxxxxxxxxxxx", name)
                 p.add_section(name + '_' + data.name)
                 print('adding : ' + name + '_' + data.name)
                 print('dict : ',  data.__dict__)
@@ -230,27 +240,35 @@ class Probe:
                 cur = self.db.cursor()
                 #cur.execute("SELECT id FROM eqLogic WHERE name='lost'")
                 
+
+
                 sql_eqlogic = "SELECT id,name FROM eqLogic WHERE name='{}' and logicalId={}".format(device.name, str(device.slave_id))
                 
                 cur.execute(sql_eqlogic)
-                eqLogic = cur.fetchall()
-                try:
-                    device_db_id = eqLogic[0][0]
+                eqLogic = cur.fetchone()
+                x = eqLogic
+                print(x)#when i print it works for some reason do not tack off
+                device_db_id = x[0]#eqLogic[0][0]
+                """
                 except Exception:
                     print("error : failed to fetch eqLogic id")
                     print(sql_eqlogic)
                     sys.exit(0)
+                """
                 
                 sql_cmd = "SELECT id FROM cmd WHERE  name='{}' and eqType='{}' and eqLogic_id={}".format(data.name, device.name, str(device_db_id))
 
                 cur.execute(sql_cmd)
-                cmd = cur.fetchall()
-                try:
-                    device_value_db_id = cmd[0][0]
+                cmd = cur.fetchone()
+                print(cmd)#when i print it works for some reason do not tack off
+                
+                device_value_db_id = cmd[0]
+                """
                 except Exception:
                     print("error : failed to fetch cmd id")
                     print(sql_cmd)
                     sys.exit(0)
+                """
                 
                 sql_history = "INSERT INTO history (cmd_id,datetime,value) VALUES ({},'{}','{}')".format(device_value_db_id, data.date, str(data.val))
 
@@ -301,7 +319,9 @@ if __name__ == "__main__":
         av 1 option
     """
 
-    p1 = Probe()
+    g = Gateway_Database()
+    p1 = Probe(g)
+    
     
     if (len(sys.argv) == 2):
         p1.scan(sys.argv[1])

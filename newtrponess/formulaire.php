@@ -3,14 +3,48 @@
 <html>
 <head>
 <style>
-	.error {color: #FF0000;}
-	.field_to_fill {color: #DCDCDC; font-weight: bold;}
-	h2 {color: grey; text-decoration: underline overline;}
+	.error {
+		color: #FF0000;
+	}
+
+	.field_to_fill {
+		color: #DCDCDC;
+		font-weight: bold;
+		height: 150;
+		padding: 8px;
+		border: none;
+		border-bottom: 1px solid #ccc;
+		/* width: 10%; */
+		size: 10;
+	} 
+
+	.button_back_to_main {
+		color: white;
+		border-radius: 4px;
+		text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+		background: grey;
+		font-size: 100%;
+	}
+
+	.button_destroy {
+		color: white;
+		border-radius: 4px;
+		text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+		background: red;
+		font-size: 100%;
+	}
+
+	h2 {
+		color: grey;
+		text-decoration: underline overline;
+	}
 </style>
 </head>
-<body style="background-color:#212121;">
+<body style="background-color:#212121; font-size:130%;">
 
-<span class="field_to_fill">
+<link rel="stylesheet" href="css/main.css">
+
+
 <?php
 
 ini_set('display_errors', 1);
@@ -23,7 +57,7 @@ $tmp_file = "";
 
 
 if (empty($_GET['device_chosen']) == FALSE) {
-	echo "PREMIERE FOIS    ";
+	//echo "PREMIERE FOIS    ";
 	$device_chosen = $_GET['device_chosen'];
 
 	$tmp_file = fopen("tmp_file", "w+");
@@ -33,7 +67,7 @@ if (empty($_GET['device_chosen']) == FALSE) {
 	fclose($tmp_file);
 }
 else {
-	echo("SECONDE FOIS    ");
+	//echo("SECONDE FOIS    ");
 	$tmp_file = fopen("tmp_file", "r");
 	if ($tmp_file === false)
 		exit(123);
@@ -55,7 +89,6 @@ function test_input($data)
 }
 
 
-//when posted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	
 	if (empty($_POST["alias"])) {
@@ -63,7 +96,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } 
   	else {
 		$alias = test_input($_POST["alias"]);
-		// check if name only contains letters and whitespace
 		if (preg_match("/^[0-9a-zA-Z_-]*$/", $alias) == 0) {
 	  		$aliasErr = "Only letters and white space allowed";
 		}
@@ -83,15 +115,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   	} 
   	else {
 		$visible = test_input($_POST["visible"]);
-	  }
+	}
 	  
 	$parentobj_id = test_input($_POST["select_parentobj"]);
 
-	echo "<br><br><h3>DEBUG:</h3>";
-	echo "alias = $alias<br>";
-	echo "activer = $activer<br>";
-	echo "visible = $visible<br>";
-	echo "parentobj = $parentobj_id<br>";
+	// echo "<br><br><h3>DEBUG:</h3>";
+	// echo "alias = $alias<br>";
+	// echo "activer = $activer<br>";
+	// echo "visible = $visible<br>";
+	// echo "parentobj = $parentobj_id<br>";
 
 	$dbconnect = mysqli_connect("localhost", "jeedom", "85522aa27894d77", "jeedom");
 	if ($dbconnect->connect_errno) {
@@ -100,29 +132,34 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	}
 	
 		
-	function form_to_db($dbconnect, $device_chosen,  $alias, $visible, $activer) {
-
+	function form_to_db($dbconnect, $device_chosen,  $alias, $visible, $activer)
+	{
 		$isVisible = ($visible === "Oui") ? (1) : (0);
 		$isEnable = ($activer === "Oui") ? (1) : (0);
 		
 		//$dbconnect->query("INSERT INTO eqLogic (`name`,isVisible, isEnable) VALUES ('$tmp[0]', '$tmp[1]', '$tmp[2]')");
 		$dbconnect->query("UPDATE eqLogic SET name=\"$alias\" WHERE name=\"$device_chosen\"");
 		$dbconnect->query("UPDATE eqLogic SET isVisible=$isVisible WHERE name=\"$alias\"");	
-		$dbconnect->query("UPDATE eqLogic SET isEnable=$isEnable WHERE name=\"$alias\"");		
+		$dbconnect->query("UPDATE eqLogic SET isEnable=$isEnable WHERE name=\"$alias\"");
+
+		echo "<script>
+				alert('Configuration sauvegardée\\nVous allez être redirigé vers la page d\'accueil de la configuration modbus');
+				document.location.href = 'main.php';
+			</script>";
 	}
 
 	
-	if ($aliasErr == "" and $visibleErr == ""  and $activerErr == "") {
-		echo "<br>SAVE<br>";
+	if ($aliasErr === "" and $visibleErr === "" and $activerErr === "") {
 		form_to_db($dbconnect, $device_chosen, $alias, $visible, $activer);
 	}
 	
 	mysqli_close($dbconnect);  			 		
-}//when posted
+
+} /* if ($_SERVER["REQUEST_METHOD"] == "POST") */
 
 
 ?>
-</span>
+
 
 
 <h2>Device Configuration : <?php echo $device_chosen; ?></h2>
@@ -131,7 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <form id="main_form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
 	<!-- Alias:  -->
 	<span class="field_to_fill">Alias</span>
-	<input type="text" name="alias" value="<?php echo $alias;?>">
+	<input class =field_to_fill style=color:black; type="text" name="alias" value="<?php echo $alias;?>">
 	<span class="error">* <?php echo $aliasErr;?></span>
 	<br><br>
 
@@ -152,10 +189,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 	<span class="error">* <?php echo $visibleErr;?></span>
 	<br><br>
 	 
-	<!-- <label for="pet-select">Objet parent:</label> -->
 	<span class="field_to_fill">Objet parent:</span>
-	<select name="select_parentobj" id="id_parentobj">
-		<option value="">Aucun</option>
+	<select class=select-css name="select_parentobj" id="id_parentobj">
+		<option style=font-weight:normal; value="">Aucun</option>
 		<?php 
 			$dbconnect = mysqli_connect("localhost", "jeedom", "85522aa27894d77", "jeedom");
 			if ($dbconnect->connect_errno) {
@@ -174,34 +210,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 		?>
 	</select>
 
-	<br><br><br><br><br><br><br><br>
-	<input type="submit" name="submit" value="Valider"> 
+	<br><br>
+	<!-- VALIDER -->
+	<input class=button_valider type="submit" name="submit" value="Valider"> 
 </form>
 
-<?php
+<div class=top_left_corner>
+	<button class=button_back_to_main type=button onclick="document.location.href='main.php'" >
+		Retourner à la page principale
+	</button>
+</div>
 
-function launch_data_python_script() {
-
-	exec("sudo /usr/bin/python3.5 /home/pi/modbus-gateway/scan.py data /home/pi/modbus-gateway/modbus__cache/cache_modbus.ini 2>&1", $output, $return_value);
-	display_python_output($output);
-	$xfile = "/home/pi/modbus-gateway/modbus__cache/data.ini"; 
-	$data_cache = parse_ini_file($xfile, true);
-	print_web($data_cache);
-
-	return $data_cache;
-}
-
-//update values
-launch_data_python_script();
-?>
-
-
-<button onclick="">values</button>
-<!-- // E4000NG  COV  A5 09 0C
-// E4000NG  CO2 HUM TEMP  D2 04 08f
-// P4000  PMs  A5 09 07 -->
-
-
+<br>
+<br>
+<div class=bottom_right_corner>
+	<?php /*$web = "destroy_probe.php?alias=\"$GET['alias']\" "; echo $web;*/?>
+	<?php 
+		$ali = $_GET['device_chosen']; 
+		$web = "destroy_probe.php?alias=\"$ali\" "; 
+	?>
+	
+	<button class=button_destroy type=button onclick="document.location.href='destroy_probe.php?alias=<?php echo $ali ?>'">
+		Supprimer un équipement modbus
+	</button>
+</div>
 
 
 </body>

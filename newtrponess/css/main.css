@@ -83,4 +83,10 @@ form {
     left: 10px;
 }
 
+.bottom_right_corner {
+    position:absolute;
+    bottom:10px;
+    right: 10px;
+}
+
 

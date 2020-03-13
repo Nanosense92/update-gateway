@@ -84,26 +84,26 @@
 
     
 
-    /* OBSOLETE JE CROIS
-    function update_device_in_eqLogic($dev) {
+   
+    function update_device_in_eqLogic($alias, $slave_id) {
         $dbconnect = load_db();
 
-        $slave_id = $dev['slave_id'];
+        /*$slave_id = $dev['slave_id'];
         $reg = $dev['registers'];
         $ty = $dev['type'];
-        $na = $dev['name'];
+        $na = $dev['name'];*/
 
-        $dbconnect->query("UPDATE eqLogic SET name='$na'         WHERE logicalId=$slave_id");	
-        $dbconnect->query("UPDATE eqLogic SET isEnable=1         WHERE logicalId=$slave_id");	
-        $dbconnect->query("UPDATE eqLogic SET isVisible=1        WHERE logicalId=$slave_id");	
-        $dbconnect->query("UPDATE eqLogic SET generic_type='$ty' WHERE logicalId=$slave_id");	
-        $dbconnect->query("UPDATE eqLogic SET status='$reg'      WHERE logicalId=$slave_id");	
+        $dbconnect->query("UPDATE eqLogic SET name='$alias'         WHERE logicalId=$slave_id");	
+        //$dbconnect->query("UPDATE eqLogic SET isEnable=1         WHERE logicalId=$slave_id");	
+        //$dbconnect->query("UPDATE eqLogic SET isVisible=1        WHERE logicalId=$slave_id");	
+        //$dbconnect->query("UPDATE eqLogic SET generic_type='$ty' WHERE logicalId=$slave_id");	
+        //$dbconnect->query("UPDATE eqLogic SET status='$reg'      WHERE logicalId=$slave_id");	
 
         echo "this->" . $dbconnect->error;
 
         close_db($dbconnect);
-    }*/
-
+    }
+/*
     function add_device_to_cmd($dev) 
     {
         $dbconnect = load_db();
@@ -165,26 +165,29 @@
         }
     
         close_db($dbconnect);
-    } /* function add_device_to_cmd($dev)  */
+    } 
+    */
 
     function launch_scan_python_script($scan_nb) 
     {
         //detecte sondes et mets leurs valeurs dans data.ini
         exec("sudo /usr/bin/python3.5 modbus_py/scan.py $scan_nb 2>&1", $output, $return_value);
-        display_python_output($output);
-        echo $output;
-        $xfile = "modbus_py/modbus__cache/cache_modbus.ini"; 
-        $modbus_cache = parse_ini_file($xfile, true);
+       // display_python_output($output);
+       // echo $output;
+       // $xfile = "modbus_py/modbus__cache/cache_modbus.ini"; 
+       // $modbus_cache = parse_ini_file($xfile, true);
        // print_web($modbus_cache);
 
-        return $modbus_cache;
+       // return $modbus_cache;
     }
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
         
         $scan_nb = $_GET['nb_scans'];
-        $modbus_cache = launch_scan_python_script($scan_nb);
+        launch_scan_python_script($scan_nb);
+
+        /*OBSOLETE
         foreach ($modbus_cache as $key => $value)  { //24,7    X 4
            // print_web($key);
             //print_web($value);
@@ -196,11 +199,14 @@
             
             if (check_idslave_db($slave_id) === "found") {
                // echo "xUPDATE";
-                delete_device_from_eqLogic($slave_id);
+               //update_device_in_eqLogic($alias);
+               // delete_device_from_eqLogic($slave_id);
             } 
-            add_device_to_eqLogic($value);
-            add_device_to_cmd($value);
-        }
+            else {
+            //add_device_to_eqLogic($value);
+            //add_device_to_cmd($value);
+            }
+        }*/
 
 
 ?>

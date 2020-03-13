@@ -30,6 +30,8 @@ delete_device_from_eqLogic($_GET['alias']);
 ?>
 
 <script>
+    alias_destroyed = "<?php echo $_GET['alias']; ?>";
+    alert("L'équipement " + alias_destroyed + " a été supprimé");
     window.location.replace("main.php");
 </script>
 
