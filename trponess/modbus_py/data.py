@@ -1,4 +1,5 @@
 from datetime import datetime
+import configparser
 
 class Data:
 
@@ -10,6 +11,26 @@ class Data:
     
     def __str__(self):
         return "date:{} name:{} val:{} unit:{}".format(self.date, self.name, self.val, self.unit)
+
+    @staticmethod
+    def device_all_reg_to_ini(devices):
+        for d in devices.values():
+            Data.device_reg_to_ini(d)
+
+    @staticmethod
+    def device_reg_to_ini(device):
+        p = configparser.ConfigParser()
+        datas = Data.parse_datas(device)
+        for data in datas:
+            p.add_section(device.name + '_' + data.name)
+            print('adding : ' + device.name + '_' + data.name)
+            print('dict : ',  data.__dict__)
+            p[device.name + '_' + data.name] = data.__dict__.copy()
+        
+        with open('./modbus__cache/data.ini','a+') as data_file:
+            print("write in p")
+            p.write(data_file)
+
 
     @staticmethod
     def parse_datas(device):

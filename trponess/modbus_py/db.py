@@ -181,6 +181,7 @@ class Gateway_Database:
         x = eqLogic
         print(x)#when i print it works for some reason do not tack off
         device_db_id = x[0]#eqLogic[0][0]
+        print(sql_eqlogic, "-> " , device_db_id)
         return device_db_id
         """
         except Exception:
@@ -191,12 +192,14 @@ class Gateway_Database:
     
     def give_cmd(self, data, device, device_db_id):
         sql_cmd = "SELECT id FROM cmd WHERE  name='{}' and eqType='{}' and eqLogic_id={}".format(data.name, device.name, str(device_db_id))
+        
 
         self.cur.execute(sql_cmd)
         cmd = self.cur.fetchone()
         print(cmd)#when i print it works for some reason do not tack off
         
         device_value_db_id = cmd[0]
+        print(sql_cmd, "-> " , device_value_db_id)
         return device_value_db_id
         """
         except Exception:
@@ -225,8 +228,8 @@ class Gateway_Database:
 
                 print ("dev db id " , device_db_id)
                 print ("dev val db id " , device_value_db_id)
-                print(sql_eqlogic, "-> " , device_db_id)
-                print(sql_cmd, "-> " , device_value_db_id)
+                #print(sql_eqlogic, "-> " , device_db_id)
+                #print(sql_cmd, "-> " , device_value_db_id)
                 print(sql_history)
                 print("insert into history cmd_id:", device_value_db_id, " val type ", data.name ," __ ", data.val)
                 print("\n\n----------ADDED TO DB ----------------")
@@ -238,7 +241,7 @@ class Gateway_Database:
         #end for                
     
     def insert_all_history(self, devices):
-        for devices in devices.values():
+        for device in devices.values():
             self.insert_data_to_history(device)
 
 

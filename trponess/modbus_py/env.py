@@ -2,6 +2,11 @@ import os
 
 class Env:
 
+    cachedir =        './modbus__cache/'
+    notfoundfile =    './modbus__cache/notfound.ini'
+    datafile =        './modbus__cache/data.ini'
+    modbuscachefile = './modbus__cache/modbus_cache.ini'
+
     @staticmethod
     def create_dir(adir):
         if not os.path.isdir(adir):
