@@ -28,15 +28,30 @@ class Gateway_Database:
             sys.exit(1)
 
 
- 
+    def update_eqLogic(self, slave_id,new_alias,isEnable, isVisible, roomplace):
+        if isVisible is not None:
+            self.exec_sql("UPDATE eqLogic SET isVisible={} WHERE logicalId={}".format(isVisible, slave_id))
+        if isEnable is not None:
+            self.exec_sql("UPDATE eqLogic SET isEnable={} WHERE logicalId={}".format(isEnable, slave_id))
+        if roomplace is not None:
+            self.exec_sql("UPDATE eqLogic SET tags='{}' WHERE logicalId={}".format(roomplace, slave_id))
+        if new_alias is not None:
+            self.exec_sql("UPDATE eqLogic SET name='{}' WHERE logicalId={}".format(new_alias, slave_id))
+        self.db.commit()
+        
+    def delete_eqLogic(self, slave_id):
+        self.exec_sql("DELETE FROM eqLogic WHERE logicalId={}".format(slave_id))
+        self.db.commit()
+
     def insert_missing_devices(self, devices):
     
         for dev_name,device in devices.items():
             if not self.search_table('eqLogic', 'LogicalId', [device.slave_id]):
-                self.insert_table('eqLogic', 'name,logicalId,generic_type,isEnable,isVisible,status', \
-                                            [device.name,device.slave_id,device.type,1,1,'modbus'])
-            else:
-                self.exec_sql("UPDATE eqLogic SET name='{}' WHERE logicalId={}".format(device.name, device.slave_id))
+                self.insert_table('eqLogic', 'name,logicalId,generic_type,isEnable,isVisible,status,tags', \
+                                            [device.name,device.slave_id,device.type,1,1,'modbus','roomplace'])
+        else:    
+            self.exec_sql("UPDATE eqLogic SET generic_type='{}' WHERE logicalId={}".format(device.type, device.slave_id))
+            self.db.commit()
 
 
 
@@ -58,20 +73,20 @@ class Gateway_Database:
         #check if everything is right
         for row in eqLogic_table:
                 #row['id'] is slave_id
-
-            print("SHOULD I ADD MISSING CMDS?")
-            if not self.search_table('cmd', 'eqlogic_id', [row['id'], row['name']]):
+            if self.search_table('cmd', 'eqlogic_id', [row['id']]):
+                self.exec_sql("DELETE FROM cmd WHERE eqLogic_id={}".format(row['id']))
+                self.db.commit()
             #not self.search_table('cmd', 'eqType', [row['name']]):
-                    if row['generic_type'] == 'p4000':
-                        self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['PM10',row['name'],'PM10::value',row['id']])
-                        self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['PM2,5',row['name'],'PM2.5::value',row['id']])
-                        self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['PM1',row['name'],'PM1::value',row['id']])
+            if row['generic_type'] == 'p4000':
+                self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['PM10',row['name'],'PM10::value',row['id']])
+                self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['PM2.5',row['name'],'PM2.5::value',row['id']])
+                self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['PM1',row['name'],'PM1::value',row['id']])
 
-                    elif row['generic_type'] == 'e4000':
-                        self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['Temperature',row['name'],'TMP::value',row['id']])
-                        self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['Humidity',row['name'],'HUM::value',row['id']])
-                        self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['CO2',row['name'],'CONC::value',row['id']]) 
-                        self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['Total',row['name'],'total',row['id']])
+            elif row['generic_type'] == 'e4000':
+                self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['Temperature',row['name'],'TMP::value',row['id']])
+                self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['Humidity',row['name'],'HUM::value',row['id']])
+                self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['CO2',row['name'],'CONC::value',row['id']]) 
+                self.insert_table('cmd', 'name,eqType,logicalId,eqLogic_id', ['Total',row['name'],'total',row['id']])
 
                             
     def fetch_eq(self):
@@ -167,6 +182,7 @@ class Gateway_Database:
             its stocked in the cur
         """
         cur = self.db.cursor()
+        print("   SQL CMD LAUNCHED : " +  cmd)
         cur.execute(cmd)
         return cur
 
@@ -177,11 +193,19 @@ class Gateway_Database:
         sql_eqlogic = "SELECT id,name FROM eqLogic WHERE name='{}' and logicalId={}".format(device.name, str(device.slave_id))
                 
         self.cur.execute(sql_eqlogic)
-        eqLogic = self.cur.fetchone()
-        x = eqLogic
-        print(x)#when i print it works for some reason do not tack off
-        device_db_id = x[0]#eqLogic[0][0]
+        print("   SQL LAUNCHED : " + sql_eqlogic)
+        tuple_eqLogic = self.cur.fetchone()
+        if tuple_eqLogic is None:
+            print("   SQL DIDNT FIND")
+            return None
+        eqLogic = dict()
+        eqLogic['id'] = tuple_eqLogic[0] 
+        eqLogic['name'] = tuple_eqLogic[1]
+        print(eqLogic)#when i print it works for some reason do not tack off
+        device_db_id = eqLogic['id']#x[0]#eqLogic[0][0]
         print(sql_eqlogic, "-> " , device_db_id)
+        
+
         return device_db_id
         """
         except Exception:
@@ -192,13 +216,16 @@ class Gateway_Database:
     
     def give_cmd(self, data, device, device_db_id):
         sql_cmd = "SELECT id FROM cmd WHERE  name='{}' and eqType='{}' and eqLogic_id={}".format(data.name, device.name, str(device_db_id))
-        
-
         self.cur.execute(sql_cmd)
-        cmd = self.cur.fetchone()
+        print("   SQL LAUNCHED : " + sql_cmd)
+        tuple_cmd = self.cur.fetchone()
+        if tuple_cmd is None:
+            print("   SQL DIDNT FIND")
+            return None
+        cmd = dict()
+        cmd['id'] = tuple_cmd[0] 
         print(cmd)#when i print it works for some reason do not tack off
-        
-        device_value_db_id = cmd[0]
+        device_value_db_id = cmd['id']
         print(sql_cmd, "-> " , device_value_db_id)
         return device_value_db_id
         """
@@ -208,7 +235,32 @@ class Gateway_Database:
             sys.exit(0)
         """
 
-    def insert_data_to_history(self, device, data):
+    def get_alias_db(self, devices):
+        for d in devices.values():
+
+            sql_eqlogic = "SELECT name FROM eqLogic WHERE logicalId={}".format(str(d.slave_id))
+                
+            self.cur.execute(sql_eqlogic)
+            print("00SQL LAUNCHED : " + sql_eqlogic)
+            tuple_eqLogic = self.cur.fetchone()
+            if tuple_eqLogic is None:
+                print("   SQL DIDNT FIND")
+                return None
+            eqLogic = dict()
+            eqLogic['name'] = tuple_eqLogic[0]
+
+            print(">>>:", eqLogic['name'])
+
+            d.name = eqLogic['name']
+
+        for key,d in devices.items():
+            print(d.name)
+        return devices
+
+            
+
+
+    def insert_data_to_history(self, device, data, device_db_id, device_value_db_id):
        #add to db we have device and data
                 """
                 example:
@@ -219,8 +271,6 @@ class Gateway_Database:
                 print("\n\n----------PUTTING VALUE " , data , "IN DB------------")
             
                 cur = self.db.cursor()                
-                device_db_id = self.give_eqLogic(device)
-                device_value_db_id = self.give_cmd(data, device, device_db_id)
 
                 sql_history = "INSERT INTO history (cmd_id,datetime,value) VALUES ({},'{}','{}')".format(device_value_db_id, data.date, str(data.val))
                 cur.execute(sql_history)

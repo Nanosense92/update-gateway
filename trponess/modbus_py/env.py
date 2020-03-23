@@ -1,11 +1,14 @@
 import os
 
+
 class Env:
 
-    cachedir =        './modbus__cache/'
-    notfoundfile =    './modbus__cache/notfound.ini'
-    datafile =        './modbus__cache/data.ini'
-    modbuscachefile = './modbus__cache/modbus_cache.ini'
+    target = '/var/www/html/nanosense/modbus/jite/update-gateway/trponess/modbus_py'
+
+    cachedir =        target + '/modbus__cache/'
+    notfoundfile =    target + '/modbus__cache/notfound.ini'
+    datafile =        target + '/modbus__cache/data.ini'
+    modbuscachefile = target + '/modbus__cache/modbus_cache.ini'
 
     @staticmethod
     def create_dir(adir):
@@ -18,10 +21,10 @@ class Env:
 
     @staticmethod
     def setup_env():
-        Env.create_dir('./modbus__cache/')
-        Env.create_file('./modbus__cache/modbus_cache.ini')
-        Env.create_file('./modbus__cache/data.ini')
-        Env.create_file('./modbus__cache/notfound.ini')
+        Env.create_dir(Env.cachedir)
+        Env.create_file(Env.notfoundfile)
+        Env.create_file(Env.datafile)
+        Env.create_file(Env.modbuscachefile)
 
   
 if __name__ == "__main__":

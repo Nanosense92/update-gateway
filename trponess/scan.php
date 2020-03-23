@@ -171,7 +171,7 @@
     function launch_scan_python_script($scan_nb) 
     {
         //detecte sondes et mets leurs valeurs dans data.ini
-        exec("sudo /usr/bin/python3.5 modbus_py/scan.py $scan_nb 2>&1", $output, $return_value);
+        exec("sudo /usr/bin/python3.5 modbus_py/main.py $scan_nb 2>&1", $output, $return_value);
        // display_python_output($output);
        // echo $output;
        // $xfile = "modbus_py/modbus__cache/cache_modbus.ini"; 

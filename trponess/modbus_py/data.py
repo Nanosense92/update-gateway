@@ -1,9 +1,11 @@
 from datetime import datetime
 import configparser
+from env import *
 
 class Data:
 
-    def __init__(self, name, val, unit, date):
+    def __init__(self, device_name, name, val, unit, date):
+        self.device_name = device_name
         self.name = name
         self.val = val
         self.unit = unit
@@ -14,38 +16,46 @@ class Data:
 
     @staticmethod
     def device_all_reg_to_ini(devices):
+        all_data = dict()
         for d in devices.values():
-            Data.device_reg_to_ini(d)
+            datas = Data.device_reg_to_ini(d)
+            for key,data in datas.items():
+                all_data[key] = data
+        return all_data
 
     @staticmethod
     def device_reg_to_ini(device):
         p = configparser.ConfigParser()
         datas = Data.parse_datas(device)
-        for data in datas:
-            p.add_section(device.name + '_' + data.name)
-            print('adding : ' + device.name + '_' + data.name)
-            print('dict : ',  data.__dict__)
-            p[device.name + '_' + data.name] = data.__dict__.copy()
-        
-        with open('./modbus__cache/data.ini','a+') as data_file:
+        print("-------------DATA INI------------")
+        for key,data in datas.items():
+            p.add_section(key)
+            p[key] = data.__dict__.copy()
+            print('datas key adding : ', key)
+            print('datas dict data  : ',  data.__dict__)
+        print("----------------------------")
+        with open(Env.datafile,'a+') as data_file:
             print("write in p")
             p.write(data_file)
+        
+        return datas
 
 
     @staticmethod
     def parse_datas(device):
-        datas = []
+        datas = dict()
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         reg = device.registers
+        ikey = device.name + '_'
         if device.type == 'p4000':
-            d1 = Data('pm1', reg[2] , 'mg/m3', date)
-            d2 = Data('pm2,5', reg[3] , 'mg/m3', date)
-            d3 = Data('pm10', reg[4] , 'mg/m3', date)
-            datas = [d1, d2, d3]
+            datas[ikey + 'pm1'] = Data(device.name, 'pm1', reg[2] , 'mg/m3', date)
+            datas[ikey + 'pm2.5'] = Data(device.name, 'pm2.5', reg[3] , 'mg/m3', date)
+            datas[ikey + 'pm10'] = Data(device.name, 'pm10', reg[4] , 'mg/m3', date)
+            
         if device.type == 'e4000':
-            d1 = Data('CO2', reg[2] , 'ppm', date)
-            d2 = Data('Total', reg[3]*10 , 'mg/m3', date)
-            d3 = Data('Humidity', reg[5] , '%%', date)
-            d4 = Data('Temperature', reg[4]/10, 'C', date)
-            datas = [d1, d2, d3, d4]
+            datas[ikey + 'CO2'] = Data(device.name, 'CO2', reg[2] , 'ppm', date)
+            datas[ikey + 'Total'] = Data(device.name, 'Total', reg[3]*10 , 'mg/m3', date)
+            datas[ikey + 'Humidity'] = Data(device.name, 'Humidity', reg[5] , '%%', date)
+            datas[ikey + 'Temperature'] = Data(device.name, 'Temperature', reg[4]/10, 'C', date)
+            
         return datas

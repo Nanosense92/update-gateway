@@ -71,7 +71,7 @@
             else {
                 $nb_scans = $_POST['nb_scans'];
                 if ($nb_scans == "") {
-                    $x = "tout";
+                    $x = "1 - 254";
                 }
             
                 echo "<span style=\"color:red\"> En cliquant sur 'Scan', vous cherchez les sondes $nb_scans";
@@ -185,6 +185,7 @@
     {
         var button = document.createElement("button");
         button.innerHTML = name;
+        button.id = "zbuttons";
 
         var body = document.getElementsByTagName("body")[0];
         body.appendChild(button);
@@ -195,6 +196,8 @@
                 document.location.href = 'formulaire.php?device_chosen=' + name;
             }
         );
+
+
     }
 </script>
 
@@ -298,6 +301,17 @@
 
 
 ?>
+
+<form action="/action_page.php">
+
+  <label for="fname">month</label><input type="text" id="fname" name="fname"><br><br>
+  <label for="fname">day</label><input type="text" id="fname" name="fname"><br><br>
+  <label for="fname">min</label><input type="text" id="fname" name="fname"><br><br>
+  <label for="fname">min</label><input type="text" id="fname" name="fname"><br><br>
+  <input type="submit" value="Submit">
+</form>
+
+
 
 </body>
 </html>

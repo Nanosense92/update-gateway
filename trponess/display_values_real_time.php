@@ -82,8 +82,41 @@ function get_alias($slave_id)
     return $alias;
 }
 
+function load_db() {
+    $dbconnect = mysqli_connect("localhost", "jeedom", "85522aa27894d77", "jeedom");
+    if ($dbconnect->connect_errno) {
+        printf("Connection to 'jeedom' database failed");
+        exit;
+    }
+    return $dbconnect;
+}
 
-$ret_parse_ini = parse_ini_file("/home/pi/modbus-gateway/modbus__cache/data.ini", true);
+function close_db($dbconnect) {
+    mysqli_close($dbconnect);  	
+}
+
+function get_idslave_db() {
+
+    $dbconnect = load_db();
+    $ret = "notfound";
+
+    $ids = array();
+    $idq = $dbconnect->query("SELECT logicalId FROM eqLogic");
+    while ( $tmp = $idq->fetch_assoc() ) {
+        array_push($ids, $tmp['logicalId']);
+    }
+
+    
+    close_db($dbconnect);
+    return $ids;
+}
+
+
+$ids = get_idslave_db();
+$x = join(",",$ids);
+var_dump($x);
+exec("sudo /usr/bin/python3.5 modbus_py/main.py $x 2>&1", $output, $return_value);
+$ret_parse_ini = parse_ini_file("modbus__cache/data.ini", true);
 if ($ret_parse_ini === false) {
     echo "parse_ini_file() failed";
     exit(2);

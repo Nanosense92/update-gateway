@@ -7,6 +7,7 @@ import os
 from datetime import datetime
 import configparser
 import ast
+from env import *
 
 class Device:
  
@@ -56,20 +57,21 @@ class Probe:
 
                 print("testing Id {slave_id} .....  |".format(slave_id=slave_id), end='')
                 rtu_client = MbClient(method='rtu', port=usb_name, stopbits=1, timeout=1, bytesize=8, parity="N", baudrate=9600) 
-                ascii_client = MbClient(method='ascii', port=usb_name, stopbits=1, timeout=1, bytesize=7, parity="O",baudrate=1200)        
+                #ascii_client = MbClient(method='ascii', port=usb_name, stopbits=1, timeout=1, bytesize=7, parity="O",baudrate=1200)        
                 res_rtu =  rtu_client.read_input_registers(address=0x00, count=15, unit=slave_id)
-                res_ascii = ascii_client.read_input_registers(address=0x00, count=15, unit=slave_id)
+                #res_ascii = ascii_client.read_input_registers(address=0x00, count=15, unit=slave_id)
                 
                 if 'registers' in res_rtu.keys():
                     print('RTU  id ',slave_id,res_rtu['registers'], end='')
                     self.add_device(usb_name, res_rtu['registers'], slave_id, 'rtu')
                     found = True                
                     
-
+                """
                 elif 'registers' in res_ascii.keys():
                     print('ASCII id ',slave_id,res_ascii['registers'], end='')
                     self.add_device(usb_name, res_ascii['registers'], slave_id, 'ascii')
                     found = True                
+                """
                  
 
                 print('\n', end='')
@@ -77,12 +79,13 @@ class Probe:
                 if found == False:
                     not_found[usb_name + '_' + str(slave_id)] = slave_id
 
-        with open('./modbus__cache/notfound.ini','w+') as notfound_file:
+        with open(Env.notfoundfile,'w+') as notfound_file:
             for k,v in not_found.items():
-                print("{}={}".format(k,v), sep='\n')
+                print("NOT FOUND >> {}={}".format(k,v), sep='\n')
                 print("{}={}".format(k,v), sep='\n', file=notfound_file)
             
         self.save_cache()#for when probe not in bd
+        return self.devices
     
     
                
@@ -128,7 +131,7 @@ class Probe:
         for name,device in self.devices.items():
             p.add_section(str(name))
             p[name] = device.__dict__.copy()
-        with open('./modbus__cache/modbus_cache.ini','w+') as cache_file:
+        with open(Env.modbuscachefile,'w+') as cache_file:
             p.write(cache_file)
       
 
