@@ -202,7 +202,7 @@ class Gateway_Database:
         print(dbdev.datas)
         datas = dbdev.datas
         for adata in datas:
-            self.insert_table('cmd', 'id,name,eqType,logicalId,eqLogic_id', [adata.cmd_id,adata.name,dbdev.name,adata.name+'::value',dbdev.eqlogic_id])
+            self.insert_table('cmd', 'id,name,eqType,logicalId,eqLogic_id,value', [adata.cmd_id,adata.name,dbdev.name,adata.name+'::value',dbdev.eqlogic_id,str(adata.val)+adata.unit])
             self.insert_table('history', 'cmd_id,datetime,value', [adata.cmd_id,adata.date,adata.val])
 
 

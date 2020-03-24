@@ -10,6 +10,7 @@ class Env:
     datafile =        target + '/modbus__cache/data.ini'
     modbuscachefile = target + '/modbus__cache/modbus_cache.ini'
     logfile = target + '/modbus__cache/log.ini'
+    sessionfile= target + '/modbus__cache/session.ini'
 
     @staticmethod
     def create_dir(adir):
