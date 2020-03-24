@@ -46,7 +46,7 @@
 
 
 <?php
-
+//session_start();  
 /////////////////////////////////////////////////////////////////////////////////////////////////////FORCE PHP TO DISPLAY ERRORS//////////////////////////////////////////////
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -55,7 +55,6 @@ error_reporting(E_ALL);
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////SUPER GLOBALS//////////////////////////////////////////////
 $device_chosen = "";
-$tmp_file = "";
 
 $slave_id = "";
 $usb = "";
@@ -64,27 +63,45 @@ $parentobj_id = "";
 $isvisible = "";
 $isenable = "";
 
-$aliasErr = $parentobjErr = $visibleErr = $activerErr = $slaveidErr = $usbErr = "";
+$aliasErr = $parentobjErr = $isvisibleErr = $isenableErr = $slaveidErr = $usbErr = "";
 /////////////////////////////////////////////////////////////////////////////////////////////////////SUPER GLOBALS//////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////functions//////////////////////////////////////////////
 
+
+function save_session($alias, $slaveid, $usb, $isvisible, $isenable, $parentobj_id) {
+
+	exec("sudo python3 ../modbus_py/session.py add name=$alias slaveid=$slaveid usb=$usb isisvisible=$isvisible isenable=$isenable parentobj_id=$parentobj_id 2>&1", $output, $return_value);
+	$ret_parse_ini = parse_ini_file("../modbus_py/modbus__cache/session.ini", true);
+	if ($ret_parse_ini === false) {echo "parse_ini_file(session) failed"; exit(2);}
+}
+
+function load_session($device_chosen) {
+    $ret_parse_ini = parse_ini_file("../modbus_py/modbus__cache/session.ini", true);
+    if ($ret_parse_ini === false) { echo "parse_ini_file() failed";exit(2);}
+    #var_dump($ret_parse_ini);
+    foreach ($ret_parse_ini as $k => $v) {
+        $dict = $v;
+		$section = $k;
+		
+		//echo "?? " . $section . '==' . $device_chosen . "<br>";
+		if ($section === $device_chosen) {
+			return $v;
+		}
+	}
+}
+
 /*
-function load_session($dev_name) {
-    $ret_parse_ini = parse_ini_file("modbus_py/modbus__cache/session.ini", true);
-    if ($ret_parse_ini === false) { echo "parse_ini_file() failed";exit(2);} //EXIT
+function init_data($dict, $alias, $slaveid, $usb, $isvisible, $isenable, $parentobj_id) {
 
-    $slave_id =
-    $usb = 
-    $alias = 
-    $parentobj_id =
-    $isvisible = 
-    $isenable = 
-
-}*/
-
-
+	$alias = $dict['name'];
+	$slaveid = $dict['slaveid'];
+	$isvisible = $dict['isvisible'];
+	$isenable = $dict['isenable'];
+	$parentobj_id = $dict['parentobj_id'];
+}
+*/
 
 function test_input($data)
 {
@@ -105,11 +122,17 @@ function spawn_radio_btn($name, $input_name, $value, $checked) {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////validate get back device_chosen get//////////////////////////////////////////////
-if (empty($_GET['device_chosen']) == FALSE) {
+/*if ($_GET['device_chosen'] !== "") {
 	//echo "PREMIERE FOIS    ";
 	$device_chosen = $_GET['device_chosen'];
-
+	$_GET['device_chosen'] = $_SESSION['device_chosen']
+}
+else {
+	$_SESSION['device_chosen']
+}
+	
 	$tmp_file = fopen("tmp_file", "w+");
+	chmod($tmp_file, 0777);
 	if ($tmp_file === false)
 		exit(123);
 	fwrite($tmp_file, $device_chosen); 
@@ -122,7 +145,7 @@ else {
 		exit(123);
 	$device_chosen = file_get_contents("tmp_file");
 	fclose($tmp_file);
-}
+}*/
 /////////////////////////////////////////////////////////////////////////////////////////////////////validate get back device_chosen get//////////////////////////////////////////////
 
 
@@ -135,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
 {
     //name="alias" sets in post
     //usb
-    if (empty($_POST["usb"])) {$usbErr = "usb is required";} 
+    if ($_POST["usb"] === "") {$usbErr = "usb is required";} 
     else                      
     {
         $usb = test_input($_POST["usb"]);
@@ -145,7 +168,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     }
     
     //check slavei
-    if (empty($_POST["slaveid"])) {$slaveidErr = "sonde id is required";} 
+    if ($_POST["slaveid"] === "") {$slaveidErr = "sonde id is required";} 
     else                          
     {
         $slaveid = test_input($_POST["slaveid"]);
@@ -169,18 +192,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
             {$aliasErr = "Only letters and white space allowed";}
   	}
 
-    //check activer
-	if (empty($_POST["activer"])) {$activerErr = "Activer is required";} 
-  	else                          {$activer = test_input($_POST["activer"]);}
+    //check isenable
+	if (empty($_POST["isenable"])) {$isenableErr = "isenable is required";} 
+  	else                          {$isenable = test_input($_POST["isenable"]);}
 
     //check vis
-  	if (empty($_POST["visible"])) {$visibleErr = "Visible is required";} 
-  	else                          {$visible = test_input($_POST["visible"]);}
+  	if (empty($_POST["isvisible"])) {$isvisibleErr = "isvisible is required";} 
+  	else                          {$isvisible = test_input($_POST["isvisible"]);}
 	  
 	$parentobj_id = test_input($_POST["select_parentobj"]);
 
 
-if ($aliasErr === "" and $visibleErr === "" and $activerErr === "" and $usbErr === "" and $slaveidErr === "") {/*SAVE SESSION   form_to_db($dbconnect, $device_chosen, $alias, $visible, $activer);*/}
+if ($aliasErr === "" and $isvisibleErr === "" and $isenableErr === "" and $usbErr === "" and $slaveidErr === "") 
+	{
+		save_session($_POST["alias"], $_POST["slaveid"], $_POST["usb"], $_POST["isvisible"], $_POST["isenable"], $_POST["select_parentobj"]);
+		echo "<script> window,alert(\"SAVED going back to main page\"); </script>";
+		echo "<script> document.location.href='main2.php'; </script>";
+	}
+
+
 	
 } /* if ($_SERVER["REQUEST_METHOD"] == "POST") */
 
@@ -188,10 +218,24 @@ if ($aliasErr === "" and $visibleErr === "" and $activerErr === "" and $usbErr =
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////START POINT//////////////////////////////////////////////
 
+$device_chosen = $_GET['device_chosen'];
 
 if ($device_chosen === "") {$device_chosen = "new";}
-//else                       {/*load_session($device_chosen);*/}
+else                       
+{
+	$dict = load_session($device_chosen);
 
+	var_dump($dict);
+	
+	$alias = $dict['name'];
+	$usb = $dict['usb'];
+	$slaveid = $dict['slaveid'];
+	$isvisible = $dict['isvisible'];
+	$isenable = $dict['isenable'];
+	$parentobj_id = $dict['parentobj_id'];
+}
+
+echo "lldjasd $usb";
 
 ?>
 
@@ -202,13 +246,13 @@ if ($device_chosen === "") {$device_chosen = "new";}
 <form id="main_form" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">  
     <!-- usb:  -->
     <span class="field_to_fill">usb</span>
-	<input class =field_to_fill style=color:black; type="text" name="usb" value="<?php echo '';?>">
+	<input class =field_to_fill style=color:black; type="text" name="usb" value="<?php echo $usb;?>">
 	<span class="error">* <?php echo $usbErr;?></span>
     <br><br>
     
     <!-- slave id:  -->
     <span class="field_to_fill">sonde id</span>
-	<input class =field_to_fill style=color:black; type="text" name="slaveid" value="<?php echo ''?>">
+	<input class =field_to_fill style=color:black; type="text" name="slaveid" value="<?php echo $slaveid;?>">
 	<span class="error">* <?php echo $slaveidErr;?></span>
     <br><br>
     
@@ -219,20 +263,20 @@ if ($device_chosen === "") {$device_chosen = "new";}
 	<br><br>
 
 
-    <!-- Activer: -->
-	<span class="field_to_fill">Activer
-		<input type="radio" name="activer" <?php if (isset($activer) && $activer=="Oui") echo "checked";?> value="Oui">Oui
-		<input type="radio" name="activer" <?php if (isset($activer) && $activer=="Non") echo "checked";?> value="Non">Non
+    <!-- isenable: -->
+	<span class="field_to_fill">isenable
+		<input type="radio" name="isenable" <?php if (isset($isenable) && $isenable=="1") echo "checked";?> value="1">Oui
+		<input type="radio" name="isenable" <?php if (isset($isenable) && $isenable=="0") echo "checked";?> value="0">Non
 	</span>
-	<span class="error">* <?php echo $activerErr;?></span>
+	<span class="error">* <?php echo $isenableErr;?></span>
 	<br><br>
 
-	<!-- Visible: -->
-	<span class="field_to_fill">Visible 
-		<input type="radio" name="visible" <?php if (isset($visible) && $visible=="Oui") echo "checked";?> value="Oui">Oui
-		<input type="radio" name="visible" <?php if (isset($visible) && $visible=="Non") echo "checked";?> value="Non">Non
+	<!-- isvisible: -->
+	<span class="field_to_fill">isvisible 
+		<input type="radio" name="isvisible" <?php if (isset($isvisible) && $isvisible=="1") echo "checked";?> value="1">Oui
+		<input type="radio" name="isvisible" <?php if (isset($isvisible) && $isvisible=="0") echo "checked";?> value="0">Non
 	</span>
-	<span class="error">* <?php echo $visibleErr;?></span>
+	<span class="error">* <?php echo $isvisibleErr;?></span>
 	<br><br>
      
     <!--get from db parentobj -->
@@ -260,9 +304,9 @@ if ($device_chosen === "") {$device_chosen = "new";}
 
 
 
-<div class=top_left_corner><button class=button_back_to_main type=button onclick="document.location.href='main.php'" >Retourner à la page principale</button></div>
+<div class=top_left_corner><button class=button_back_to_main type=button onclick="document.location.href='main2.php'" >Retourner à la page principale</button></div>
 <br><br>
-<div class=bottom_right_corner>	<button class=button_destroy type=button onclick="document.location.href='destroy_probe.php'"> Supprimer un équipement modbus </button> </div>
+<div class=bottom_right_corner>	<button class=button_destroy type=button onclick="document.location.href='delete_session.php?name=<?php echo $device_chosen;?>'"> Supprimer un équipement modbus </button> </div>
 
 
 

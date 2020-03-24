@@ -1,3 +1,11 @@
+[garden2]
+name = garden2
+parentobj_id = 
+isenable = Non
+slaveid = 7
+isvisible = Oui
+usb = 1
+
 [KITCHEN]
 parentobj_id = 7
 isenable = Oui

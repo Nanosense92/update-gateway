@@ -1,0 +1,40 @@
+[kitchen]
+isenable = Oui
+usb = 1
+isvisible = Oui
+name = kitchen
+slaveid = 24
+parentobj_id = 5
+
+[garden2]
+name = garden2
+parentobj_id = 
+isenable = Non
+slaveid = 7
+isvisible = Oui
+usb = 1
+
+[KITCHEN]
+parentobj_id = 7
+isenable = Oui
+usb = 1
+isvisible = Non
+name = KITCHEN
+slaveid = 24
+
+[garden]
+parentobj_id = 
+name = garden
+isenable = Non
+isvisible = Non
+usb = 0
+slaveid = 24
+
+[livingroom]
+isenable = Oui
+parentobj_id = 8
+slaveid = 7
+isvisible = Non
+usb = 0
+name = livingroom
+
