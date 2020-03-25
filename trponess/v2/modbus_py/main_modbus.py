@@ -9,6 +9,20 @@ from env import Env
 from unik_id import UnikId
 from db_device import Db_Devices
 
+import configparser
+
+def get_slaveids_from_session():
+
+    p = configparser.ConfigParser()
+    p.read(Env.sessionfile)
+    toscan = []
+    for k,v in p._sections.items():
+        x = v['usb'] + ':' + v['slaveid']
+        toscan.append(x)
+    slaveids = ','.join(toscan)
+    return slaveids
+
+
 if __name__ == "__main__":
     ###setup#################################################
     g = Gateway_Database()
@@ -17,8 +31,13 @@ if __name__ == "__main__":
 
     ####GET DEVICES############################################
     s1 = None
-    if len(sys.argv) == 1: s1 = Scan(None)
-    else:                  s1 = Scan(sys.argv[1])
+    if len(sys.argv) == 1: 
+        s1 = Scan(None)
+    elif sys.argv[1] == 'session': 
+        slaveids = get_slaveids_from_session()
+        s1 = Scan(slaveids)
+    else:                  
+        s1 = Scan(sys.argv[1])
     
     s1.scan()
     devices = s1.devices

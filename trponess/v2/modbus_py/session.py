@@ -19,11 +19,19 @@ def session(option, args):
     sn = args['name']
 
     print(p._sections)
+
+    ch = ""
+    if 'change' in args.keys():
+        ch = args['change']
+
+    if ch != "":
+        if ch in p._sections.keys():
+            p.remove_section(ch)
+        del args['change']
     
     if sn in p._sections.keys():
         p.remove_section(sn)
 
-    
     if option=='add':
         p.add_section(sn)
         p._sections[sn] = args.copy()

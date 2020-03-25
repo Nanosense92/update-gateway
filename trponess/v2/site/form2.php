@@ -56,7 +56,7 @@ error_reporting(E_ALL);
 /////////////////////////////////////////////////////////////////////////////////////////////////////SUPER GLOBALS//////////////////////////////////////////////
 $device_chosen = "";
 
-$slave_id = "";
+$slaveid = "";
 $usb = "";
 $alias = "";
 $parentobj_id = "";
@@ -70,9 +70,15 @@ $aliasErr = $parentobjErr = $isvisibleErr = $isenableErr = $slaveidErr = $usbErr
 /////////////////////////////////////////////////////////////////////////////////////////////////////functions//////////////////////////////////////////////
 
 
-function save_session($alias, $slaveid, $usb, $isvisible, $isenable, $parentobj_id) {
+function save_session($alias, $slaveid, $usb, $isvisible, $isenable, $parentobj_id, $change) {
 
-	exec("sudo python3 ../modbus_py/session.py add name=$alias slaveid=$slaveid usb=$usb isisvisible=$isvisible isenable=$isenable parentobj_id=$parentobj_id 2>&1", $output, $return_value);
+	if ($change === "") 
+		exec("sudo python3 ../modbus_py/session.py add name=$alias slaveid=$slaveid usb=$usb isvisible=$isvisible isenable=$isenable parentobj_id=$parentobj_id 2>&1", $output, $return_value);
+	else
+	{
+		
+		exec("sudo python3 ../modbus_py/session.py add change=$change name=$alias slaveid=$slaveid usb=$usb isvisible=$isvisible isenable=$isenable parentobj_id=$parentobj_id 2>&1", $output, $return_value);
+	}
 	$ret_parse_ini = parse_ini_file("../modbus_py/modbus__cache/session.ini", true);
 	if ($ret_parse_ini === false) {echo "parse_ini_file(session) failed"; exit(2);}
 }
@@ -156,6 +162,10 @@ else {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
 {
+
+	
+	$device_chosen = $_POST['device_chosen'];
+	
     //name="alias" sets in post
     //usb
     if ($_POST["usb"] === "") {$usbErr = "usb is required";} 
@@ -184,7 +194,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     }
 
     //check alias
-	if (empty($_POST["alias"]))
+	if ($_POST["alias"] === "")
 		$aliasErr = "Alias is required";
   	else {
 		$alias = test_input($_POST["alias"]);
@@ -193,19 +203,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
   	}
 
     //check isenable
-	if (empty($_POST["isenable"])) {$isenableErr = "isenable is required";} 
+	if ($_POST["isenable"] === "") {$isenableErr = "isenable is required";} 
   	else                          {$isenable = test_input($_POST["isenable"]);}
 
     //check vis
-  	if (empty($_POST["isvisible"])) {$isvisibleErr = "isvisible is required";} 
+  	if ($_POST["isvisible"] === "") {$isvisibleErr = "isvisible is required";} 
   	else                          {$isvisible = test_input($_POST["isvisible"]);}
 	  
-	$parentobj_id = test_input($_POST["select_parentobj"]);
+	$parentobj_id = test_input($_POST["parentobj_id"]);
 
 
 if ($aliasErr === "" and $isvisibleErr === "" and $isenableErr === "" and $usbErr === "" and $slaveidErr === "") 
 	{
-		save_session($_POST["alias"], $_POST["slaveid"], $_POST["usb"], $_POST["isvisible"], $_POST["isenable"], $_POST["select_parentobj"]);
+		
+		save_session($_POST["alias"], $_POST["slaveid"], $_POST["usb"], $_POST["isvisible"], $_POST["isenable"], $_POST["parentobj_id"], $device_chosen);
 		echo "<script> window,alert(\"SAVED going back to main page\"); </script>";
 		echo "<script> document.location.href='main2.php'; </script>";
 	}
@@ -218,14 +229,14 @@ if ($aliasErr === "" and $isvisibleErr === "" and $isenableErr === "" and $usbEr
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////START POINT//////////////////////////////////////////////
 
-$device_chosen = $_GET['device_chosen'];
 
-if ($device_chosen === "") {$device_chosen = "new";}
+if ($_GET['device_chosen'] === "") {$device_chosen = "";}
 else                       
 {
+	$device_chosen = $_GET['device_chosen'];
 	$dict = load_session($device_chosen);
 
-	var_dump($dict);
+	
 	
 	$alias = $dict['name'];
 	$usb = $dict['usb'];
@@ -235,7 +246,7 @@ else
 	$parentobj_id = $dict['parentobj_id'];
 }
 
-echo "lldjasd $usb";
+
 
 ?>
 
@@ -273,16 +284,16 @@ echo "lldjasd $usb";
 
 	<!-- isvisible: -->
 	<span class="field_to_fill">isvisible 
-		<input type="radio" name="isvisible" <?php if (isset($isvisible) && $isvisible=="1") echo "checked";?> value="1">Oui
-		<input type="radio" name="isvisible" <?php if (isset($isvisible) && $isvisible=="0") echo "checked";?> value="0">Non
+		<input type="radio" name="isvisible" <?php if (isset($isenable) && $isvisible=="1") echo "checked";?> value="1">Oui
+		<input type="radio" name="isvisible" <?php if (isset($isenable) && $isvisible=="0") echo "checked";?> value="0">Non
 	</span>
 	<span class="error">* <?php echo $isvisibleErr;?></span>
 	<br><br>
      
     <!--get from db parentobj -->
 	<span class="field_to_fill">Objet parent:</span>
-	<select class=select-css name="select_parentobj" id="id_parentobj">
-		<option style=font-weight:normal; value="">Aucun</option>
+	<select class=select-css name="parentobj_id" id="id_parentobj">
+		<option style=font-weight:normal; value=""><?php echo $parentobj_id; ?></option>
 		<?php 
 			$dbconnect = mysqli_connect("localhost", "jeedom", "85522aa27894d77", "jeedom");
 			if ($dbconnect->connect_errno) {printf("Connection to 'jeedom' database failed");exit;}
@@ -290,12 +301,17 @@ echo "lldjasd $usb";
 			while ($ret_query_row = $ret_query->fetch_array(MYSQLI_BOTH)) {
 				//var_dump($ret_query_row);
 				$tmp_objparent_name = $ret_query_row["name"];
-				$tmp_objparent_id = $ret_query_row["id"];
-				echo "<option value=\"$tmp_objparent_id\">$tmp_objparent_name</option>";
+				//$tmp_objparent_id = $ret_query_row["id"];
+				$parentobj_id = $tmp_objparent_name;
+				echo "<option value=\"$parentobj_id\">$parentobj_id</option>";
+				
 			}
 			mysqli_close($dbconnect);  
 		?>
-    </select>
+	</select>
+	
+	<input type="hidden" name="device_chosen" value=<?php echo $device_chosen;?> >
+	
     
 	<br><br>
 	<!-- VALIDER -->

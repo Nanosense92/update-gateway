@@ -1,9 +1,7 @@
 import sys 
 import os
-sys.path.append('/home/pi/.local/lib/python3.5/site-packages/')#finds mysql
-sys.path.append('/home/pi/.local/lib/python3.5/')
-import mysql.connector
-import modbus_py.db
+import configparser
+from env import Env
 
 """
 month = sys.argv[4]
@@ -21,6 +19,49 @@ for arg in sys.argv:
     sarg = arg.split('=')
     if len(sarg) == 2 and 'hour' in arg: times['hour'] = sarg[1]
     if len(sarg) == 2 and 'min' in arg: times['hour'] = sarg[1]
+"""
+"""
+p = configparser.ConfigParser()
+p.read(Env.sessionfile)
+toscan = []
+tosca = ""
+for k,v in p._sections.items():
+    print(k)
+    d = {'usb':v['usb'], 'slaveid':v['slaveid']}
+    x = v['usb'] + ':' + v['slaveid']
+    toscan.append(x)
+
+print(toscan)
+slaveids = ','.join(toscan)
+print(slaveids)
+"""
+
+#print(crontab_line + " " + "sudo python3 /var/www/html/nanosense/modbus/jite/update-gateway/trponess/modbus_py/main.py " + slaveids)
+
+crontab_line = sys.argv[1]
+lines = []
+
+print(crontab_line)
+
+with open('/etc/crontab', 'r') as f:
+    lines = f.readlines()
+
+for i in range(len(lines)):
+    if "main_modbus.py" in lines[i]:
+        if lines[i][0] != '#': 
+            lines[i] = '#' + lines[i][0:]
+
+lines.append(crontab_line + " root sudo python3 " + Env.target + "/main_modbus.py session > " + Env.logfile + ' 2>' + Env.logfile + '\n')
+print(*lines)
+
+
+#print(crontab_line + " " + "sudo python3 /var/www/html/nanosense/modbus/jite/update-gateway/trponess/modbus_py/main.py " + slaveids)
+
+with open('/etc/crontab', 'w+') as f:
+    f.writelines(lines)
+    
+
+
 """
 
 g = modbus_py.db.Gateway_Database()
@@ -51,7 +92,7 @@ with open('/etc/crontab', 'w+') as f:
     f.writelines(lines)
     f.write(crontab_line + " " + "sudo python3 /var/www/html/nanosense/modbus/jite/update-gateway/trponess/modbus_py/main.py " + slaveids + '\n')
 
-
+"""
 
 
 
