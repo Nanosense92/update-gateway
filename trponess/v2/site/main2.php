@@ -2,6 +2,43 @@
 <!DOCTYPE HTML>  
 <html>
 <head>
+<style>
+	.error {
+		color: #FF0000;
+	}
+
+	.field_to_fill {
+		color: #DCDCDC;
+		font-weight: bold;
+		height: 150;
+		padding: 8px;
+		border: none;
+		border-bottom: 1px solid #ccc;
+		/* width: 10%; */
+		size: 10;
+	} 
+
+	.button_back_to_main {
+		color: white;
+		border-radius: 4px;
+		text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+		background: grey;
+		font-size: 100%;
+	}
+
+	.button_destroy {
+		color: white;
+		border-radius: 4px;
+		text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+		background: red;
+		font-size: 100%;
+	}
+
+	h2 {
+		color: grey;
+		text-decoration: underline overline;
+	}
+</style>
 </head>
 <body style="background-color:#333333;">  
 <link rel="stylesheet" href="css/main.css">
@@ -29,9 +66,23 @@
     }
 </script>
 
-<button type=button onclick="document.location.href='form2.php?device_chosen='"> add device </button> 
-<button type=button onclick="document.location.href='form2.php?device_chosen='"> log </button> 
-<button type=button onclick="document.location.href='crontab.php'"> crontab </button> 
+<?php
+
+    exec("sudo python3 ../modbus_py/get_crontab_info.py", $output, $return_value);
+    if ($output !== "") {
+        foreach ($output as $k => $v) {
+            echo $v . "<br>";
+            
+        }
+    }
+
+?>
+
+<button style="background : purple;" type=button onclick="document.location.href='user_log.php'"> log </button> 
+<button style="background : blue;" type=button onclick="document.location.href='crontab.php'"> crontab </button> 
+<br><br>
+<button  style="background : green;" type=button onclick="document.location.href='form2.php?device_chosen='"> add device </button> 
+<br><br>
 
 <?php
 

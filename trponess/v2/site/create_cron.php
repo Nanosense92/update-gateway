@@ -66,7 +66,7 @@ $n = $_GET['nb'];
 
 if ($_GET['every'] == 'heures') {
 
-    exec("sudo python3 ../modbus_py/create_crontab.py '* */$n * * *'", $output, $return_value);
+    exec("sudo python3 ../modbus_py/create_crontab.py '0 */$n * * *'", $output, $return_value);
 }
 if ($_GET['every'] == 'minutes'){
     
@@ -74,7 +74,7 @@ if ($_GET['every'] == 'minutes'){
  
 }
 
-echo "<script> window,alert(\"SAVED going back to main page\"); </script>";
+echo "<script> window.alert(\"SAVED going back to main page\"); </script>";
 echo "<script> document.location.href='main2.php'; </script>";
 
 ?>
