@@ -1,11 +1,8 @@
 import random
 
 class Db_Devices:
-    """
-        fusion of Scan, Unikid, Data classes
-        unikids added to scan & data
-        dataunikids added to scan
-    """
+  
+  
     # devices, datas, eqlogic_id, cmd_ids
     def __init__(self):
         self.db_devices = None
@@ -37,7 +34,7 @@ class Db_Devices:
             for key,adata in x.items():
                 #print(" adata key > ", key)
                 #print(" adata val > ",adata.__dict__)
-                print(key + "in " + d.name + " ?")
+                #print(key + "in " + d.name + " ?")
                 if d.name in key:
                     #print("gonna add this .............", adata.cmd_ids)
                     d.datas.append(adata) 

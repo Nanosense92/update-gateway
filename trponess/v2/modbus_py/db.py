@@ -92,13 +92,13 @@ class Gateway_Database:
     def fetch_eq(self):
         
         cmd = "SELECT * FROM {}".format("eqLogic")
-        print(cmd)
+        #print(cmd)
         cur = self.exec_sql(cmd)
         #fields = fields.split(',')
         #data = [dict(zip(fields,row)) for row in cur.fetchall()]
         data = cur.fetchall()
 
-        print(data)
+        
         return data
 
 
@@ -112,7 +112,7 @@ class Gateway_Database:
         """
     
         cmd = "SELECT {} FROM {}".format(fields, table)
-        print(cmd)
+        
         cur = self.exec_sql(cmd)
         fields = fields.split(',')
         data = [dict(zip(fields,row)) for row in cur.fetchall()]
@@ -125,7 +125,7 @@ class Gateway_Database:
         """
         cmd = self._sql_formatter(None, val)
         cmd='INSERT INTO {} ({}) VALUES ({})'.format(table,fields, cmd)
-        print(cmd)
+        #print(cmd)
         self.exec_sql(cmd)
         self.db.commit()#in order to insert
     
@@ -199,7 +199,6 @@ class Gateway_Database:
                                      [device.eqlogic_id, device.name,device.slave_id,  device.type, 1,         1,      'modbus','roomplace'])               
     
     def insert_dbdevdatas_cmd_history(self, dbdev):
-        print(dbdev.datas)
         datas = dbdev.datas
         for adata in datas:
             self.insert_table('cmd', 'id,name,eqType,logicalId,eqLogic_id,value', [adata.cmd_id,adata.name,dbdev.name,adata.name+'::value',dbdev.eqlogic_id,str(adata.val)+adata.unit])

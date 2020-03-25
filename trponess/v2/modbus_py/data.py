@@ -1,6 +1,6 @@
 from datetime import datetime
 import configparser
-from env import *
+from env import Env
 
 class Data:
 
@@ -28,16 +28,15 @@ class Data:
     def device_reg_to_ini(device):
         p = configparser.ConfigParser()
         datas = Data.parse_datas(device)
-        print("-------------DATA INI------------")
-        for key,data in datas.items():
-            p.add_section(key)
-            p[key] = data.__dict__.copy()
-            print('datas key adding : ', key)
-            print('datas dict data  : ',  data.__dict__)
-        print("----------------------------")
-        with open(Env.datafile,'a+') as data_file:
-            print("write in p")
-            p.write(data_file)
+        #print("-------------DATA INI------------")
+        #for key,data in datas.items():
+        #    p.add_section(key)
+        #    p[key] = data.__dict__.copy()
+            #print('datas key adding : ', key)
+            #print('datas dict data  : ',  data.__dict__)
+        #print("----------------------------")
+        #with open(Env.datafile,'a+') as data_file:
+        #    p.write(data_file)
         
         return datas
 
@@ -56,7 +55,7 @@ class Data:
         if device.type == 'e4000':
             datas[ikey + 'CO2'] = Data(device.name, 'CO2', reg[2] , 'ppm', date)
             datas[ikey + 'Total'] = Data(device.name, 'Total', reg[3]*10 , 'mg/m3', date)
-            datas[ikey + 'Humidity'] = Data(device.name, 'Humidity', reg[5] , '%%', date)
+            datas[ikey + 'Humidity'] = Data(device.name, 'Humidity', reg[5] , '%', date)
             datas[ikey + 'Temperature'] = Data(device.name, 'Temperature', reg[4]/10, 'C', date)
             
         return datas

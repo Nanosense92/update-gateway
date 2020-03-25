@@ -42,7 +42,7 @@ class Scan:
 
         self.devices = dict()
         self.slaveids_lst = self.setup_slaveids(slaveids_str) #lst of Slave_id obj
-        self.not_found = dict()
+        self.not_found = []
         
     def setup_slaveids(self, slaveids_str):
         #0:12,1:7
@@ -68,7 +68,8 @@ class Scan:
 
         return slaveids_lst
 
-
+    def get_notfound(self):
+        return self.not_found
     """
     def check(self):
 
@@ -85,9 +86,9 @@ class Scan:
             slave_id = int(slaveid_obj.slaveid)
             usb_name = slaveid_obj.usb
             
-            print("===getting slave_id" + str(slave_id) + " for probe >" + usb_name + '========')
+            print("testing slave_id" + str(slave_id) + " for usb >" + usb_name + '..... |  ', end='')
             found = False
-            print("testing Id {slave_id} .....  |".format(slave_id=slave_id), end='')
+            #print("testing Id {slave_id} .....  |".format(slave_id=slave_id), end='')
             rtu_client = MbClient(method='rtu', port=usb_name, stopbits=1, timeout=5, bytesize=8, parity="N", baudrate=9600) 
             try:    
                 #ascii_client = MbClient(method='ascii', port=usb_name, stopbits=1, timeout=1, bytesize=7, parity="O",baudrate=1200)        
@@ -109,22 +110,23 @@ class Scan:
                 """
             except pymodbus.exceptions.ConnectionException:
                 if found == False:
-                    self.not_found[usb_name + '_' + str(slave_id)] = slave_id
-                    print("NOT FOUND >>", end='')
+                    #self.not_found[usb_name + '_' + str(slave_id)] = slave_id
+                    self.not_found.append([usb_name, slave_id])
+                    print(" >>> NOT FOUND", end='')
             
             print('\n', end='')
 
         
-        self.save_notfound()
-        self.save_cache()#for when probe not in bd
+        #self.save_notfound()
+        #self.save_cache()#for when probe not in bd
 
         return self.devices
     
-    def save_notfound(self):
-        with open(Env.notfoundfile,'w+') as notfound_file:
-            for k,v in self.not_found.items():
-                print("NOT FOUND >> {}={}".format(k,v), sep='\n')
-                print("{}={}".format(k,v), sep='\n', file=notfound_file)
+    #def save_notfound(self):
+        #with open(Env.notfoundfile,'w+') as notfound_file:
+        #    for k,v in self.not_found.items():
+                #print("NOT FOUND >> {}={}".format(k,v), sep='\n')
+            #print("{}={}".format(k,v), sep='\n', file=notfound_file)
                
     def add_device(self, usb_name, reg, slave_id, mode):
 
@@ -132,7 +134,7 @@ class Scan:
         usb_nb = usb_name.split("/")[-1]
         device_name = str(slave_id) + '_' + device_type + '_usb' + usb_nb
 
-        print("device_name : ", device_name)
+        
         n = device_name
         self.devices[n] = Device(None)
         self.devices[n].name = device_name

@@ -19,6 +19,8 @@
         button.addEventListener ("click", 
             function() {
                 /*window.open('formulaire.php?device_chosen=' + name, '_blank'); */
+                name = name.split(' ');
+                name = name[0];
                 document.location.href = 'form2.php?device_chosen=' + name;
             }
         );
@@ -28,6 +30,8 @@
 </script>
 
 <button type=button onclick="document.location.href='form2.php?device_chosen='"> add device </button> 
+<button type=button onclick="document.location.href='form2.php?device_chosen='"> log </button> 
+<button type=button onclick="document.location.href='crontab.php'"> crontab </button> 
 
 <?php
 
@@ -42,8 +46,18 @@ function get_session_names() {
     foreach ($ret_parse_ini as $k => $v) {
         $dict = $v;
         $section = $k;
-        array_push($names, (string)$k);
-        #echo $k . " " . var_dump($v) . "<br>"; 
+
+        $z = array();
+
+        if (array_key_exists("usb", $v) && array_key_exists("slaveid", $v))
+        {
+            array_push($z, (string)$k);
+            array_push($z, (string)$v['usb']);//usb
+        }
+        array_push($z, (string)$v['slaveid']);//slaveid
+
+        array_push($names, $z);//slaveid
+        #echo $k . " " . var_dump($v) . "<br>";thunde 
     }
     return $names;
 }
@@ -52,7 +66,11 @@ $names = get_session_names();
 
 
 foreach ($names as $name) {
-    echo "<script> spawn_button(\"$name\");</script>";
+    
+    if (count($name) == 3) 
+        echo "<script> spawn_button(\"$name[0] (usb:$name[1] id:$name[2])\");</script>";
+    else 
+        echo "<script> spawn_button(\"$name[0]\");</script>";
 }
 
 

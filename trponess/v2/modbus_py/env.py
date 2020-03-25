@@ -11,8 +11,8 @@ class Env:
     modbuscachefile = target + '/modbus__cache/modbus_cache.ini'
     logfile = target + '/modbus__cache/log.ini'
     sessionfile= target + '/modbus__cache/session.ini'
+    userlogfile = target + '/modbus__cache/userlog.ini'
     
-
     @staticmethod
     def create_dir(adir):
         if not os.path.isdir(adir):
@@ -31,6 +31,7 @@ class Env:
         Env.create_file(Env.modbuscachefile, '+w')
         Env.create_file(Env.logfile, '+w')
         Env.create_file(Env.sessionfile, '+a')
+        Env.create_file(Env.userlogfile, '+a')
 
   
 if __name__ == "__main__":
