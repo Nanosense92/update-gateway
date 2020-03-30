@@ -22,11 +22,3 @@ isvisible = 0
 usb = 2
 name = livingroom
 
-[salon]
-name = salon
-isvisible = 0
-isenable = 0
-parentobj_id = boulogne
-slaveid = 24
-usb = 0
-

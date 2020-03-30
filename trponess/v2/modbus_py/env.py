@@ -12,6 +12,8 @@ class Env:
     logfile = target + '/modbus__cache/log.ini'
     sessionfile= target + '/modbus__cache/session.ini'
     userlogfile = target + '/modbus__cache/userlog.ini'
+    deffile = target + '/modbus__cache/def.ini'
+    scanconfigfile = target + '/modbus__cache/scan_config.ini'
     
     @staticmethod
     def create_dir(adir):
@@ -32,6 +34,8 @@ class Env:
         Env.create_file(Env.logfile, '+w')
         Env.create_file(Env.sessionfile, '+a')
         Env.create_file(Env.userlogfile, '+a')
+        Env.create_file(Env.deffile, '+a')
+        Env.create_file(Env.scanconfigfile, '+a')
 
   
 if __name__ == "__main__":

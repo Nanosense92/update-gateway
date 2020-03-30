@@ -84,8 +84,8 @@ if __name__ == "__main__":
 
     ####FUSION############################################>NEEDS DEVICES 
     
-    #for x in devices.values():
-    #    print(x.__dict__)
+    for x in devices.values():
+        print(x.__dict__)
 
     dbd1 = Db_Devices()
     new_devs = dbd1.add_ids_to_devices(devices, eqlogic_ids)

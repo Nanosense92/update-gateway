@@ -1,36 +1,25 @@
-str = "0:7,1:24"
+conf = dict()
+#conf['slaveid'] = "7,24 99-120 12-1 5,1"
+conf['slaveid'] ='all'
 
-class Slave_id:
+usbs = None
+slaveids = []
 
-    def __init__(self, slaveid, usb):
-        self.usb = usb
-        self.slaveid = slaveid
-    
-class X:
+if conf['slaveid'] == 'all' : 
+    slaveids = [i for i in range(1,255)] 
+else:
+    parts = conf['slaveid'].split(' ')#7,24 99-110 12-13 5,1
+    print(parts)
+    for part in parts:
+        if ',' in part:
+            eachdev = part.split(',')
+            eachdev = list(map(int, eachdev))
+            slaveids.extend(eachdev)
+        if '-' in part:
+            rang = part.split('-')
+            rang = list(map(int, rang))
+            rang = sorted(rang)#range returns [] if not
+            newids = [i for i in range(rang[0],rang[1] + 1)] 
+            slaveids.extend(newids)
 
-    def __init__(self, slaveids_str):
-
-        self.devices = dict()
-        self.slaveids_lst = self.setup_slaveids(slaveids_str) #lst of Slave_id obj
-        
-    def setup_slaveids(self, slaveids_str):
-        #0:12,1:7
-        slaveids_lst = []
-        print(slaveids_str)
-        slaveids_pairs = slaveids_str.split(',')
-        print(slaveids_lst)
-        for slaveids_pair in slaveids_pairs:
-            x = slaveids_pair.split(':')
-            usb = x[0]
-            slaveid = x[1]
-            slaveids_lst.append(Slave_id(slaveid, usb)) 
-        return slaveids_lst
-
-
-
-
-print(str)
-x = X(str)
-for x in x.slaveids_lst:
-    print(x.__dict__)
-
+print(slaveids)

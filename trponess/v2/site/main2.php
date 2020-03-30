@@ -84,7 +84,17 @@
 <button  style="background : green;" type=button onclick="document.location.href='form2.php?device_chosen='"> add device </button> 
 <br><br>
 
+
+
 <?php
+
+echo "<br><br><br> <button style=background:grey;position:absolute;top:10px;left:10px;  onclick=\"document.location.href='/nanosense/main.php';\">
+            Revenir à l'interface web Nanosense
+        </button>";
+        
+
+
+
 
 $names = array();
 
