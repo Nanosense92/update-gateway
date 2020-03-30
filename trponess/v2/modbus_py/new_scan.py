@@ -40,13 +40,28 @@ class Device:
 
 class Scan:
 
-    def __init__(self):
+    def __init__(self, option):
 
         self.devices = dict()
         self.not_found = []
+        self.option = option
+
+        s = configparser.ConfigParser()
+        self.session = s.read(Env.sessionfile)
 
     def get_notfound(self):
         return self.not_found
+    
+    def load_config(self):
+
+        scan_config = configparser.ConfigParser()
+        if self.option == 'session': 
+            scan_config.read(Env.sessionfile)
+        if self.option == 'scan_config': 
+            scan_config.read(Env.scanconfigfile)
+        confs = scan_config._sections
+        
+        return confs
 
     def get_usbs_slaveids(self, conf):
         
@@ -91,21 +106,17 @@ class Scan:
         #client = MbClient(method='rtu', port='/dev/ttyUSB' + , stopbits=1, timeout=5, bytesize=8, parity="N", baudrate=9600) 
         return client
 
-    def load_scan_config(self):
-
-        scan_config = configparser.ConfigParser()
-        scan_config.read(Env.scanconfigfile)
-        confs = scan_config._sections
-        
-        return confs
 
     def scan(self):
 
-        confs = self.load_scan_config()
+        confs = self.load_config()
+
+        print(confs.values())
 
         for conf in confs.values():
             print('conf >>> ', conf)
             usbs, slaveids = self.get_usbs_slaveids(conf)
+            print(usbs, slaveids)
             for usb in usbs:
                 for slaveid in slaveids:
                     print('usb ', usb, ' id ', slaveid, end='|')
@@ -122,6 +133,18 @@ class Scan:
                             print('id ',slaveid,res['registers'], end='')
                             self.add_device(usb, res['registers'], slaveid, conf)
                             found = True  
+
+                            #save into session if option is scanconfig
+                            if self.option == 'session':
+                                device_name = str(slaveid) + '_' + '707' + '_usb' + usb
+                                self.session.add_section(device_name)
+                                self.session.set(device_name, 'slaveid', str(slaveid))
+                                self.session.set(device_name, 'baudrate', conf['baudrate'])
+
+
+                                with open(Env.sessionfile, 'a+') as f:
+                                    self.session.write(f)
+
                         else:
                             raise Exception#pymodbus.exceptions.ConnectionException
                             
@@ -179,15 +202,20 @@ class Scan:
         else:                  name ='unknownR' + str(nb_reg)
 
         return name
+    
+
           
 if __name__ == "__main__":
 
-
-    p1 = Scan()
+    option = sys.argv[1]
+    p1 = Scan(option)
     p1.scan()
 
-    for x in p1.devices.values():
-        print(x.__dict__)
+    #print(p1)
+    #for x in p1.devices.values():
+    #    print(x.__dict__)
+    
+    #print(len(p1.not_found))
     
 
     #p1.scan(sys.argv[1])

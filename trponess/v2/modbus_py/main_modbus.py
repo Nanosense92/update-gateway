@@ -12,8 +12,21 @@ from datetime import datetime
 
 import configparser
 
-def get_slaveids_from_session():
+"""
+def get_str_for_slaveids_from_session():
+    #0:24,7:2
+    p = configparser.ConfigParser()
+    p.read(Env.sessionfile)
+    toscan = []
+    for k,v in p._sections.items():
+        if 'usb' in v.keys() and 'slaveid' in v.keys():
+            x = v['usb'] + ':' + v['slaveid']
+            toscan.append(x)
+    slaveids = ','.join(toscan)
+    return slaveids
+"""
 
+def get_slaveids_session():
     p = configparser.ConfigParser()
     p.read(Env.sessionfile)
     toscan = []
@@ -34,6 +47,7 @@ if __name__ == "__main__":
     ####GET DEVICES############################################
     print("SCAN".center(100, '#'))
 
+    """
     s1 = None
     if len(sys.argv) == 1: 
         s1 = Scan(None)
@@ -44,7 +58,9 @@ if __name__ == "__main__":
         s1 = Scan(slaveids)
     else:                  
         s1 = Scan(sys.argv[1])
-    
+    """
+
+    s1 = Scan()
     s1.scan()
     devices = s1.devices
 

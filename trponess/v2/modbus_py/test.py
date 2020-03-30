@@ -1,6 +1,6 @@
 conf = dict()
 #conf['slaveid'] = "7,24 99-120 12-1 5,1"
-conf['slaveid'] ='all'
+conf['slaveid'] ='24'
 
 usbs = None
 slaveids = []
