@@ -4,7 +4,7 @@ sys.path.append('/home/pi/.local/lib/python3.5/')
 
 from new_scan import Scan
 from db import Gateway_Database
-from data import Data
+from data import Data,Register
 from env import Env
 from unik_id import UnikId
 from db_device import Db_Devices
@@ -90,14 +90,26 @@ if __name__ == "__main__":
 
 
     ####GET data############################################>NEEDS DEVICES
-    all_data = Data.device_all_reg_to_ini(devices)
+    #all_data = Data.device_all_reg_to_ini(devices)
+    all_data = Register.get_all_datas(devices)
     
 
     print("DATA".center(50, '#'))
     for key,data in all_data.items():
+    #for key,data in all_data.items():
         print('key  :',key,  end=' > ')
-        print(data.__dict__)
+        #if data is not None:
+        #    print(data)
+        #else:
+
+        print('data : ', data) 
+        #print(data)
+        
+        
     print("".center(50, '#'))
+
+
+    
     ##########################################################
 
 

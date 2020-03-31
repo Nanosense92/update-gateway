@@ -20,13 +20,15 @@ class Device:
         self.slave_id = None
         self.mode = None
 
+        """
         self.baudrate = None
         self.parity = None
         self.timeout = None 
         self.nb_regs = None
         self.bytesize = None
         self.stopbits = None
-
+        """
+        #FUTUR USE FOR OTHER CLASSES TO ADD ON 
         self.eqlogic_id = ""#for configparser cause of dict
         self.datas = ""
 
@@ -46,8 +48,7 @@ class Scan:
         self.not_found = []
         self.option = option
 
-        s = configparser.ConfigParser()
-        self.session = s.read(Env.sessionfile)
+        #self.session = None
 
     def get_notfound(self):
         return self.not_found
@@ -55,8 +56,11 @@ class Scan:
     def load_config(self):
 
         scan_config = configparser.ConfigParser()
+        """
         if self.option == 'session': 
             scan_config.read(Env.sessionfile)
+            self.session = scan_config.read(Env.sessionfile)
+        """
         if self.option == 'scan_config': 
             scan_config.read(Env.scanconfigfile)
         confs = scan_config._sections
@@ -75,7 +79,7 @@ class Scan:
             slaveids = [i for i in range(1,255)] 
         else:
             parts = conf['slaveid'].split(' ')#7,24 99-110 12-13 5,1
-            print(parts)
+            
             for part in parts:
                 if ',' in part:
                     eachdev = part.split(',')
@@ -114,9 +118,10 @@ class Scan:
         print(confs.values())
 
         for conf in confs.values():
-            print('conf >>> ', conf)
+            print('conf >>> ', dict(conf))
+            print('-----------------------------------')
             usbs, slaveids = self.get_usbs_slaveids(conf)
-            print(usbs, slaveids)
+            #print(usbs, slaveids)
             for usb in usbs:
                 for slaveid in slaveids:
                     print('usb ', usb, ' id ', slaveid, end='|')
@@ -135,6 +140,7 @@ class Scan:
                             found = True  
 
                             #save into session if option is scanconfig
+                            """
                             if self.option == 'session':
                                 device_name = str(slaveid) + '_' + '707' + '_usb' + usb
                                 self.session.add_section(device_name)
@@ -144,6 +150,7 @@ class Scan:
 
                                 with open(Env.sessionfile, 'a+') as f:
                                     self.session.write(f)
+                            """
 
                         else:
                             raise Exception#pymodbus.exceptions.ConnectionException
@@ -153,7 +160,7 @@ class Scan:
                         #print('!!!!!\n', e, '!!!!!!\n')
                         if found == False:
                             #self.not_found[usb_name + '_' + str(slave_id)] = slave_id
-                            self.not_found.append(conf)
+                            self.not_found.append(str(slaveid) + ' ' + str(usb))#conf)
                             print(" >>> NOT FOUND ",e, end='')
                     
                     print('\n', end='')
@@ -169,12 +176,19 @@ class Scan:
         #    for k,v in self.not_found.items():
                 #print("NOT FOUND >> {}={}".format(k,v), sep='\n')
             #print("{}={}".format(k,v), sep='\n', file=notfound_file)
+    """
+    def find_model(regs):
+        p = configparser.ConfigParser()
+        p.read('modbus__cache/machine.ini')
+        if x in p._sections.values():
+            
+        return 'unknown'
+   """
                
     def add_device(self, usb_name, reg, slave_id, conf):
 
-        device_type = self.get_device_type(reg)
         usb_nb = usb_name.split("/")[-1]
-        device_name = str(slave_id) + '_' + device_type + '_usb' + usb_nb
+        device_name = str(slave_id) + '_' + conf['model'] + '_usb' + usb_nb
 
         n = device_name
         self.devices[n] = Device(None)
@@ -183,15 +197,18 @@ class Scan:
         self.devices[n].registers = reg
         self.devices[n].slave_id = str(slave_id)
         self.devices[n].mode = conf['mode']
-        self.devices[n].type = device_type
+        self.devices[n].type = conf['model']
 
+        """
         self.devices[n].baudrate = conf['baudrate']
         self.devices[n].stopbits = conf['stopbits']
         self.devices[n].parity = conf['parity']
         self.devices[n].bytesize = conf['bytesize']
         self.devices[n].timeout = conf['timeout']
         self.devices[n].nb_regs = conf['nb_regs']
+        """
 
+    """
 
     def get_device_type(self, registers):
 
@@ -202,7 +219,7 @@ class Scan:
         else:                  name ='unknownR' + str(nb_reg)
 
         return name
-    
+    """
 
           
 if __name__ == "__main__":
@@ -211,9 +228,12 @@ if __name__ == "__main__":
     p1 = Scan(option)
     p1.scan()
 
-    #print(p1)
-    #for x in p1.devices.values():
-    #    print(x.__dict__)
+
+
+    print(p1.not_found)
+
+    for x in p1.devices.values():
+        print(x.__dict__)
     
     #print(len(p1.not_found))
     

@@ -22,6 +22,7 @@ if ($_GET['fill'] === "yes") {
         $mode = $ini['mode'];
         $timeout = $ini['timeout'];
         $parity = $ini['parity'];
+        $model = $ini['model'];
         break;
     }
 
@@ -58,7 +59,10 @@ if ($_GET['fill'] === "yes") {
 	<input class =field_to_fill style=color:black; size="5" type="text" name="mode" value="<?php echo $mode;?>">
 	
     <span class="field_to_fill">stopbits</span>
-	<input class =field_to_fill style=color:black; size="5" type="text" name="stopbits" value="<?php echo $stopbits;?>">
+    <input class =field_to_fill style=color:black; size="5" type="text" name="stopbits" value="<?php echo $stopbits;?>">
+    
+    <span class="field_to_fill">model</span>
+	<input class =field_to_fill style=color:black; size="5" type="text" name="stopbits" value="<?php echo $model;?>">
 	
 	<input type="hidden" name="device_chosen" value=<?php echo $device_chosen;?> >
 
