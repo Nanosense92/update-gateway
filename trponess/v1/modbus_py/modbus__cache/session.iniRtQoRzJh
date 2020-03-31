@@ -1,0 +1,8 @@
+[kitchen]
+parentobj_id = 
+slaveid = 24
+name = kitchen
+isenable = 0
+isvisible = 0
+usb = 0
+

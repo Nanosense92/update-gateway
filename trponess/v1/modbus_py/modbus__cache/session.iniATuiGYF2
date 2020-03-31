@@ -1,0 +1,8 @@
+[sal]
+isvisible = 1
+isenable = 1
+name = sal
+parentobj_id = cuisine
+usb = 2
+slaveid = 24
+

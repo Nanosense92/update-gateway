@@ -2,7 +2,7 @@ import sys
 sys.path.append('/home/pi/.local/lib/python3.5/site-packages/')#finds mysql
 sys.path.append('/home/pi/.local/lib/python3.5/')
 
-from scan import Scan
+from new_scan import Scan
 from db import Gateway_Database
 from data import Data
 from env import Env
@@ -26,6 +26,7 @@ def get_str_for_slaveids_from_session():
     return slaveids
 """
 
+"""
 def get_slaveids_session():
     p = configparser.ConfigParser()
     p.read(Env.sessionfile)
@@ -36,6 +37,7 @@ def get_slaveids_session():
             toscan.append(x)
     slaveids = ','.join(toscan)
     return slaveids
+"""
 
 
 if __name__ == "__main__":
@@ -47,6 +49,7 @@ if __name__ == "__main__":
     ####GET DEVICES############################################
     print("SCAN".center(100, '#'))
 
+    #for old scan
     """
     s1 = None
     if len(sys.argv) == 1: 
@@ -60,7 +63,7 @@ if __name__ == "__main__":
         s1 = Scan(sys.argv[1])
     """
 
-    s1 = Scan()
+    s1 = Scan(sys.argv[1])
     s1.scan()
     devices = s1.devices
 
@@ -139,8 +142,10 @@ if __name__ == "__main__":
         print(stri , file=userlog)
 
         print("...notfound", file=userlog)
-        for x in notfound:
-            print("usb: {} id: {}".format(x[0], x[1]) , file=userlog)
+        print(notfound)
+        #for x in notfound:
+        #    print("")
+        #    print("usb: {} id: {}".format(x[0], x[1]) , file=userlog)
         
         print("", file=userlog)
         print("", file=userlog)

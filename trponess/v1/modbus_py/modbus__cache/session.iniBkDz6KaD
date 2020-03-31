@@ -1,0 +1,8 @@
+[sal]
+usb = 0
+slaveid = 24
+isenable = 1
+isvisible = 1
+name = sal
+parentobj_id = parent
+

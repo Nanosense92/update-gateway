@@ -1,0 +1,14 @@
+[salon]
+slaveid = 24
+usb = 0
+name = salon
+isvisible = 0
+isenable = 0
+parentobj_id = boulogne
+mode = rtu
+baudrate = 9600
+timeout = 1
+bytesize = 8
+parity = N
+stopbits = 1
+nb_regs = 15

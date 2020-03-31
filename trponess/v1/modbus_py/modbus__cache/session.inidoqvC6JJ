@@ -1,0 +1,24 @@
+[kitchen]
+usb = 0
+isvisible = 0
+isenable = 0
+name = kitchen
+parentobj_id = boulogne
+slaveid = 24
+
+[bathroom]
+isvisible = 1
+name = bathroom
+usb = 0
+slaveid = 7
+parentobj_id = maison
+isenable = 1
+
+[livingroom]
+isenable = 0
+parentobj_id = test
+slaveid = 17
+isvisible = 0
+usb = 2
+name = livingroom
+
