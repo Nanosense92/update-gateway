@@ -1,0 +1,24 @@
+[salon]
+usb = 0
+name = salon
+isenable = 0
+parentobj_id = test
+isvisible = 0
+slaveid = 24
+
+[24_e4000_usb0]
+isvisible = 1
+name = 24_e4000_usb0
+isenable = 1
+slaveid = 24
+parentobj_id = 
+usb = 0
+
+[7_p4000_usb0]
+usb = 0
+name = 7_p4000_usb0
+isvisible = 1
+slaveid = 7
+isenable = 1
+parentobj_id = 
+

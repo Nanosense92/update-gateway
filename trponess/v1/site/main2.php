@@ -80,6 +80,7 @@
 
 <button style="background : purple;" type=button onclick="document.location.href='user_log.php'"> log </button> 
 <button style="background : blue;" type=button onclick="document.location.href='crontab.php'"> crontab </button> 
+<button style="background : yellow;" type=button onclick="document.location.href='scan_input.php'">scan </button> 
 <br><br>
 <button  style="background : green;" type=button onclick="document.location.href='form2.php?device_chosen='"> add device </button> 
 <br><br>

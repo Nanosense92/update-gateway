@@ -46,9 +46,12 @@ class Gateway_Database:
     def insert_missing_devices(self, devices):
     
         for dev_name,device in devices.items():
+            #insert parent obj in father obj
+            
+
             if not self.search_table('eqLogic', 'LogicalId', [device.slave_id]):
                 self.insert_table('eqLogic', 'name,logicalId,generic_type,isEnable,isVisible,status,tags', \
-                                            [device.name,device.slave_id,device.type,1,1,'modbus','roomplace'])
+                                            [device.name,device.slave_id,device.type,device.isenable,device.isvisible,'modbus',device.parentobj_id])
         else:    
             self.exec_sql("UPDATE eqLogic SET generic_type='{}' WHERE logicalId={}".format(device.type, device.slave_id))
             self.db.commit()
@@ -195,8 +198,10 @@ class Gateway_Database:
 
     def insert_dbdev_in_eqlogic(self, dbdev):
         device = dbdev
+
+        #self.insert_table('object', 'name,father_id', [device.parentobj_id, device.parentobj_nb])
         self.insert_table('eqLogic', 'id,                  name,       logicalId,      generic_type,isEnable,isVisible,status,  tags', \
-                                     [device.eqlogic_id, device.name,device.slave_id,  device.type, 1,         1,      'modbus','roomplace'])               
+                                     [device.eqlogic_id, device.name,device.slave_id,  device.type, device.isenable,   device.isvisible, 'modbus',device.parentobj_id])               
     
     def insert_dbdevdatas_cmd_history(self, dbdev):
         datas = dbdev.datas

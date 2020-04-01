@@ -12,7 +12,7 @@ from datetime import datetime
 
 import configparser
 
-
+"""
 def get_str_for_slaveids_from_session():
     #0:24,7:2
     p = configparser.ConfigParser()
@@ -27,7 +27,7 @@ def get_str_for_slaveids_from_session():
     slaveids = ','.join(toscan)
     
     return slaveids
-
+"""
 
 if __name__ == "__main__":
     ###setup#################################################
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     ####GET DEVICES############################################
     print("SCAN".center(100, '#'))
 
-    
+    """
     s1 = None
     if len(sys.argv) == 1: 
         s1 = Scan(None)
@@ -49,11 +49,12 @@ if __name__ == "__main__":
         s1 = Scan(slaveids)
     else:                  
         s1 = Scan(sys.argv[1])
-    
+    """
+    s1 = Scan() #will exit if session.ini missing info
     s1.scan()
     devices = s1.devices
 
-    notfound = s1.get_notfound()
+    notfound = s1.not_found
     
 
     print("".center(100, '#'))

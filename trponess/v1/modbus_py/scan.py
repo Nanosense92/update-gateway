@@ -20,6 +20,14 @@ class Device:
         self.slave_id = None
         self.mode = None
 
+        #will be inserted in db
+        self.parentobj_id = None
+        self.parentobj_nb = None
+        self.isenable = None
+        self.isvisible = None
+        
+
+
         self.eqlogic_id = ""#for configparser cause of dict
         self.datas = ""
 
@@ -30,20 +38,40 @@ class Device:
         self.__dict__ = dict(kwargs)
         self.registers =ast.literal_eval(self.registers) #converts str '[9,2]' to list [9,2] 
 
+"""
 class Slave_id:
 
     def __init__(self, slaveid, usb):
         self.usb = usb
         self.slaveid = slaveid
+"""
 
 class Scan:
 
-    def __init__(self, slaveids_str):
+    def __init__(self):
 
+        self.session_data = self.get_session_data()
+        #slaveids_str = self.get_str_for_slaveids_from_session()
         self.devices = dict()
-        self.slaveids_lst = self.setup_slaveids(slaveids_str) #lst of Slave_id obj
+        #self.slaveids_lst = self.setup_slaveids(slaveids_str) #lst of Slave_id obj
         self.not_found = []
+    
+    """
+    def get_str_for_slaveids_from_session(self):
+        #0:24,7:2
+        p = configparser.ConfigParser()
+        p.read(Env.sessionfile)
+        toscan = []
+        for k,v in p._sections.items():
+            #print(dict(v.items()))
+            if 'usb' in v.keys() and 'slaveid' in v.keys():
+                x = v['usb'] + ':' + v['slaveid']
+                toscan.append(x)
+                print(x)
+        slaveids = ','.join(toscan)
         
+        return slaveids
+
     def setup_slaveids(self, slaveids_str):
         #0:12,1:7
         slaveids_lst = []
@@ -70,7 +98,7 @@ class Scan:
 
     def get_notfound(self):
         return self.not_found
-    """
+    
     def check(self):
 
         if self.get_connected_usb() == []:
@@ -81,9 +109,26 @@ class Scan:
 
 
     def scan(self):
-        for slaveid_obj in self.slaveids_lst:
-            slave_id = int(slaveid_obj.slaveid)
-            usb_name = slaveid_obj.usb
+
+        #for slaveid_obj in self.slaveids_lst:
+        for ses in self.session_data.values():
+            
+
+            try:
+                alias = ses['name']
+                slave_id = int(ses['slaveid'])#int(slaveid_obj.slaveid)
+                usb_name = '/dev/ttyUSB' + ses['usb']#slaveid_obj.usb
+                parent_obj = ses['parentobj_id']
+                parent_nb = ses['parentobj_nb']
+                isenable = ses['isenable']
+                isvisible = ses['isvisible']
+
+            except Exception as e:
+                print('exception : ', e)
+                print('modbus__config/session.ini section corrupted missing data :', ses)
+                continue
+                #sys.exit(29)
+
             
             print("testing slave_id" + str(slave_id) + " for usb >" + usb_name + '..... |  ', end='')
             found = False
@@ -96,7 +141,7 @@ class Scan:
                 
                 if 'registers' in res_rtu.keys():
                     print('RTU  id ',slave_id,res_rtu['registers'], end='')
-                    self.add_device(usb_name, res_rtu['registers'], slave_id, 'rtu')
+                    self.add_device(usb_name, res_rtu['registers'], slave_id, 'rtu', alias ,  parent_obj, parent_nb, isenable, isvisible)
                     found = True  
                 else:
                     raise pymodbus.exceptions.ConnectionException
@@ -127,7 +172,7 @@ class Scan:
                 #print("NOT FOUND >> {}={}".format(k,v), sep='\n')
             #print("{}={}".format(k,v), sep='\n', file=notfound_file)
                
-    def add_device(self, usb_name, reg, slave_id, mode):
+    def add_device(self, usb_name, reg, slave_id, mode, x, p, n, e, v):
 
         device_type = self.get_device_type(reg)
         usb_nb = usb_name.split("/")[-1]
@@ -136,12 +181,17 @@ class Scan:
         
         n = device_name
         self.devices[n] = Device(None)
-        self.devices[n].name = device_name
+        self.devices[n].name = x
         self.devices[n].usb_name = usb_name
         self.devices[n].registers = reg
         self.devices[n].slave_id = str(slave_id)
         self.devices[n].mode = mode 
         self.devices[n].type = device_type
+
+        self.devices[n].parentobj_id = p
+        self.devices[n].parentobj_nb = n
+        self.devices[n].isenable = e
+        self.devices[n].isvisible = v
  
     def get_device_type(self, registers):
         nb_reg = len(registers)
@@ -174,10 +224,45 @@ class Scan:
         with open(Env.modbuscachefile,'w+') as cache_file:
             p.write(cache_file)
       
+    def get_session_data(self):
 
+        p = configparser.ConfigParser()
+        p.read(Env.sessionfile)
+        return p._sections
+    """
+    def write_in_session(self, slaveid, usb, device_type):
+        
+        p = configparser.ConfigParser()
+        p.read(Env.sessionfile)
+
+        
+
+        device_name = str(slaveid) + '_' + device_type + '_usb' + str(usb)
+        if device_name in p._sections.keys():
+            return 
+        p.add_section(device_name)
+        
+        data = dict()
+        data['usb'] = usb
+        data['name'] = device_name
+        data['isenable'] = 1
+        data['parentobj_id'] = 'test'
+        data['isvisible'] = 1
+        data['slaveid'] = slaveid
+
+        p._sections[device_name] = data
+
+        with open(Env.sessionfile,'w+') as cache_file:
+            print('change SESSION')
+            p.write(cache_file)
+    """
 
 if __name__ == "__main__":
 
+
+    p1 = Scan()
+    p1.scan()
+    """
     if len(sys.argv) == 1:
         p1 = Scan(None)
     else:     
@@ -185,7 +270,7 @@ if __name__ == "__main__":
     for x in p1.slaveids_lst:
         print(x.__dict__)
     p1.scan()
-
+    """
     
 
     #p1.scan(sys.argv[1])

@@ -1,0 +1,18 @@
+[7_p4000_usb0]
+parentobj_id = maison
+slaveid = 7
+isvisible = 1
+parentobj_nb = 3
+isenable = 1
+name = 7_p4000_usb0
+usb = 0
+
+[24_e4000_usb0]
+usb = 0
+isenable = 1
+isvisible = 1
+name = 24_e4000_usb0
+parentobj_id = maison
+parentobj_nb = 3
+slaveid = 24
+
