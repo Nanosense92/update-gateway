@@ -51,6 +51,19 @@ if __name__ == "__main__":
         s1 = Scan(sys.argv[1])
     """
     s1 = Scan() #will exit if session.ini missing info
+
+    if s1.emptysession:
+
+        with open(Env.userlogfile, 'a+') as userlog:
+            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            stri = 'SESSION of ' + date
+            stri = stri.center(100, '#')
+            print(stri , file=userlog)
+            print("vous n'avez aucune sonde sur la ,page d'accueil, scan pour les trouver ou ajoutez les manuellement.", file=userlog)
+
+            print(''.center(100, '#') , file=userlog)
+        sys.exit(-1)
+
     s1.scan()
     devices = s1.devices
 
@@ -129,15 +142,18 @@ if __name__ == "__main__":
         print(stri , file=userlog)
 
         print("...notfound", file=userlog)
+        if notfound == {} or len(notfound) == 0:
+            print("vide", file=userlog)
         for x in notfound:
             print("usb: {} id: {}".format(x[0], x[1]) , file=userlog)
+        
         
         print("", file=userlog)
         print("", file=userlog)
         
         for x in dbdevs.values():
 
-            print(">>>>>usb {} id {}".format(x.usb_name, x.slave_id) , file=userlog)
+            print(">>>>>usb {} id {} machine {}".format(x.usb_name, x.slave_id, x.type) , file=userlog)
             for d in x.datas:
                 print("type: {} val: {} unit: {}".format(d.name, d.val, d.unit) , file=userlog)
             print("" , file=userlog)

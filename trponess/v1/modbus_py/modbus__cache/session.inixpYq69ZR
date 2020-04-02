@@ -1,0 +1,18 @@
+[24_e4000_usb0]
+slaveid = 24
+isvisible = 1
+usb = 0
+name = 24_e4000_usb0
+isenable = 1
+parentobj_id = test
+parentobj_nb = 3
+
+[7_p4000_usb0]
+slaveid = 7
+isvisible = 1
+usb = 0
+name = 7_p4000_usb0
+isenable = 1
+parentobj_id = test
+parentobj_nb = 3
+

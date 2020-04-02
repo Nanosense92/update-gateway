@@ -22,7 +22,7 @@ class Device:
 
         #will be inserted in db
         self.parentobj_id = None
-        self.parentobj_nb = None
+        self.parentobj_name = None
         self.isenable = None
         self.isvisible = None
         
@@ -51,10 +51,19 @@ class Scan:
     def __init__(self):
 
         self.session_data = self.get_session_data()
+        self.emptysession = False
+        if self.session_data == {}:
+            #print("vous n'avez aucune sonde sur la page d'accueil, scan pour les trouver ou ajoutez les manuellement.")
+            self.emptysession = True
+            
+
+        #if (self.session_data == )
         #slaveids_str = self.get_str_for_slaveids_from_session()
         self.devices = dict()
         #self.slaveids_lst = self.setup_slaveids(slaveids_str) #lst of Slave_id obj
         self.not_found = []
+
+        
     
     """
     def get_str_for_slaveids_from_session(self):
@@ -118,10 +127,12 @@ class Scan:
                 alias = ses['name']
                 slave_id = int(ses['slaveid'])#int(slaveid_obj.slaveid)
                 usb_name = '/dev/ttyUSB' + ses['usb']#slaveid_obj.usb
-                parent_obj = ses['parentobj_id']
-                parent_nb = ses['parentobj_nb']
+
+                parentobj_id = ses['parentobj_id']
+                parentobj_name = ses['parentobj_name']
                 isenable = ses['isenable']
                 isvisible = ses['isvisible']
+
 
             except Exception as e:
                 print('exception : ', e)
@@ -141,7 +152,7 @@ class Scan:
                 
                 if 'registers' in res_rtu.keys():
                     print('RTU  id ',slave_id,res_rtu['registers'], end='')
-                    self.add_device(usb_name, res_rtu['registers'], slave_id, 'rtu', alias ,  parent_obj, parent_nb, isenable, isvisible)
+                    self.add_device(usb_name, res_rtu['registers'], slave_id, 'rtu', alias ,  parentobj_name, parentobj_id, isenable, isvisible)
                     found = True  
                 else:
                     raise pymodbus.exceptions.ConnectionException
@@ -172,26 +183,30 @@ class Scan:
                 #print("NOT FOUND >> {}={}".format(k,v), sep='\n')
             #print("{}={}".format(k,v), sep='\n', file=notfound_file)
                
-    def add_device(self, usb_name, reg, slave_id, mode, x, p, n, e, v):
+    def add_device(self, usb_name, reg, slave_id, mode, alias, objn, objid, e, v):
 
         device_type = self.get_device_type(reg)
         usb_nb = usb_name.split("/")[-1]
         device_name = str(slave_id) + '_' + device_type + '_usb' + usb_nb
-
         
         n = device_name
         self.devices[n] = Device(None)
-        self.devices[n].name = x
+        self.devices[n].name = alias
         self.devices[n].usb_name = usb_name
         self.devices[n].registers = reg
         self.devices[n].slave_id = str(slave_id)
         self.devices[n].mode = mode 
         self.devices[n].type = device_type
 
-        self.devices[n].parentobj_id = p
-        self.devices[n].parentobj_nb = n
+        self.devices[n].parentobj_id = objid
+        self.devices[n].parentobj_name = objn
         self.devices[n].isenable = e
         self.devices[n].isvisible = v
+
+        print(self.devices[n].__dict__)
+
+
+
  
     def get_device_type(self, registers):
         nb_reg = len(registers)
@@ -261,6 +276,10 @@ if __name__ == "__main__":
 
 
     p1 = Scan()
+
+    if p1.emptysession:
+        sys.exit(-1)
+
     p1.scan()
     """
     if len(sys.argv) == 1:
@@ -271,6 +290,9 @@ if __name__ == "__main__":
         print(x.__dict__)
     p1.scan()
     """
+
+    for d in p1.devices.values():
+        print(d.__dict__)
     
 
     #p1.scan(sys.argv[1])

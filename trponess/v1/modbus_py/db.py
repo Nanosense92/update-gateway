@@ -199,9 +199,12 @@ class Gateway_Database:
     def insert_dbdev_in_eqlogic(self, dbdev):
         device = dbdev
 
+        self.exec_sql("UPDATE eqLogic set object_id=NULL where object_id IS NOT NULL")
+
+        
         #self.insert_table('object', 'name,father_id', [device.parentobj_id, device.parentobj_nb])
-        self.insert_table('eqLogic', 'id,                  name,       logicalId,      generic_type,isEnable,isVisible,status,  tags', \
-                                     [device.eqlogic_id, device.name,device.slave_id,  device.type, device.isenable,   device.isvisible, 'modbus',device.parentobj_id])               
+        self.insert_table('eqLogic', 'id,                  name,       logicalId,      generic_type,isEnable,isVisible,status,  tags, object_id', \
+                                     [device.eqlogic_id, device.name,device.slave_id,  device.type, device.isenable,   device.isvisible, 'modbus',device.parentobj_name,device.parentobj_id])               
     
     def insert_dbdevdatas_cmd_history(self, dbdev):
         datas = dbdev.datas

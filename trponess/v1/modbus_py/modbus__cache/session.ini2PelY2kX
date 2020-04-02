@@ -1,0 +1,18 @@
+[24_e4000_usb0]
+usb = 0
+isvisible = 0
+slaveid = 24
+isenable = 0
+parentobj_id = 99
+name = 24_e4000_usb0
+parentobj_name = versus
+
+[strange]
+slaveid = 99
+isenable = 0
+name = strange
+usb = 1
+parentobj_id = 8
+isvisible = 0
+parentobj_name = boulogne
+

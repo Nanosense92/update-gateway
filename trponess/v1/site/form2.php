@@ -60,9 +60,10 @@ $slaveid = "";
 $usb = "";
 $alias = "";
 $parentobj_id = "";
-$parentobj_nb = "";
+$parentobj_name = "";
 $isvisible = "";
 $isenable = "";
+$val = "";
 
 
 
@@ -73,17 +74,18 @@ $aliasErr = $parentobjErr = $isvisibleErr = $isenableErr = $slaveidErr = $usbErr
 /////////////////////////////////////////////////////////////////////////////////////////////////////functions//////////////////////////////////////////////
 
 
-function save_session($alias, $slaveid, $usb, $isvisible, $isenable, $parentobj_id, $parentobj_nb , $change) {
+function save_session($alias, $slaveid, $usb, $isvisible, $isenable, $parentobj_id, $parentobj_name , $change) {
 
 	if ($change === "") 
 	{
 		
-		exec("sudo python3 ../modbus_py/session.py add name=$alias slaveid=$slaveid usb=$usb isvisible=$isvisible isenable=$isenable parentobj_id=$parentobj_id parentobj_nb=$parentobj_nb 2>&1", $output, $returncode);
+		exec("sudo python3 ../modbus_py/session.py add name=$alias slaveid=$slaveid usb=$usb isvisible=$isvisible isenable=$isenable parentobj_id=$parentobj_id parentobj_name=$parentobj_name 2>&1", $output, $returncode);
 	}
 	else
 	{
-		echo "else";
-		exec("sudo python3 ../modbus_py/session.py add change=$change name=$alias slaveid=$slaveid usb=$usb isvisible=$isvisible isenable=$isenable parentobj_id=$parentobj_id parentobj_nb=$parentobj_nb 2>&1", $output, $return_value);
+		
+		exec("sudo python3 ../modbus_py/session.py add change=$change name=$alias slaveid=$slaveid usb=$usb isvisible=$isvisible isenable=$isenable parentobj_id=$parentobj_id parentobj_name=$parentobj_name 2>&1", $output, $return_value);
+		
 	}
 	$ret_parse_ini = parse_ini_file("../modbus_py/modbus__cache/session.ini", true);
 	if ($ret_parse_ini === false) {echo "parse_ini_file(session) failed"; exit(2);}
@@ -164,11 +166,13 @@ else {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////AFTER VALIDATE//////////////////////////////////////////////
+ ?>
+	
 
+<?php
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") 
 {
-
 	
 	$device_chosen = $_POST['device_chosen'];
 	
@@ -216,16 +220,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
   	if ($_POST["isvisible"] === "") {$isvisibleErr = "isvisible is required";} 
   	else                          {$isvisible = test_input($_POST["isvisible"]);}
 	  
-	$parentobj_id = test_input($_POST["parentobj_id"]);
-	$parentobj_nb = test_input($_POST["parentobj_nb"]);
+	$bothvals = test_input($_POST["send_parent"]);
+
+	$x = explode("-", $bothvals);
+	$parentobj_id = $x[0];
+	$parentobj_name = $x[1];
+	
 
 
 if ($aliasErr === "" and $isvisibleErr === "" and $isenableErr === "" and $usbErr === "" and $slaveidErr === "") 
 	{
 		
-		save_session($_POST["alias"], $_POST["slaveid"], $_POST["usb"], $_POST["isvisible"], $_POST["isenable"], $_POST["parentobj_id"], $_POST["parentobj_nb"], $device_chosen);
+		save_session($_POST["alias"], $_POST["slaveid"], $_POST["usb"], $_POST["isvisible"], $_POST["isenable"], $parentobj_id, $parentobj_name, $device_chosen);
 		
-		sleep(5);
+		sleep(3);
 		echo "<script> window,alert(\"SAVED going back to main page\"); </script>";
 		echo "<script> document.location.href='main2.php'; </script>";
 		
@@ -254,6 +262,9 @@ else
 	$isvisible = $dict['isvisible'];
 	$isenable = $dict['isenable'];
 	$parentobj_id = $dict['parentobj_id'];
+	$parentobj_name = $dict['parentobj_name'];
+
+	$val = $parentobj_id . "-" . $parentobj_name;
 	
 
 }
@@ -304,34 +315,53 @@ else
      
     <!--get from db parentobj -->
 	<span class="field_to_fill">Objet parent:</span>
-	<select class=select-css name="parentobj_id" id="id_parentobj">
-		<option style=font-weight:normal; value=<?php echo $parentobj_id; ?>><?php echo $parentobj_id; ?></option>
+	<select class=select-css name="send_parent" id="id_parentobj">
+		<option style=font-weight:normal; value=<?php echo $val ?> ><?php echo $parentobj_name; ?></option>
 		<?php 
 			$dbconnect = mysqli_connect("localhost", "jeedom", "85522aa27894d77", "jeedom");
 			if ($dbconnect->connect_errno) {printf("Connection to 'jeedom' database failed");exit;}
-			$ret_query = $dbconnect->query("SELECT father_id, name FROM object ORDER BY position");
+			$ret_query = $dbconnect->query("SELECT id, name FROM object ORDER BY position");
+			$take = $ret_query;
 			while ($ret_query_row = $ret_query->fetch_array(MYSQLI_BOTH)) {
+				
+				/*
+				var_dump($ret_query_row["name"]);
+				var_dump($ret_query_row["father_id"]);
+				
 				//var_dump($ret_query_row);
+
+
 				$tmp_objparent_name = $ret_query_row["name"];
-				//$tmp_objparent_id = $ret_query_row["id"];
-				$parentobj_nb = $ret_query_row["father_id"];
-				$parentobj_id = $tmp_objparent_name;
-				echo "<option value=\"$parentobj_id\">$parentobj_id</option>";
+				$tmp_objparent_id = $ret_query_row["id"];
+				*/
+				
+				$parentobj_id = $ret_query_row["id"];
+				$parentobj_name = $ret_query_row["name"];
+				/*$parentobj_id = $tmp_objparent_name;*/
+				$val = $parentobj_id . "-" . $parentobj_name;
+
+				
+				
+				
+				echo "<option value=\"$val\">$parentobj_name</option>";
 				
 			}
 			mysqli_close($dbconnect);  
 		?>
 	</select>
-	
+
+
+
 	<input type="hidden" name="device_chosen" value=<?php echo $device_chosen;?> >
-	<input type="hidden" name="parentobj_id" value=<?php echo $parentobj_id;?> >
-	<input type="hidden" name="parentobj_nb" value=<?php echo $parentobj_nb;?> >
+	
+
 	
     
 	<br><br>
 	<!-- VALIDER -->
 	<input class=button_valider type="submit" name="submit" value="Valider"> 
 </form>
+
 
 
 

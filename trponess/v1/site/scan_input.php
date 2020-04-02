@@ -1,4 +1,4 @@
-<p>Interroge les sondes sur la page d'accueil mode rtu connectées via usb</p>
+<p>Interroge les sondes connectées via usb mode rtu </p>
 <p>24,7,1 = scan id24 et id7 et id1</p>
 <p>50-100 = scan les ids 50 à 100</p> 
 <p>les adresses vont de 1 - 254</p>
