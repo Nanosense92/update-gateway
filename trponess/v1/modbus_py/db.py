@@ -200,11 +200,19 @@ class Gateway_Database:
         device = dbdev
 
         self.exec_sql("UPDATE eqLogic set object_id=NULL where object_id IS NOT NULL")
+        t = self.fetch_table("object", "id,name")
+        objid = 3 #just in case not present in db 
+        for c in t:
+            if c['name'] == device.parentobj_name:
+                print('CNAME    ', c['name'], 'DNAME  ', device.parentobj_name)
+                objid = c['id']
+                break
+
 
         
         #self.insert_table('object', 'name,father_id', [device.parentobj_id, device.parentobj_nb])
         self.insert_table('eqLogic', 'id,                  name,       logicalId,      generic_type,isEnable,isVisible,status,  tags, object_id', \
-                                     [device.eqlogic_id, device.name,device.slave_id,  device.type, device.isenable,   device.isvisible, 'modbus',device.parentobj_name,device.parentobj_id])               
+                                     [device.eqlogic_id, device.name,device.slave_id,  device.type, device.isenable,   device.isvisible, 'modbus',device.parentobj_name,objid])               
     
     def insert_dbdevdatas_cmd_history(self, dbdev):
         datas = dbdev.datas
