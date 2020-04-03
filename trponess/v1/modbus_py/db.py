@@ -201,13 +201,16 @@ class Gateway_Database:
 
         self.exec_sql("UPDATE eqLogic set object_id=NULL where object_id IS NOT NULL")
         t = self.fetch_table("object", "id,name")
-        objid = 3 #just in case not present in db 
+
+        
+        #if yo uscan default value is
+        objid = device.parentobj_id #just in case not present in db 
         for c in t:
             if c['name'] == device.parentobj_name:
                 print('CNAME    ', c['name'], 'DNAME  ', device.parentobj_name)
                 objid = c['id']
                 break
-
+        
 
         
         #self.insert_table('object', 'name,father_id', [device.parentobj_id, device.parentobj_nb])

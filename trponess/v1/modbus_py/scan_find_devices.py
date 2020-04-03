@@ -188,7 +188,7 @@ class Scan:
         data['name'] = device_name
         data['isenable'] = 1
         data['parentobj_name'] = 'test'
-        data['parentobj_id'] = 3
+        data['parentobj_id'] = 5#in db but by heart its 5 i have a fun in dn.py that checks and replaces this
         data['isvisible'] = 1
         data['slaveid'] = slaveid
 

@@ -1,9 +1,0 @@
-[7_p4000_usb0]
-parentobj_id = test
-isenable = 1
-isvisible = 1
-name = 7_p4000_usb0
-parentobj_name = 3
-usb = 0
-slaveid = 7
-

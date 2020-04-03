@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     Env.setup_env()
 
-    copyfile(Env.sessionfile, Env.sessionfile + randomStringDigits())
+    #copyfile(Env.sessionfile, Env.sessionfile + randomStringDigits())
     
     if len(sys.argv) < 3: print("not enough args") ; sys.exit(2)
     option = sys.argv[1]

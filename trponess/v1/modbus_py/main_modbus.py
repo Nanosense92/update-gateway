@@ -55,7 +55,7 @@ if __name__ == "__main__":
     if s1.emptysession:
 
         with open(Env.userlogfile, 'a+') as userlog:
-            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            date = Env.get_date()
             stri = 'SESSION of ' + date
             stri = stri.center(100, '#')
             print(stri , file=userlog)
@@ -136,7 +136,7 @@ if __name__ == "__main__":
 
     with open(Env.userlogfile, 'a+') as userlog:
 
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        date = Env.get_date()
         stri = 'SESSION of ' + date
         stri = stri.center(100, '#')
         print(stri , file=userlog)

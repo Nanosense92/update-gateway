@@ -1,5 +1,6 @@
 import os
-
+from datetime import datetime,timedelta
+import time
 
 class Env:
 
@@ -36,6 +37,20 @@ class Env:
         Env.create_file(Env.userlogfile, '+a')
         Env.create_file(Env.deffile, '+a')
         Env.create_file(Env.scanconfigfile, '+a')
+    
+    @staticmethod
+    def get_date():
+        epoch_now = int(time.time())
+        datetime_now = datetime.fromtimestamp(epoch_now)
+        dateadd = timedelta(hours=2)
+        d = str(datetime_now + dateadd)
+        return d
+
+        """
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        date = date + timedelta(hours=2)
+        return date
+        """
 
   
 if __name__ == "__main__":

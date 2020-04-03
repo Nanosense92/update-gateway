@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime,timedelta
 import configparser
 from env import Env
 
@@ -44,7 +44,7 @@ class Data:
     @staticmethod
     def parse_datas(device):
         datas = dict()
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        date = Env.get_date()
         reg = device.registers
         ikey = device.name + '_'
         if device.type == 'p4000':
