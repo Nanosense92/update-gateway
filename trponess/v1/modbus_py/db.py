@@ -199,10 +199,11 @@ class Gateway_Database:
     def insert_dbdev_in_eqlogic(self, dbdev):
         device = dbdev
 
-        self.exec_sql("UPDATE eqLogic set object_id=NULL where object_id IS NOT NULL")
+        #self.exec_sql("UPDATE eqLogic set object_id=NULL where object_id IS NOT NULL")
         t = self.fetch_table("object", "id,name")
+        self.exec_sql("DELETE FROM eqLogic") 
+        self.db.commit()
 
-        
         #if yo uscan default value is
         objid = device.parentobj_id #just in case not present in db 
         for c in t:
@@ -211,6 +212,7 @@ class Gateway_Database:
                 objid = c['id']
                 break
         
+
 
         
         #self.insert_table('object', 'name,father_id', [device.parentobj_id, device.parentobj_nb])
