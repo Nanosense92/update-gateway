@@ -57,5 +57,17 @@ class Data:
             datas[ikey + 'Total'] = Data(device.name, 'Total', reg[3]*10 , 'mg/m3', date)
             datas[ikey + 'Humidity'] = Data(device.name, 'Humidity', reg[5] , '%', date)
             datas[ikey + 'Temperature'] = Data(device.name, 'Temperature', reg[4]/10, 'C', date)
-            
+        
+        if device.type == 'EP5000':
+            datas[ikey + 'CO2'] = Data(device.name, 'CO2',     reg[5] , 'ppm', date)
+            datas[ikey + 'Total'] = Data(device.name, 'Total', reg[6]*10 , 'mg/m3', date)
+            datas[ikey + 'Temperature'] = Data(device.name, 'Temperature', reg[7]/10, 'C', date)
+            datas[ikey + 'Rel_Humidity'] = Data(device.name, 'Relative_Humidity', reg[8] , '%', date)
+            datas[ikey + 'Abs_Humidity'] = Data(device.name, 'Absolute_Humidity', reg[9] , '%', date)
+            datas[ikey + 'Pression'] = Data(device.name, 'pression', reg[10]/10 , 'pa', date)
+            datas[ikey + 'pm1'] = Data(device.name, 'pm1',     reg[11] , 'mg/m3', date)
+            datas[ikey + 'pm2.5'] = Data(device.name, 'pm2.5', reg[12] , 'mg/m3', date)
+            datas[ikey + 'pm10'] = Data(device.name, 'pm10',   reg[13] , 'mg/m3', date)
+            datas[ikey + 'Scintillement'] = Data(device.name, 'Scintillement', reg[19], '%', date)
+
         return datas
