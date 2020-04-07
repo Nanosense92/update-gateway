@@ -55,7 +55,6 @@ class Scan:
             slaveids = [i for i in range(1,255)] 
         else:
             parts = istr.split(' ')#7,24 99-110 12-13 5,1
-            
             for part in parts:
                 if ',' in part:
                     eachdev = part.split(',')
