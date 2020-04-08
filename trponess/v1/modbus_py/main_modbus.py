@@ -134,12 +134,21 @@ if __name__ == "__main__":
 
     #################user_log################################
 
-    with open(Env.userlogfile, 'a+') as userlog:
+    option = 'a+'
+    with open(Env.userlogfile, 'r') as userlog:
+
+        lines = userlog.readlines()
+        if len(lines) > 1000:
+            option = 'w+'
+
+    with open(Env.userlogfile, option) as userlog:
 
         date = Env.get_date()
         stri = 'SESSION of ' + date
         stri = stri.center(100, '#')
         print(stri , file=userlog)
+
+
 
         print("...notfound", file=userlog)
         if notfound == {} or len(notfound) == 0:

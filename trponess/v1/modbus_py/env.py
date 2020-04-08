@@ -29,14 +29,14 @@ class Env:
     @staticmethod
     def setup_env():
         Env.create_dir(Env.cachedir)
-        Env.create_file(Env.notfoundfile, '+w')
-        Env.create_file(Env.datafile, '+w')
-        Env.create_file(Env.modbuscachefile, '+w')
+        #Env.create_file(Env.notfoundfile, '+w')
+        #Env.create_file(Env.datafile, '+w')
+        #Env.create_file(Env.modbuscachefile, '+w')
         Env.create_file(Env.logfile, '+w')
         Env.create_file(Env.sessionfile, '+a')
         Env.create_file(Env.userlogfile, '+a')
-        Env.create_file(Env.deffile, '+a')
-        Env.create_file(Env.scanconfigfile, '+a')
+        #Env.create_file(Env.deffile, '+a')
+        #Env.create_file(Env.scanconfigfile, '+a')
     
     @staticmethod
     def get_date():

@@ -53,68 +53,10 @@ class Scan:
         self.session_data = self.get_session_data()
         self.emptysession = False
         if self.session_data == {}:
-            #print("vous n'avez aucune sonde sur la page d'accueil, scan pour les trouver ou ajoutez les manuellement.")
             self.emptysession = True
             
-
-        #if (self.session_data == )
-        #slaveids_str = self.get_str_for_slaveids_from_session()
         self.devices = dict()
-        #self.slaveids_lst = self.setup_slaveids(slaveids_str) #lst of Slave_id obj
         self.not_found = []
-
-        
-    
-    """
-    def get_str_for_slaveids_from_session(self):
-        #0:24,7:2
-        p = configparser.ConfigParser()
-        p.read(Env.sessionfile)
-        toscan = []
-        for k,v in p._sections.items():
-            #print(dict(v.items()))
-            if 'usb' in v.keys() and 'slaveid' in v.keys():
-                x = v['usb'] + ':' + v['slaveid']
-                toscan.append(x)
-                print(x)
-        slaveids = ','.join(toscan)
-        
-        return slaveids
-
-    def setup_slaveids(self, slaveids_str):
-        #0:12,1:7
-        slaveids_lst = []
-
-        if slaveids_str is None:
-            usbs = self.get_connected_usb()
-            for slaveid in range(1,255):
-                for usb in usbs:
-                    slaveids_lst.append(Slave_id(slaveid, usb)) 
-
-
-        elif ':' in slaveids_str:            
-            print(slaveids_str)
-            slaveids_pairs = slaveids_str.split(',')
-            print(slaveids_lst)
-            for slaveids_pair in slaveids_pairs:
-                x = slaveids_pair.split(':')
-                usb = '/dev/ttyUSB' + x[0]
-                slaveid = x[1]
-                slaveids_lst.append(Slave_id(slaveid, usb)) 
-        
-        print('$>>>>>>>>>>>>>>>>>>>>>>>####', slaveids_lst)
-        return slaveids_lst
-
-    def get_notfound(self):
-        return self.not_found
-    
-    def check(self):
-
-        if self.get_connected_usb() == []:
-            print("Nothin is connected")
-            return False
-        return True
-    """
 
 
     def scan(self):
@@ -138,7 +80,7 @@ class Scan:
                 print('exception : ', e)
                 print('modbus__config/session.ini section corrupted missing data :', ses)
                 continue
-                #sys.exit(29)
+                
 
             
             print("testing slave_id" + str(slave_id) + " for usb >" + usb_name + '..... |  ', end='')

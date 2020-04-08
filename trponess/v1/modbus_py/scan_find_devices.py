@@ -221,7 +221,7 @@ class Scan:
              name = 'e4000' 
         elif nb_reg in [9,10]:
              name = 'p4000'
-        elif nb_reg in [9,10]:
+        elif nb_reg in [40]:
              name = 'EP5000'
         else:
             name ='unknownR' + str(nb_reg)
