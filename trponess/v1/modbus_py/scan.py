@@ -136,7 +136,8 @@ class Scan:
             #print("{}={}".format(k,v), sep='\n', file=notfound_file)
                
     def add_device(self, usb_name, reg, slave_id, mode, alias, objn, objid, e, v):
-
+        
+        usb_name = usb_name.strip('/dev/tty')
         device_type = self.get_device_type(reg)
         usb_nb = usb_name.split("/")[-1]
         device_name = str(slave_id) + '_' + device_type + '_usb' + usb_nb
@@ -146,7 +147,7 @@ class Scan:
         self.devices[n].name = alias
         self.devices[n].usb_name = usb_name
         self.devices[n].registers = reg
-        self.devices[n].slave_id = str(slave_id)
+        self.devices[n].slave_id = usb_name  + '@' + str(slave_id)
         self.devices[n].mode = mode 
         self.devices[n].type = device_type
 
