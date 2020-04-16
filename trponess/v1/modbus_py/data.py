@@ -76,7 +76,7 @@ class Data:
 
             if bit_status[-2] == '1':
                 print("COV captor pres")
-                datas[ikey + 'Total'] = Data(device.name, 'Total', reg[6] , 'mg/m3', date)
+                datas[ikey + 'COVT'] = Data(device.name, 'COVT', reg[6] , 'mg/m3', date)
 
             if bit_status[-3] == '1':
                 print("Temp captor pres")

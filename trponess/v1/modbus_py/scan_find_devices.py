@@ -135,13 +135,6 @@ class Scan:
                 res_rtu =  rtu_client.read_input_registers(address=0x00, count=15, unit=slave_id)
                 res_ascii = ascii_client.read_input_registers(address=0x00, count=15, unit=slave_id)
                 res_ep5000 = ep5000_rtu_client.read_input_registers(address=0x00, count=40, unit=slave_id)
-               
-                
-                
-                print()
-                print('res_tru' ,res_ep5000)
-                
-                print()
                 
                 usb_name = usb_name.split("/")[-1]
                 usb_name = usb_name.strip("USBtty")
