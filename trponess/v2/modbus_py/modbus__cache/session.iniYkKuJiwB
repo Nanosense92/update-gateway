@@ -1,8 +1,0 @@
-[kitchen]
-usb = 0
-isvisible = 0
-isenable = 0
-name = kitchen
-parentobj_id = boulogne
-slaveid = 24
-
