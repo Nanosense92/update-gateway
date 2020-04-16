@@ -19,20 +19,25 @@ class UnikId:
     def get_eqlogicid(self, db_obj):
         eqlogic_ids = db_obj.fetch_table('eqLogic', 'id')
         ceqlogic_ids = [x['id'] for x in eqlogic_ids]
-        r = random.randrange(1, 2147483648)
+        r = random.randrange(1, 2147483647)
         #print(ceqlogic_ids)
         while r in ceqlogic_ids or r in self.eqlogic_id:
-            r = random.randrange(1, 2147483648)
+            r = random.randrange(1, 2147483647)
         self.eqlogic_id.append(r)
     
     def get_cmdids(self, db_obj):
         eqlogic_ids = db_obj.fetch_table('cmd', 'id')
         ceqlogic_ids = [x['id'] for x in eqlogic_ids]
-        r = random.randrange(1, 2147483648)
+        r = random.randrange(1, 2147483647)
         #print(ceqlogic_ids)
-        for _ in range(4):
+        for _ in range(40):
+            i = 0
             while r in ceqlogic_ids or r in self.cmd_ids:
-                r = random.randrange(1, 2147483648)
+                i += 1
+                if i == 1000:
+                    print('>>>>>>>>>>>db is full')
+                    return None
+                r = random.randrange(1, 2147483647)
             self.cmd_ids.append(r)
 
         

@@ -86,15 +86,25 @@ class Scan:
             print("testing slave_id" + str(slave_id) + " for usb >" + usb_name + '..... |  ', end='')
             found = False
             #print("testing Id {slave_id} .....  |".format(slave_id=slave_id), end='')
+            ep5000_rtu_client = MbClient(method='rtu', port=usb_name, stopbits=1, timeout=5, bytesize=8, parity="N", baudrate=19200) 
             rtu_client = MbClient(method='rtu', port=usb_name, stopbits=1, timeout=5, bytesize=8, parity="N", baudrate=9600) 
+            ascii_client = MbClient(method='ascii', port=usb_name, stopbits=1, timeout=1, bytesize=7, parity="O",baudrate=1200)        
             try:    
-                #ascii_client = MbClient(method='ascii', port=usb_name, stopbits=1, timeout=1, bytesize=7, parity="O",baudrate=1200)        
                 res_rtu =  rtu_client.read_input_registers(address=0x00, count=15, unit=slave_id)
-                #res_ascii = ascii_client.read_input_registers(address=0x00, count=15, unit=slave_id)
-                
+                res_ascii = ascii_client.read_input_registers(address=0x00, count=15, unit=slave_id)
+                res_ep5000 = ep5000_rtu_client.read_input_registers(address=0x00, count=40, unit=slave_id)
+               
                 if 'registers' in res_rtu.keys():
                     print('RTU  id ',slave_id,res_rtu['registers'], end='')
                     self.add_device(usb_name, res_rtu['registers'], slave_id, 'rtu', alias ,  parentobj_name, parentobj_id, isenable, isvisible)
+                    found = True 
+                elif 'registers' in res_ascii.keys():
+                    print('ascii  id ',slave_id,res_ascii['registers'], end='')
+                    self.add_device(usb_name, res_ascii['registers'], slave_id, 'ascii', alias ,  parentobj_name, parentobj_id, isenable, isvisible)
+                    found = True  
+                elif 'registers' in res_ep5000.keys():
+                    print('RTU ep5000 id ',slave_id,res_ep5000['registers'], end='')
+                    self.add_device(usb_name, res_ep5000['registers'], slave_id, 'rtu', alias ,  parentobj_name, parentobj_id, isenable, isvisible)
                     found = True  
                 else:
                     raise pymodbus.exceptions.ConnectionException
