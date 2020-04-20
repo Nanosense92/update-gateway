@@ -13,9 +13,9 @@ with open('/etc/crontab') as f:
 h = s.split(' ')
 if '/' in h[1]:
     a = h[1].split('/')
-    print('valeurs toutes les heures ' + a[1])
+    print('valeurs toutes les heures : ' + a[1])
 if '/' in h[0]:
     a = h[0].split('/')
-    print('valeurs toutes les minutes ' + a[1])
+    print('valeurs toutes les minutes : ' + a[1])
 
 

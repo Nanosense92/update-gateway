@@ -67,22 +67,25 @@
 </script>
 
 <?php
-
+    $x = 0;
     exec("sudo python3 ../modbus_py/get_crontab_info.py", $output, $return_value);
     if ($output !== "") {
         foreach ($output as $k => $v) {
-            echo $v . "<br>";
+            #echo $v . "<br>";
+            $x = $v;
             
         }
     }
 
 ?>
 
-<button style="background : purple;" type=button onclick="document.location.href='user_log.php'"> log </button> 
-<button style="background : blue;" type=button onclick="document.location.href='crontab.php'"> crontab </button> 
-<button style="background : yellow;" type=button onclick="document.location.href='scan_input.php'">scan </button> 
+<br><br><br><br>
+<button style="background : white;" type=button> <?php echo $v; ?> </button> <br><br>
+<button style="background : purple;" type=button onclick="document.location.href='user_log.php'"> Resultats </button> 
+<button style="background : blue;" type=button onclick="document.location.href='crontab.php'"> Intervalle d'interrogation </button> 
+<button style="background : yellow;" type=button onclick="document.location.href='scan_input.php'"> Trouver sondes </button> 
 <br><br>
-<button  style="background : green;" type=button onclick="document.location.href='form2.php?device_chosen='"> add device </button> 
+<!--button  style="background : green;" type=button onclick="document.location.href='form2.php?device_chosen='"> add device </button --> 
 <br><br>
 
 
