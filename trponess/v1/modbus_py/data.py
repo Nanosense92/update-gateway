@@ -85,7 +85,7 @@ class Data:
             if bit_status[-4] == '1':
                 print("Hum captor pres")
                 datas[ikey + 'Rel_Humidity'] = Data(device.name, 'Relative_Humidity', reg[8] , '%', date)
-                datas[ikey + 'Abs_Humidity'] = Data(device.name, 'Absolute_Humidity', reg[9] , '%', date)
+                datas[ikey + 'Abs_Humidity'] = Data(device.name, 'Absolute_Humidity', reg[9]/100 , 'g/m3', date) #erreur dans doc cest g/m3  reg / 100
             
 
             if bit_status[-5] == '1':
