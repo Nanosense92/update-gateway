@@ -179,6 +179,9 @@ if __name__ == "__main__":
 
     ####ADD TO DB####
     print("DB ACTIONS".center(50, '#'))
+    g.exec_sql("DELETE FROM eqLogic")
+    g.db.commit()
+
 
     g.insert_all_dbdevs(dbdevs)
 

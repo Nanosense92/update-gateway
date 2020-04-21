@@ -201,8 +201,8 @@ class Gateway_Database:
 
         #self.exec_sql("UPDATE eqLogic set object_id=NULL where object_id IS NOT NULL")
         t = self.fetch_table("object", "id,name")
-        self.exec_sql("DELETE FROM eqLogic") 
-        self.db.commit()
+        #self.exec_sql("DELETE FROM eqLogic") 
+        #self.db.commit()
 
         #if yo uscan default value is
         objid = device.parentobj_id #just in case not present in db 
