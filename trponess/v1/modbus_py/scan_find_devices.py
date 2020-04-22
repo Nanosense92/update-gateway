@@ -191,7 +191,16 @@ class Scan:
         
         device_name = str(slaveid) + '_' + device_type + '_usb' + str(usb)
         if device_name in p._sections.keys():
+            print('\nSESSION error: found same alias ', device_name)
             return 
+
+        for s in p._sections.values():
+            print(s, usb, slaveid)
+            if s['usb'] == str(usb) and s['slaveid'] == str(slaveid):
+                print('\nSESSION error: found same usb@id', usb, ' ' , slaveid)
+                return 
+
+
         p.add_section(device_name)
         
         data =dict()

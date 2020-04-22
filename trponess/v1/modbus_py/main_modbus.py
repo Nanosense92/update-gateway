@@ -73,25 +73,59 @@ if __name__ == "__main__":
     print("".center(100, '#'))
     #######################################################
     
-    eq = g.fetch_table('eqLogic', 'logicalId')
-    print(eq)
+    #eq = g.fetch_table('eqLogic', 'logicalId')
     
     for d in devices.values():
         
-        if eq == []:
-            g.insert_table('eqLogic', 'id,                  name,       logicalId,      generic_type,isEnable,isVisible,status,  tags, object_id', \
-                                [d.eqlogic_id, d.name,d.slave_id,  d.type, d.isenable,   d.isvisible, 'modbus',d.parentobj_name,d.parentobj_id])               
-        else:    
-            pass
-            """
-            g.exec_sql("UPDATE eqLogic SET isVisible={} WHERE logicalId={}".format(d.isvisible, d.slave_id))
-            g.exec_sql("UPDATE eqLogic SET isEnable={} WHERE logicalId={}".format(d.isenable, d.slave_id))
-            g.exec_sql("UPDATE eqLogic SET name={} WHERE logicalId={}".format(d.name, d.slave_id))
-            g.exec_sql("UPDATE eqLogic SET name={} WHERE logicalId={}".format(d.name, d.parentobj_id))
-            g.db.commit()
-            """
+        indb = None
+        deqid = -1
+        try:
+            cur = g.exec_sql("SELECT id FROM eqLogic WHERE logicalId='" + d.slave_id + "'")
+            deqid = cur.fetchone()[0]
+            print(deqid)
+            indb = True
+        except Exception as e:
+            print('!!!!!! ' , d.name , 'NOT IN DB : ', e)
+            indb = False
 
+        try:
+            if indb == True:
+
+                g.exec_sql("delete from eqLogic where logicalId='" + d.slave_id + "'")
+                g.db.commit()
+                g.insert_table('eqLogic', 'id,                  name,       logicalId,      generic_type,isEnable,isVisible,status,  tags, object_id', \
+                                    [deqid    , d.name,d.slave_id,  d.type, d.isenable,   d.isvisible, 'modbus',d.parentobj_name,d.parentobj_id])    
+            else:
+                g.insert_table('eqLogic', '                  name,       logicalId,      generic_type,isEnable,isVisible,status,  tags, object_id', \
+                                    [ d.name,d.slave_id,  d.type, d.isenable,   d.isvisible, 'modbus',d.parentobj_name,d.parentobj_id])    
+
+
+        except Exception as e:
+            print('!!!!!! error' , d.name , ': ', e)
+            
+            continue
+            """
+            try:
+                g.exec_sql("UPDATE eqLogic SET isVisible={} WHERE logicalId='{}'".format(d.isvisible, d.slave_id))
+                g.exec_sql("UPDATE eqLogic SET isEnable={} WHERE logicalId='{}'".format(d.isenable, d.slave_id))
+                g.exec_sql("UPDATE eqLogic SET name='{}' WHERE logicalId='{}'".format(d.name, d.slave_id))
+                g.exec_sql("UPDATE eqLogic SET object_id={} WHERE logicalId='{}'".format(d.parentobj_id, d.slave_id))
+                
+                g.db.commit()
+            
+            except Exception as e:
+                print('FAILED TO UPDATE : ', e)
+                continue
+            """
+   
     
+    Data.put_in_db(devices, g)
+
+    g.db.close()
+
+    print('-----------------------END-------------------------')
+    
+
 
 
     ####GET UNIKIDS############################################NEEDS DB
@@ -113,14 +147,15 @@ if __name__ == "__main__":
     
 
     ####GET data############################################>NEEDS DEVICES
-    all_data = Data.device_all_reg_to_ini(devices, g)
     
-
+    
+    """
     print("DATA".center(50, '#'))
     for key,data in all_data.items():
         print('key  :',key,  end=' > ')
         print(data.__dict__)
     print("".center(50, '#'))
+    """
     ##########################################################
       
 
