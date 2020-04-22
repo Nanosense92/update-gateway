@@ -194,7 +194,7 @@ class Gateway_Database:
     def insert_all_dbdevs(self, dbdevs):
         for d in dbdevs.values():
             self.insert_dbdev_in_eqlogic(d)
-            self.insert_dbdevdatas_cmd_history(d)
+            #self.insert_dbdevdatas_cmd_history(d)
 
     def insert_dbdev_in_eqlogic(self, dbdev):
         device = dbdev

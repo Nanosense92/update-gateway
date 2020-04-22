@@ -16,29 +16,64 @@ class Data:
         return "date:{} name:{} val:{} unit:{}".format(self.date, self.name, self.val, self.unit)
 
     @staticmethod
-    def device_all_reg_to_ini(devices):
+    def device_all_reg_to_ini(devices, g):
         all_data = dict()
         for d in devices.values():
-            datas = Data.device_reg_to_ini(d)
+            datas = Data.parse_datas(d)
+            print('for', d.name)
             for key,data in datas.items():
+                
+                #x = g.search_table('eqLogic', 'logicalId', [d.slave_id])
+                #print(x)
+                x = None
+                eq = g.fetch_table('eqLogic', 'id,logicalId')
+                if eq != []:
+                    for e in eq:
+                        if e['logicalId'] == d.slave_id:
+                            x = e['id']
+                print(x)
+
+                if data.name == 'CO2':
+                    g.exec_sql("UPDATE cmd SET eqLogic_id={} WHERE id={}".format(x, 1))
+                    g.insert_table('history', 'cmd_id,datetime,value', [1,data.date,data.val])
+                
+                if data.name == 'COVT':
+                    g.exec_sql("UPDATE cmd SET eqLogic_id={} WHERE id={}".format(x, 2))
+                    g.insert_table('history', 'cmd_id,datetime,value', [2,data.date,data.val])
+                
+                if data.name == 'HUM_ABS':
+                    g.exec_sql("UPDATE cmd SET eqLogic_id={} WHERE id={}".format(x, 4))
+                    g.insert_table('history', 'cmd_id,datetime,value', [4,data.date,data.val])
+                
+                if data.name == 'HUM':
+                    g.exec_sql("UPDATE cmd SET eqLogic_id={} WHERE id={}".format(x, 5))
+                    g.insert_table('history', 'cmd_id,datetime,value', [5,data.date,data.val])
+                
+                if data.name == 'TMP':
+                    g.exec_sql("UPDATE cmd SET eqLogic_id={} WHERE id={}".format(x, 3))
+                    g.insert_table('history', 'cmd_id,datetime,value', [3,data.date,data.val])
+                
+                if data.name == 'PM1':
+                    g.exec_sql("UPDATE cmd SET eqLogic_id={} WHERE id={}".format(x, 6))
+                    g.insert_table('history', 'cmd_id,datetime,value', [6,data.date,data.val])
+                
+                if data.name == 'PM2.5':
+                    g.exec_sql("UPDATE cmd SET eqLogic_id={} WHERE id={}".format(x, 7))
+                    g.insert_table('history', 'cmd_id,datetime,value', [7,data.date,data.val])
+                
+                if data.name == 'PM10':
+                    g.exec_sql("UPDATE cmd SET eqLogic_id={} WHERE id={}".format(x, 8))
+                    g.insert_table('history', 'cmd_id,datetime,value', [8,data.date,data.val])
+
+                #self.insert_table('cmd', 'id,name,eqType,logicalId,eqLogic_id,value', [adata.cmd_id,adata.name,dbdev.name,adata.name+'::value',dbdev.eqlogic_id,str(adata.val)+adata.unit])
+                
+                
+                print('>>>>>', key, data)
+
+                
+
                 all_data[key] = data
         return all_data
-
-    @staticmethod
-    def device_reg_to_ini(device):
-        p = configparser.ConfigParser()
-        datas = Data.parse_datas(device)
-        #print("-------------DATA INI------------")
-        #for key,data in datas.items():
-        #    p.add_section(key)
-        #    p[key] = data.__dict__.copy()
-            #print('datas key adding : ', key)
-            #print('datas dict data  : ',  data.__dict__)
-        #print("----------------------------")
-        #with open(Env.datafile,'a+') as data_file:
-        #    p.write(data_file)
-        
-        return datas
 
 
     @staticmethod

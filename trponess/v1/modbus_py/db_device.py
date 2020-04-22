@@ -12,11 +12,25 @@ class Db_Devices:
     
     
     def add_ids_to_devices(self, devices, eqlogicids):
+        
         ceqlogicids = eqlogicids.copy()
         for i,d in enumerate(devices.values()):
             #d.__dict__['eqlogic_id'] = ceqlogicids[i] #add new field new self.eqlogicid
             d.eqlogic_id = ceqlogicids[i]
         return devices
+        
+
+        """
+        for n,eqid in eqlogicids.items():
+            print('>>>>>>>>>>>>>>>>>>>>', eqid)
+            if n == 'time':
+                continue
+            for d in devices.values():
+                if d.name == n:
+                    d.eqlogic_id = int(eqid['eqlogicid'])
+        return devices
+        """
+            
     
     def add_ids_to_datas(self, alldatas, cmdids):
         ccmdids = cmdids.copy()

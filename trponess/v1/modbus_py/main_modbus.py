@@ -72,8 +72,30 @@ if __name__ == "__main__":
 
     print("".center(100, '#'))
     #######################################################
-  
+    
+    eq = g.fetch_table('eqLogic', 'logicalId')
+    print(eq)
+    
+    for d in devices.values():
+        
+        if eq == []:
+            g.insert_table('eqLogic', 'id,                  name,       logicalId,      generic_type,isEnable,isVisible,status,  tags, object_id', \
+                                [d.eqlogic_id, d.name,d.slave_id,  d.type, d.isenable,   d.isvisible, 'modbus',d.parentobj_name,d.parentobj_id])               
+        else:    
+            pass
+            """
+            g.exec_sql("UPDATE eqLogic SET isVisible={} WHERE logicalId={}".format(d.isvisible, d.slave_id))
+            g.exec_sql("UPDATE eqLogic SET isEnable={} WHERE logicalId={}".format(d.isenable, d.slave_id))
+            g.exec_sql("UPDATE eqLogic SET name={} WHERE logicalId={}".format(d.name, d.slave_id))
+            g.exec_sql("UPDATE eqLogic SET name={} WHERE logicalId={}".format(d.name, d.parentobj_id))
+            g.db.commit()
+            """
+
+    
+
+
     ####GET UNIKIDS############################################NEEDS DB
+    """
     print("UNIK IDS".center(50, '#'))
 
     nb_devices = len(devices)
@@ -86,11 +108,12 @@ if __name__ == "__main__":
     print("unik cmd ids : ", cmd_ids)
 
     print("".center(50, '#'))
+    """
     ##########################################################
-
+    
 
     ####GET data############################################>NEEDS DEVICES
-    all_data = Data.device_all_reg_to_ini(devices)
+    all_data = Data.device_all_reg_to_ini(devices, g)
     
 
     print("DATA".center(50, '#'))
@@ -99,10 +122,10 @@ if __name__ == "__main__":
         print(data.__dict__)
     print("".center(50, '#'))
     ##########################################################
-    
+      
 
     ####FUSION############################################>NEEDS DEVICES 
-    
+    """
     for x in devices.values():
         print(x.__dict__)
 
@@ -124,16 +147,16 @@ if __name__ == "__main__":
     #dbd1.read(new_alldatas)
     dbdevs = dbd1.add_datas_to_devices(new_alldatas,  new_devs)
 
-    #for x in dbdevs.values():
-    #    print(x.__dict__)
-    #    for d in x.datas:
-    #        print("x gives >", d.__dict__)
+    for x in dbdevs.values():
+        print(x.__dict__)
+        for d in x.datas:
+            print("x gives >", d.__dict__)
 
     #!!!repr error, id print adata, fetches class attr when first created , any added later gone solut print __dict__
-
+    """
 
     #################user_log################################
-
+    """
     option = 'a+'
     with open(Env.userlogfile, 'r') as userlog:
 
@@ -172,14 +195,15 @@ if __name__ == "__main__":
             
 
         print(''.center(100, '#') , file=userlog)
-
+    """
     ##########################################################
     
 
 
     ####ADD TO DB####
+    """
     print("DB ACTIONS".center(50, '#'))
-    g.exec_sql("DELETE FROM eqLogic")
+    g.exec_sql("DELETE FROM eqLogic where status='modbus'") #so enocean can co exist
     g.db.commit()
 
 
@@ -187,7 +211,7 @@ if __name__ == "__main__":
 
 
     print("".center(50, '#'))
-
+    """
 
     ###########
 

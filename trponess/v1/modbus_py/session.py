@@ -16,7 +16,16 @@ def session(option, args):
     p = configparser.ConfigParser()
     p.read(Env.sessionfile)
 
+    
+    """
+    #check if already exists if does rename
+    for section in p._sections.values():
+        if section['name'] == args['name']:
+            args['name'] += randomStringDigits(2)
+    args['name']
+    """
     sn = args['name']
+    
 
     print(p._sections)
 
@@ -36,7 +45,6 @@ def session(option, args):
         p.add_section(sn)
         p._sections[sn] = args.copy()
 
-
     print(p._sections)
     with open(Env.sessionfile,'w+') as cache_file:
         print('change SESSION')
@@ -45,8 +53,8 @@ def session(option, args):
 
 def randomStringDigits(stringLength=8):
     """Generate a random string of letters and digits """
-    lettersAndDigits = string.ascii_letters + string.digits
-    return ''.join(random.choice(lettersAndDigits) for i in range(stringLength))
+    Digits = string.digits
+    return ''.join(random.choice(Digits) for i in range(stringLength))
 
 if __name__ == '__main__':
 
