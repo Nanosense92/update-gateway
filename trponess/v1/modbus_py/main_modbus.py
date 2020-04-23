@@ -56,9 +56,9 @@ if __name__ == "__main__":
 
     
     try:
-        g.exec_sql("delete from object where name='test'")
-        g.exec_sql("delete from object where id=5")
-        g.exec_sql("insert INTO object (id,name) values (5,'test')")
+        g.exec_sql("delete from object where name='modbustest'")
+        g.exec_sql("delete from object where id=99999")
+        g.exec_sql("insert INTO object (id,name) values (99999,'modbustest')")
         g.db.commit()
     except Exception as e:
         print('adding test failed:', e)
