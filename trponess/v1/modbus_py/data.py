@@ -46,7 +46,7 @@ class Data:
                 try:
                     
                     ids = [cmdr['eqLogic_id'] for cmdr in g.fetch_table('cmd', 'eqLogic_id')]
-                    print(ids)
+                    
                     
                     #print(ids)
                     #g.exec_sql("delete from cmd where generic_type='{}'".format('modbus'))
@@ -58,8 +58,8 @@ class Data:
                     
                     if deqid not in ids:
                         for i in range(len(effects)):        
-                                g.insert_table('cmd', 'eqLogic_id,name,logicalId,generic_type,type', \
-                                                [deqid,effects[i], effects[i]+'::value','modbus',d.slave_id])
+                                g.insert_table('cmd', 'eqLogic_id,name,logicalId,generic_type,type,subType', \
+                                                [deqid,effects[i], effects[i]+'::value','modbus',d.slave_id,d.name])
                         """
                         else:
                             g.exec_sql("delete from cmd where id={}".format(i + 1))
@@ -142,9 +142,9 @@ class Data:
         datas = dict()
         date = Env.get_date()
         reg = device.registers
-        ikey = device.name + '_'
+        ikey = device.name + '_' + device.slave_id + '_' + device.type + '_'
 
-        if 'known' in device.type:
+        if 'sonde__unknownR' in device.type:
             return dict()
 
         if device.type == 'p4000':
@@ -186,7 +186,7 @@ class Data:
 
             if bit_status[-4] == '1':
                 print("Hum captor pres")
-                datas[ikey + 'Rel_Humidity'] = Data(device.name, 'HUM', reg[8] , '%', date)
+                datas[ikey + 'Humidity'] = Data(device.name, 'HUM', reg[8] , '%', date)
                 datas[ikey + 'Abs_Humidity'] = Data(device.name, 'HUMABS', reg[9]/100 , 'g/m3', date) #erreur dans doc cest g/m3  reg / 100
             
 

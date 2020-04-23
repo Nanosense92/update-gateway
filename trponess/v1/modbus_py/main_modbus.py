@@ -9,6 +9,7 @@ from env import Env
 from unik_id import UnikId
 from db_device import Db_Devices
 from datetime import datetime
+import collections
 
 import configparser
 
@@ -80,10 +81,11 @@ if __name__ == "__main__":
         indb = None
         deqid = -1
         try:
-            cur = g.exec_sql("SELECT id FROM eqLogic WHERE logicalId='" + d.slave_id + "'")
+            cur = g.exec_sql("SELECT id FROM eqLogic WHERE name='" + d.name + "'")
             deqid = cur.fetchone()[0]
             print(deqid)
             indb = True
+        
         except Exception as e:
             print('!!!!!! ' , d.name , 'NOT IN DB : ', e)
             indb = False
@@ -91,6 +93,7 @@ if __name__ == "__main__":
         try:
             if indb == True:
 
+                g.exec_sql("delete from eqLogic where name='" + d.name + "'")
                 g.exec_sql("delete from eqLogic where logicalId='" + d.slave_id + "'")
                 g.db.commit()
                 g.insert_table('eqLogic', 'id,                  name,       logicalId,      generic_type,isEnable,isVisible,status,  tags, object_id', \
@@ -120,6 +123,9 @@ if __name__ == "__main__":
    
     
     all_data = Data.put_in_db(devices, g)
+
+    all_data =  collections.OrderedDict(sorted(all_data.items()))
+
 
     g.db.close()
 
@@ -218,13 +224,12 @@ if __name__ == "__main__":
         print("", file=userlog)
         print("", file=userlog)
         
-        for d in all_data.values():
+        for k,d in all_data.items():
 
             #print(">>>>>usb {} id {} machine {}".format(x.usb_name, x.slave_id, x.type) , file=userlog)
             
-            print("type: {} val: {} unit: {}".format(d.name, d.val, d.unit) , file=userlog)
-            print("" , file=userlog)
-            print("" , file=userlog)
+            print("{} -> type: {} val: {} unit: {}".format(k,d.name, d.val, d.unit) , file=userlog)
+            
                 #print("data gives >", d.__dict__)
             
             

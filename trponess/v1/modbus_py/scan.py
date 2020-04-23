@@ -175,13 +175,13 @@ class Scan:
         nb_reg = len(registers)
         name = 'unknown'
         if nb_reg == 15:
-             name = 'e4000' 
+            name = 'e4000' 
         elif nb_reg in [9,10]:
-             name = 'p4000'
+            name = 'p4000'
         elif nb_reg in [40]:
-             name = 'EP5000'
+            name = 'EP5000'
         else:
-            name ='unknownR' + str(nb_reg)
+            name = 'sonde__unknownR' + str(nb_reg)
         return name
     
     def get_connected_usb(self):

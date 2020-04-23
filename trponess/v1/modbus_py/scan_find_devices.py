@@ -196,13 +196,13 @@ class Scan:
         
         device_name = str(slaveid) + '_' + device_type + '_usb' + str(usb)
         if device_name in p._sections.keys():
-            print('\nSESSION error: found same alias ', device_name)
+            #print('\nSESSION error: found same alias ', device_name)
             return 
 
         for s in p._sections.values():
-            print(s, usb, slaveid)
+            #print(s, usb, slaveid)
             if s['usb'] == str(usb) and s['slaveid'] == str(slaveid):
-                print('\nSESSION error: found same usb@id', usb, ' ' , slaveid)
+                #print('\nSESSION error: found same usb@id', usb, ' ' , slaveid)
                 return 
 
 
@@ -250,7 +250,7 @@ class Scan:
         elif nb_reg in [40]:
              name = 'EP5000'
         else:
-            name ='unknownR' + str(nb_reg)
+            name ='sonde__unknownR' + str(nb_reg)
         return name
     
     def get_connected_usb(self):
