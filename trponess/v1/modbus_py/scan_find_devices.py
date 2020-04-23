@@ -132,10 +132,15 @@ class Scan:
             ascii_client = MbClient(method='ascii', port=usb_name, stopbits=1, timeout=1, bytesize=7, parity="O",baudrate=1200)        
             try:    
                 
-                res_rtu =  rtu_client.read_input_registers(address=0x00, count=15, unit=slave_id)
-                res_ascii = ascii_client.read_input_registers(address=0x00, count=15, unit=slave_id)
-                res_ep5000 = ep5000_rtu_client.read_input_registers(address=0x00, count=40, unit=slave_id)
+                try:
+                    res_rtu =  rtu_client.read_input_registers(address=0x00, count=15, unit=slave_id)
+                    res_ascii = ascii_client.read_input_registers(address=0x00, count=15, unit=slave_id)
+                    res_ep5000 = ep5000_rtu_client.read_input_registers(address=0x00, count=40, unit=slave_id)
                 
+                except Exception as e:
+                    print('ERROR while getting registers from broken modbus connection check wires > original error: ', e)
+                    continue
+
                 usb_name = usb_name.split("/")[-1]
                 usb_name = usb_name.strip("USBtty")
                 

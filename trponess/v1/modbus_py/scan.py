@@ -81,7 +81,12 @@ class Scan:
                 print('modbus__config/session.ini section corrupted missing data :', ses)
                 continue
                 
-
+            try:
+                print(type(slave_id))
+                str(slave_id)
+                print(slave_id)
+            except Exception as e:
+                print(e)
             
             print("testing slave_id" + str(slave_id) + " for usb >" + usb_name + '..... |  ', end='')
             found = False
@@ -89,10 +94,15 @@ class Scan:
             ep5000_rtu_client = MbClient(method='rtu', port=usb_name, stopbits=1, timeout=5, bytesize=8, parity="N", baudrate=19200) 
             rtu_client = MbClient(method='rtu', port=usb_name, stopbits=1, timeout=5, bytesize=8, parity="N", baudrate=9600) 
             ascii_client = MbClient(method='ascii', port=usb_name, stopbits=1, timeout=1, bytesize=7, parity="O",baudrate=1200)        
-            try:    
-                res_rtu =  rtu_client.read_input_registers(address=0x00, count=15, unit=slave_id)
-                res_ascii = ascii_client.read_input_registers(address=0x00, count=15, unit=slave_id)
-                res_ep5000 = ep5000_rtu_client.read_input_registers(address=0x00, count=40, unit=slave_id)
+            try:   
+
+                try:
+                    res_rtu =  rtu_client.read_input_registers(address=0x00, count=15, unit=slave_id)
+                    res_ascii = ascii_client.read_input_registers(address=0x00, count=15, unit=slave_id)
+                    res_ep5000 = ep5000_rtu_client.read_input_registers(address=0x00, count=40, unit=slave_id)
+                except Exception as e:
+                    print('ERROR while getting registers from broken modbus connection check wires > original error: ', e)
+                    continue
                
                 if 'registers' in res_rtu.keys():
                     print('RTU  id ',slave_id,res_rtu['registers'], end='')

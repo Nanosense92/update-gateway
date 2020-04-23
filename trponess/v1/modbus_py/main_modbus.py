@@ -105,21 +105,21 @@ if __name__ == "__main__":
             
             continue
             """
-            try:
-                g.exec_sql("UPDATE eqLogic SET isVisible={} WHERE logicalId='{}'".format(d.isvisible, d.slave_id))
-                g.exec_sql("UPDATE eqLogic SET isEnable={} WHERE logicalId='{}'".format(d.isenable, d.slave_id))
-                g.exec_sql("UPDATE eqLogic SET name='{}' WHERE logicalId='{}'".format(d.name, d.slave_id))
-                g.exec_sql("UPDATE eqLogic SET object_id={} WHERE logicalId='{}'".format(d.parentobj_id, d.slave_id))
+                try:
+                    g.exec_sql("UPDATE eqLogic SET isVisible={} WHERE logicalId='{}'".format(d.isvisible, d.slave_id))
+                    g.exec_sql("UPDATE eqLogic SET isEnable={} WHERE logicalId='{}'".format(d.isenable, d.slave_id))
+                    g.exec_sql("UPDATE eqLogic SET name='{}' WHERE logicalId='{}'".format(d.name, d.slave_id))
+                    g.exec_sql("UPDATE eqLogic SET object_id={} WHERE logicalId='{}'".format(d.parentobj_id, d.slave_id))
+                    
+                    g.db.commit()
                 
-                g.db.commit()
-            
-            except Exception as e:
-                print('FAILED TO UPDATE : ', e)
-                continue
+                except Exception as e:
+                    print('FAILED TO UPDATE : ', e)
+                    continue
             """
    
     
-    Data.put_in_db(devices, g)
+    all_data = Data.put_in_db(devices, g)
 
     g.db.close()
 
@@ -191,7 +191,7 @@ if __name__ == "__main__":
     """
 
     #################user_log################################
-    """
+    
     option = 'a+'
     with open(Env.userlogfile, 'r') as userlog:
 
@@ -213,16 +213,16 @@ if __name__ == "__main__":
             print("vide", file=userlog)
         for x in notfound:
             print("usb: {} id: {}".format(x[0], x[1]) , file=userlog)
-        
+        print("---------------", file=userlog)
         
         print("", file=userlog)
         print("", file=userlog)
         
-        for x in dbdevs.values():
+        for d in all_data.values():
 
-            print(">>>>>usb {} id {} machine {}".format(x.usb_name, x.slave_id, x.type) , file=userlog)
-            for d in x.datas:
-                print("type: {} val: {} unit: {}".format(d.name, d.val, d.unit) , file=userlog)
+            #print(">>>>>usb {} id {} machine {}".format(x.usb_name, x.slave_id, x.type) , file=userlog)
+            
+            print("type: {} val: {} unit: {}".format(d.name, d.val, d.unit) , file=userlog)
             print("" , file=userlog)
             print("" , file=userlog)
                 #print("data gives >", d.__dict__)
@@ -230,24 +230,11 @@ if __name__ == "__main__":
             
 
         print(''.center(100, '#') , file=userlog)
-    """
+    
     ##########################################################
     
 
 
-    ####ADD TO DB####
-    """
-    print("DB ACTIONS".center(50, '#'))
-    g.exec_sql("DELETE FROM eqLogic where status='modbus'") #so enocean can co exist
-    g.db.commit()
-
-
-    g.insert_all_dbdevs(dbdevs)
-
-
-    print("".center(50, '#'))
-    """
-
-    ###########
-
+   
+   
 

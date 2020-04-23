@@ -19,9 +19,10 @@ class Data:
 
     @staticmethod
     def put_in_db(devices, g):
-        #all_data = dict()
+        all_data = dict()
+
         for d in devices.values():
-            
+
             deqid = -1
             try:
                 cur = g.exec_sql("SELECT id FROM eqLogic WHERE logicalId='" + d.slave_id + "'")
@@ -44,17 +45,21 @@ class Data:
 
                 try:
                     
-                    ids = [cmdid['id'] for cmdid in g.fetch_table('cmd', 'id')]
+                    ids = [cmdr['eqLogic_id'] for cmdr in g.fetch_table('cmd', 'eqLogic_id')]
+                    print(ids)
+                    
                     #print(ids)
-                
+                    #g.exec_sql("delete from cmd where generic_type='{}'".format('modbus'))
+                    #g.db.commit()
+
                     effects = ['CO2','COVT','HUMABS','HUM','TMP','PM1','PM2.5','PM10', 'ATM']
                     #for i in range(1,len(effects) + 1):
                     #    print(i)
                     
-                    for i in range(len(effects)):
-                        if i + 1 not in ids:
-                            g.insert_table('cmd', 'id,name,logicalId','generic_type' \
-                                            [i + 1, effects[i], effects[i]+'::value'],'modbus')
+                    if deqid not in ids:
+                        for i in range(len(effects)):        
+                                g.insert_table('cmd', 'eqLogic_id,name,logicalId,generic_type,type', \
+                                                [deqid,effects[i], effects[i]+'::value','modbus',d.slave_id])
                         """
                         else:
                             g.exec_sql("delete from cmd where id={}".format(i + 1))
@@ -66,8 +71,10 @@ class Data:
                     for i in range(len(effects)):
                         if data.name == effects[i]:
                             data_tag = data.name+'_'+str(data.val)+'_'+data.unit
-                            g.exec_sql("UPDATE cmd SET eqLogic_id={},eqType='{}',value='{}' WHERE id={}".format( deqid, d.name,data_tag, i + 1))
-                            g.insert_table('history', 'cmd_id,datetime,value', [i + 1,data.date,data.val])
+                            cur = g.exec_sql("SELECT id FROM cmd WHERE eqLogic_id={} and name='{}'".format(deqid, data.name))
+                            cmdid = cur.fetchone()[0]
+                            g.exec_sql("UPDATE cmd SET eqLogic_id={},eqType='{}',value='{}' WHERE id={}".format( deqid, d.name,data_tag, cmdid))
+                            g.insert_table('history', 'cmd_id,datetime,value', [cmdid,data.date,data.val])
                             time.sleep(1)#to avoid duplicate key in history  date with secs and cmd_id
 
 
@@ -124,8 +131,10 @@ class Data:
 
                 
 
-                #all_data[key] = data
-        #return all_data
+                all_data[key] = data
+        
+        print('returning data')
+        return all_data
 
 
     @staticmethod
@@ -134,6 +143,10 @@ class Data:
         date = Env.get_date()
         reg = device.registers
         ikey = device.name + '_'
+
+        if 'known' in device.type:
+            return dict()
+
         if device.type == 'p4000':
             datas[ikey + 'pm1'] = Data(device.name, 'PM1', reg[2] , 'mg/m3', date)
             datas[ikey + 'pm2.5'] = Data(device.name, 'PM2.5', reg[3] , 'mg/m3', date)
@@ -147,7 +160,7 @@ class Data:
         
         if device.type == 'EP5000':
 
-            print('reg for EP5000 before 16 conversion' + reg)
+            print('reg for EP5000 before 16 conversion ', reg)
             try:
                 bit_status = format(reg[2], '016b')
                 print(bit_status)
@@ -174,7 +187,7 @@ class Data:
             if bit_status[-4] == '1':
                 print("Hum captor pres")
                 datas[ikey + 'Rel_Humidity'] = Data(device.name, 'HUM', reg[8] , '%', date)
-                datas[ikey + 'Abs_Humidity'] = Data(device.name, 'HUM_ABS', reg[9]/100 , 'g/m3', date) #erreur dans doc cest g/m3  reg / 100
+                datas[ikey + 'Abs_Humidity'] = Data(device.name, 'HUMABS', reg[9]/100 , 'g/m3', date) #erreur dans doc cest g/m3  reg / 100
             
 
             if bit_status[-5] == '1':
@@ -207,8 +220,7 @@ class Data:
                 print('Scintillement captor pres')
                 datas[ikey + 'Scintillement'] = Data(device.name, 'Scintillement', reg[18], '%', date)
 
-
+    
         return datas
-
       
 

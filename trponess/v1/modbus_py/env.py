@@ -34,7 +34,7 @@ class Env:
         #Env.create_file(Env.notfoundfile, '+w')
         #Env.create_file(Env.datafile, '+w')
         #Env.create_file(Env.modbuscachefile, '+w')
-        Env.create_file(Env.logfile, '+w')
+        Env.create_file(Env.logfile, '+a')
         Env.create_file(Env.sessionfile, '+a')
         Env.create_file(Env.userlogfile, '+a')
         Env.create_file(Env.timerfile, '+a')
@@ -49,11 +49,6 @@ class Env:
         d = str(datetime_now + dateadd)
         return d
 
-        """
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        date = date + timedelta(hours=2)
-        return date
-        """
 
   
 if __name__ == "__main__":
