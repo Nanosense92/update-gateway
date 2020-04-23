@@ -30,10 +30,44 @@ def get_str_for_slaveids_from_session():
     return slaveids
 """
 
+
+
 if __name__ == "__main__":
     ###setup#################################################
     g = Gateway_Database()
     Env.setup_env()
+
+
+    #create def object 
+    """
+    indb = None
+    try:
+        cur = g.exec_sql("SELECT id FROM object WHERE name='test'")
+        deqid = cur.fetchone()[0]
+        print(deqid)
+        indb = True
+    
+    except Exception as e:
+        print('!!!!!! ' , deqid , 'NOT IN DB : ', e)
+        indb = False
+
+    if indb == True:
+    """
+
+    
+    try:
+        g.exec_sql("delete from object where name='test'")
+        g.exec_sql("delete from object where id=5")
+        g.exec_sql("insert INTO object (id,name) values (5,'test')")
+        g.db.commit()
+    except Exception as e:
+        print('adding test failed:', e)
+        sys.exit(0)
+    
+
+
+
+
     ##########################################################
 
     ####GET DEVICES############################################
@@ -75,6 +109,7 @@ if __name__ == "__main__":
     #######################################################
     
     #eq = g.fetch_table('eqLogic', 'logicalId')
+
     
     for d in devices.values():
         
