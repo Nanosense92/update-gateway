@@ -13,6 +13,9 @@ $logfile = fopen($logname, 'a') or die('Cannot open file: ' . $logname . "\n");
 $errorlogname = '/var/log/postphysio_error.log';
 $errorlogfile = fopen($errorlogname, 'a') or die('Cannot open file: ' . $errorlogname . "\n");
 
+$offset = "0:55:00";
+$timezone_offset = 1;
+
 /*
  * Query on the jeedom database to get all the distinct location from the impact
  * table

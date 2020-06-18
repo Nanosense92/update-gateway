@@ -92,7 +92,7 @@ rm -f $EMAIL
     echo "" >> $EMAIL
 
     DISK_SPACE_USAGE=$(df -h)
-    echo  "Current disk space usage:\n $DISK_SPACE_USAGE" >> $EMAIL
+    echo -e "Current disk space usage:\n$DISK_SPACE_USAGE" >> $EMAIL
     
     echo "" >> $EMAIL
     HOSTNAME=$(hostname)
@@ -107,24 +107,24 @@ rm -f $EMAIL
     ENOCEAN_EQUIPMENTS=$(mysql -Bt jeedom -e "SELECT \`eqLogic\`.\`name\` AS 'eqLogic_name',
         \`eqLogic\`.\`logicalId\`, \`object\`.\`name\` AS 'object_name' FROM \`eqLogic\`, \`object\`
         WHERE \`eqLogic\`.\`object_id\` = \`object\`.\`id\` AND \`eqLogic\`.\`logicalId\` != \"\"")
-    echo  "EnOcean equipments list:\n$ENOCEAN_EQUIPMENTS" >> $EMAIL 
+    echo -e "EnOcean equipments list:\n$ENOCEAN_EQUIPMENTS" >> $EMAIL 
    
     echo "" >> $EMAIL
 
     PUBLIC_KEY=$(cat /home/pi/.ssh/id_rsa.pub)
-    echo  "Public RSA key:\n$PUBLIC_KEY" >> $EMAIL
+    echo -e "Public RSA key:\n$PUBLIC_KEY" >> $EMAIL
 
     echo "" >> $EMAIL
 
-    LINE_CRONTAB=$(grep "autossh" /etc/crontab)
-    echo  "Autossh line crontab:\n$LINE_CRONTAB" >> $EMAIL
+    #LINE_CRONTAB=$(grep "autossh" /etc/crontab)
+    #echo  "Autossh line crontab:\n$LINE_CRONTAB" >> $EMAIL
 
-    echo "" >> $EMAIL
+    #echo "" >> $EMAIL
 
     ETH0_MAC_ADDR=$(/sbin/ifconfig | awk '/eth0/,/^$/' | grep -a 'ether' | cut -d ' ' -f 10)
     echo "Eth0 MAC address: $ETH0_MAC_ADDR" >> $EMAIL
 
-    echo "" >> $EMAIL
+    #echo "" >> $EMAIL
 
     WLAN0_MAC_ADDR=$(/sbin/ifconfig | awk '/wlan0/,/^$/' | grep -a 'ether' | cut -d ' ' -f 10)
     echo "Wlan0 MAC address: $WLAN0_MAC_ADDR" >> $EMAIL
@@ -158,10 +158,19 @@ rm -f $EMAIL
     # sudo echo "Private IPv4 address: $PRIVATE_IP_ADDR" >> $EMAIL
 
 
-    echo "" >> $EMAIL
+    #echo "" >> $EMAIL
 
     PUBLIC_IP_ADDR=$(wget -qO- https://ipecho.net/plain ; echo)
     echo "Public IPv4 address: $PUBLIC_IP_ADDR" >> $EMAIL
+
+    echo "" >> $EMAIL
+
+    POSTDATA_ERROR_LOG=$( tail -n 10 /var/log/postdata_error.log )
+    echo -e "Last 10 lines of /var/log/postdata_error.log :\n------------------------------------------" >> $EMAIL
+    echo -e "$POSTDATA_ERROR_LOG\n------------------------------------------\n" >> $EMAIL
+
+    WHERE_TO_POST=$( mysql -Bt jeedom -e "SELECT id, addr, port, path FROM nanodb" )
+    echo -e "SERVERS WHERE TO POST :\n$WHERE_TO_POST\n" >> $EMAIL
 
     echo "" >> $EMAIL
     echo "BONUS MESSAGE = $1" >> $EMAIL
@@ -178,5 +187,11 @@ rm -f $EMAIL
     fi
 #fi
 
+cp $EMAIL mailee
 rm -f $EMAIL
+
+# LA LISTE DES OBJETS
+# go crypter mdp de la ou ca poste
+# offset timezone
+# 
 
