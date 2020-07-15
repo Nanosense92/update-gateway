@@ -20,6 +20,10 @@ function eep_traduction($eep)
         return 'TMP';
     if ($eep == 'a5-20-01')
         return 'HVAC';
+    if ($eep == 'a5-07-01')
+        return 'OCCUPANCY';
+    if ($eep == 'd5-00-01')
+        return 'OPENING';
     
     else
         return $eep;
@@ -27,7 +31,7 @@ function eep_traduction($eep)
 
 
 // Rename the pollutant name in order to not exceed 5 characters
-function setpollutant($pollutant)
+function setpollutant($pollutant, $eep)
 {
     if ($pollutant == 'PM2.5')
         return 'PM2_5';
@@ -37,6 +41,11 @@ function setpollutant($pollutant)
         return 'HUM';
     if (strpos($pollutant, 'Total') !== false)
         return 'VOC';
+    if ($eep === 'a5-07-01' && strpos($pollutant, 'Etat') !== false)
+		return 'OCCUPIED';
+	if ($eep === 'd5-00-01' && strpos($pollutant, 'Etat') !== false)
+        return 'WINDOW_OPEN';
+    
     else
         return $pollutant;
 }

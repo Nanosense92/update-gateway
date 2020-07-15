@@ -26,7 +26,7 @@
 
 MAILTO=""
 
-*/5 * * * * sudo sh /home/pi/enocean-gateway/runsmart.sh >> /dev/null
+#*/5 * * * * sudo sh /home/pi/enocean-gateway/runsmart.sh >> /dev/null
 */5 * * * * sudo php /home/pi/enocean-gateway/postdata.php >> /dev/null
 #*/5 * * * * sudo php /home/pi/enocean-gateway/postphysio.php >> /dev/null
 0 2 * * * sudo bash /home/pi/enocean-gateway/monitor_space_usage.bash

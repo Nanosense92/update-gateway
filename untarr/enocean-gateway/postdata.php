@@ -10,6 +10,9 @@ include 'misc.php';
 $logname = '/var/log/postdata.log';
 $logfile = fopen($logname, 'a') or die('Cannot open file: ' . $logname . "\n");
 
+////
+$trouslog = fopen("/home/pi/trous.log", 'a') or die("Cannot open file: trouslog \n");
+
 // the error log file (contains all the IAQ data not sent)
 $errorlogname = '/var/log/postdata_error.log';
 $errorlogfile = fopen($errorlogname, 'a') or die('Cannot open file: ' . $errorlogname . "\n");//echo "** DEBUG - OFFSET = $offset\n";
@@ -21,6 +24,9 @@ $errorlogfile = fopen($errorlogname, 'a') or die('Cannot open file: ' . $errorlo
  */
 $offset = "1:55:00";
 echo "OFFSET = $offset\n";
+
+$timezone_offset = 2;
+echo "timezone offset = $timezone_offset\n";
 
 
 
@@ -61,11 +67,8 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
     $equipment_ID = $last_val_row[1];
     $command_name = $last_val_row[2];
     $command_ID = $last_val_row[4];
-    $object_name = $last_val_row[5];    
+    $object_name = $last_val_row[5];
     
-    $pollutant = setpollutant($command_name); // set the pollutant name
-    
-    fwrite($logfile, $equipment_alias . '-' . $pollutant . "\n");    
     
     if ($average_mode == 1) { // AVERAGE MODE        
         /* 
@@ -103,7 +106,14 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
         
         while ( $val_row = $val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
             $datetime = $val_row[1];
-            $value = $val_row[2];            
+            $value = $val_row[2];
+            
+            // $valuee = $value; ////
+            // if (FALSE && $equipment_alias === "E4000NG 01 CO2-HUM-TEMP" && $pollutant !== "dBm")
+            //     fwrite($trouslog, date('Y-m-d H:i:s') . " -- $pollutant -- " 
+            //         . date('Y-m-d H:i:s', strtotime($datetime . '-' . $timezone_offset . 'hours')) 
+            //         . " -- value = $valuee\n"
+            //     );
             
             // Build the main array that will contain all the values for one pollutant
             $value_array[] = array(
@@ -117,13 +127,17 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
     
     
     # chopper l'ID du premier pere, dans $id_room
-    $sql_query = "SELECT object_id, configuration FROM eqLogic WHERE eqLogic.logicalId = '$equipment_ID'";
+    $sql_query = "SELECT `object_id`, `configuration` FROM eqLogic WHERE eqLogic.logicalId = '$equipment_ID'";
     $result_cmd_query = $dbconnect->query($sql_query);
     $val_row = $result_cmd_query->fetch_array(MYSQLI_BOTH);
     //  echo "==========\n";  var_dump($val_row); echo "==========\n";
     $id_room = $val_row['object_id'];    
-    $eep_before_parsing = $val_row['configuration'];
-    
+    $ret_json_decode = json_decode($val_row['configuration'], $assoc = TRUE);
+    if ($ret_json_decode === NULL) {
+        $eep = "";
+    }
+    $eep = $ret_json_decode['device'];
+
     # chopper l'alias du premier pere, dans $alias_room
     $sql_query = "SELECT name, father_id FROM object WHERE object.id = '$id_room'";
     $result_cmd_query = $dbconnect->query($sql_query);
@@ -155,10 +169,6 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
    // $id_building = $val_row['father_id'];    
     
 
-   
-
-
-
     # chopper l'alias du troisieme pere, dans $alias_building
     //$sql_query = "SELECT name FROM object WHERE object.id = '$id_building'";
    // $result_cmd_query = $dbconnect->query($sql_query);
@@ -169,24 +179,18 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
     // $sql_query = "SELECT configuration FROM eqLogic WHERE eqLogic.logicalID = '$equipment_ID'";
     // $result_cmd_query = $dbconnect->query($sql_query);
     // $val_row = $result_cmd_query->fetch_array(MYSQLI_BOTH);
-    // $eep_before_parsing = $val_row['configuration'];    
+    // $eep_before_parsing = $val_row['configuration'];
     
+    $data_type = eep_traduction($eep); 
+    $pollutant = setpollutant($command_name, $eep); // set the pollutant name
     
-    //echo "EEP BEFORE PARSING = |$eep_before_parsing\n|";    
-    $shell_exec_output = shell_exec("echo $eep_before_parsing | cut -d ',' -f 1 | cut -d ':' -f 2");
-    //  echo "SHELL EXEC OUTPUT = |$shell_exec_output|\n";    
-    $eep = rtrim($shell_exec_output);
-    // echo "EEP = |$eep|\n"; 
-    $data_type = eep_traduction($eep);    
-
-    
+    fwrite($logfile, $equipment_alias . '-' . $pollutant . "\n");
 
     $sql_query = "SELECT status FROM eqLogic";
     $result_cmd_query = $dbconnect->query($sql_query);
     $val_row = $result_cmd_query->fetch_array(MYSQLI_BOTH);
 
     // Build the header of the JSON
-    
     $table['version'] = '1.0.0';
     $table['datastreams'] = array(
         array(
@@ -209,24 +213,23 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
             'datapoints' => $value_array
         )
     );
-    
-    /*
-        SELECT object_id  FROM eqLogic WHERE eqLogic.logicalId = 'FF91C88F'  ;
-            ==> Avec cette commande je choppe l'ID de son pere (ex: Nanosense_bureau, ID 42)
-                'FFmachin' c'est $equipment_ID        SELECT father_id, name FROM object WHERE id = '42'
-            ==> avec ca j'ai l'ID du second pere (ex: 7 pour Nanosense)        Et donc meme commande pour recuperer le 3e père        
-                */    
+        
                 
     // Encode the newly formatted table into a PHP json object
     $jsondata = json_encode($table, JSON_PRETTY_PRINT);
     
-    // HTTP request with database query
-    http_request($dbconnect, $logfile, $jsondata, $equipment_alias, $pollutant, $errorlogfile);
-}
+    if ( count($value_array) != 0 ) {
+        http_request($dbconnect, $logfile, $jsondata, $equipment_alias, $pollutant, $errorlogfile);
+    }
+   // fgetc(STDIN);
+} //// break
 
 // close all the currently opened resources
 fclose($logfile);
 fclose($errorlogfile);
+////
+fwrite($trouslog, "\n");
+fclose($trouslog);
 mysqli_close($dbconnect);
 
 ?>

@@ -48,6 +48,11 @@ while ($dist_loc_row = $dist_loc_cmd_query->fetch_array(MYSQLI_BOTH)){
             $datetime = $val_row[0];
             $value = $val_row[$i];
 
+            if ($value < 0) {
+                //echo "\nAAAAAAAAAAH\n"; fgetc(STDIN);
+                continue ;
+            }
+
             // Build the main array that will contain all the values for one physio. impact
             $value_array[] = array(
                 "at" => date("Y-m-d\TH:i:s\Z",
@@ -135,9 +140,11 @@ while ($dist_loc_row = $dist_loc_cmd_query->fetch_array(MYSQLI_BOTH)){
         // Encode the newly formatted table into a PHP json object
         $jsondata = json_encode($table, JSON_PRETTY_PRINT);
 
-        // HTTP request with database query
-        http_request($dbconnect, $logfile, $jsondata, $location, $effect_name,
-            $errorlogfile);
+        if ( count($value_array) != 0 ) {
+            http_request($dbconnect, $logfile, $jsondata, $location, $effect_name, $errorlogfile);
+        }
+
+        
     }
 }
 

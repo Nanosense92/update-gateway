@@ -15,10 +15,11 @@
  * $errlog = the error log file
  *
  */
-function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog){ 
+function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
+{ 
     // get all the informations about the URL where the data will be sent
     $http_query = $dbconnect->query('SELECT * FROM nanodb');
-    while ($http_row = $http_query->fetch_array(MYSQLI_BOTH)){
+    while ($http_row = $http_query->fetch_array(MYSQLI_BOTH)) {
 
         $token = $http_row['location'];
         $url = $http_row['addr'];
@@ -52,22 +53,46 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog){
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLINFO_HEADER_OUT, true); //debug
+        //curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+        //curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+
+        if ( $http_row['port'] == 443 || strpos($url, "https://") === true )
+        {
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+
+            require_once 'find_cert_local_path.php';
+            $cert_local_path = find_cert_local_path($http_row['addr']);
+         //   echo "RETT = $cert_local_path\n";
+            curl_setopt($ch, CURLOPT_CAINFO, $cert_local_path);
+        }
+        
         $curl_res = curl_exec($ch);
 
         /* DEBUG */
-            $header_sent = curl_getinfo($ch, CURLINFO_HEADER_OUT );
-          //  echo "\nDEBUG ** CURL GET INFO ---- BEGIN ----\n";
-          //  var_dump(curl_getinfo($ch, CURLINFO_HTTP_CODE));
-          //  echo "DEBUG ** CURL GET INFO ----  END  ----\n";
-            
+        $header_sent = curl_getinfo($ch, CURLINFO_HEADER_OUT );
+        // echo "\nDEBUG ** CURL GET INFO ---- BEGIN ----\n";
+        //  var_dump(curl_getinfo($ch, CURLINFO_HTTP_CODE));
+        // echo "DEBUG ** CURL GET INFO ----  END  ----\n";
         
-            // echo "\nDEBUG ** HEADER SENT ---- BEGIN ----\n";
-            // print_r($header_sent);
-            // echo "DEBUG ** HEADER SENT ----  END  ----\n";
+    
+        // echo "\nDEBUG ** HEADER SENT ---- BEGIN ----\n";
+        // print_r($header_sent);
+        // echo "DEBUG ** HEADER SENT ----  END  ----\n";
+        
+        //if ( true && (strpos($data, 'big_presence') !== FALSE 
+        //|| strpos($data, 'beige') !== FALSE) )
+        if (true)
+        {
+            echo "\nDEBUG ** JSON ---- BEGIN ----\n";
+            echo $data . "\n";
+            echo "DEBUG ** JSON ----  END  ----\n";
+        }
+
+		// echo "=== ";
+		// var_dump($data['datastreams']);
+		// echo "\n";
             
-             echo "\nDEBUG ** JSON ---- BEGIN ----\n";
-             echo $data . "\n";
-             echo "DEBUG ** JSON ----  END  ----\n";
         
 
             //var_dump($curl_res);
@@ -84,10 +109,10 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog){
             fwrite($errlog, $error_msg);
         }
         if (curl_errno($ch)){
-        //    echo 'CURL error: '. curl_error($ch) . "\n";
+            echo 'CURL error: '. curl_error($ch) . "\n";
         }
 
         curl_close($ch);
-    }
-}
+   } // end while()
+} // end function
 ?>
