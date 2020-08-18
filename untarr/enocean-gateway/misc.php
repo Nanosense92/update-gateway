@@ -41,10 +41,12 @@ function setpollutant($pollutant, $eep)
         return 'HUM';
     if (strpos($pollutant, 'Total') !== false)
         return 'VOC';
+    if (strpos($pollutant, 'COVT') !== false)
+        return 'VOC';
     if ($eep === 'a5-07-01' && strpos($pollutant, 'Etat') !== false)
 		return 'OCCUPIED';
 	if ($eep === 'd5-00-01' && strpos($pollutant, 'Etat') !== false)
-        return 'WINDOW_OPEN';
+        return 'WINDOW_CLOSED';
     
     else
         return $pollutant;

@@ -17,6 +17,19 @@ button {
     font-size: 15px;
 }
 
+input[type=submit] {
+    background-color: #008CBA;
+    border: none;
+    color: white;
+    padding: 5px 5px;
+    cursor: pointer;
+    opacity: 0.9;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+}
+
 button:hover {
     opacity: 1;
 }
