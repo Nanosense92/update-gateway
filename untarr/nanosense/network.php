@@ -217,7 +217,7 @@
 <h4> Already configured networks : </h4>
 <?php
     $exec_output = array();
-    exec("cat /etc/wpa_supplicant/wpa_supplicant.conf | grep ssid | cut -d '\"' -f 2", $exec_output);
+    exec("sudo cat /etc/wpa_supplicant/wpa_supplicant.conf | grep ssid | cut -d '\"' -f 2", $exec_output);
     $nb_nw = count($exec_output);
     echo "<p><i>";
     for ($i = 0 ; $i < $nb_nw ; $i++) {
