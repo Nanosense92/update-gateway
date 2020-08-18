@@ -1,1 +1,1 @@
-69e3510157a4404dd58550612f763916baed05f0  enocean-gateway/update.tar
+69e3510157a4404dd58550612f763916baed05f0  update-gateway/update.tar
