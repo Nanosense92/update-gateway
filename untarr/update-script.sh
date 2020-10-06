@@ -261,6 +261,8 @@ then
     bash /home/pi/update-gateway/config_mail.bash "ALL IS ALRIGHT UPDATE FULLY SUCCESSFUL !"
 
     bash /home/pi/update-gateway/push_mail_on_github.bash
+    rm -rf /home/pi/push_email
+    
 else
     write_to_log "INFO" "already to the newest version: $UPVERS"
     bash /home/pi/update-gateway/config_mail.bash "Already newest version"

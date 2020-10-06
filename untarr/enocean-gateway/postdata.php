@@ -11,7 +11,6 @@ $logname = '/var/log/postdata.log';
 $logfile = fopen($logname, 'a') or die('Cannot open file: ' . $logname . "\n");
 
 ////
-$trouslog = fopen("/home/pi/trous.log", 'a') or die("Cannot open file: trouslog \n");
 
 // the error log file (contains all the IAQ data not sent)
 $errorlogname = '/var/log/postdata_error.log';
@@ -107,13 +106,6 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
         while ( $val_row = $val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
             $datetime = $val_row[1];
             $value = $val_row[2];
-            
-            // $valuee = $value; ////
-            // if (FALSE && $equipment_alias === "E4000NG 01 CO2-HUM-TEMP" && $pollutant !== "dBm")
-            //     fwrite($trouslog, date('Y-m-d H:i:s') . " -- $pollutant -- " 
-            //         . date('Y-m-d H:i:s', strtotime($datetime . '-' . $timezone_offset . 'hours')) 
-            //         . " -- value = $valuee\n"
-            //     );
             
             // Build the main array that will contain all the values for one pollutant
             $value_array[] = array(
@@ -228,8 +220,7 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
 fclose($logfile);
 fclose($errorlogfile);
 ////
-fwrite($trouslog, "\n");
-fclose($trouslog);
+
 mysqli_close($dbconnect);
 
 ?>

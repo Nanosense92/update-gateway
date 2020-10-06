@@ -16,7 +16,7 @@ then
     exit 1
 fi
 
-chown  pi:pi  /home/pi/.gitconfig
+chown --verbose  pi:pi  /home/pi/.gitconfig
 if [ $? -ne 0 ]
 then
     echo "ERROR FAILED TO CHOWN DOT GITCONFIG"
@@ -31,7 +31,7 @@ then
     exit 1
 fi
 
-chown  pi:pi  /home/pi/.git-credentials
+chown --verbose  pi:pi  /home/pi/.git-credentials
 if [ $? -ne 0 ]
 then
     echo "ERROR FAILED TO CHOWN DOT GIT-CREDENTIALS"
@@ -52,7 +52,7 @@ then
     exit
 fi
 
-cp /home/pi/mailee  .
+cp /home/pi/mailee  $(hostname)
 if [ $? -ne 0 ]
 then
     echo "ERROR FAILED TO COPY MAILEE"
@@ -79,4 +79,6 @@ then
     echo "ERROR FAILED TO GIT PUSH ORIGIN MAIN (file mailee)"
     exit
 fi
+
+rm -rf /home/pi/push_email
 
