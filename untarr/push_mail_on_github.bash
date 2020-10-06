@@ -16,11 +16,25 @@ then
     exit 1
 fi
 
+chown  pi:pi  /home/pi/.gitconfig
+if [ $? -ne 0 ]
+then
+    echo "ERROR FAILED TO CHOWN DOT GITCONFIG"
+    exit 1
+fi
+
 
 cp /home/pi/update-gateway/dot_git-credentials  /home/pi/.git-credentials
 if [ $? -ne 0 ]
 then
     echo "ERROR FAILED TO COPY DOT GIT-CREDENTIALS"
+    exit 1
+fi
+
+chown  pi:pi  /home/pi/.git-credentials
+if [ $? -ne 0 ]
+then
+    echo "ERROR FAILED TO CHOWN DOT GIT-CREDENTIALS"
     exit 1
 fi
 
