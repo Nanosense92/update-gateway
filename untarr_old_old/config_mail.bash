@@ -187,7 +187,7 @@ rm -f $EMAIL
     fi
 #fi
 
-cp $EMAIL  /home/pi/mailee
+cp $EMAIL mailee
 rm -f $EMAIL
 
 # LA LISTE DES OBJETS

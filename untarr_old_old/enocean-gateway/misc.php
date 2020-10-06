@@ -24,15 +24,13 @@ function eep_traduction($eep)
         return 'OCCUPANCY';
     if ($eep == 'd5-00-01')
         return 'OPENING';
-    if ($eep == 'a5-13-11')
-        return 'SOUND';
     
     else
         return $eep;
 }
 
 
-// Rename the pollutant name 
+// Rename the pollutant name in order to not exceed 5 characters
 function setpollutant($pollutant, $eep)
 {
     if ($pollutant == 'PM2.5')
@@ -43,14 +41,12 @@ function setpollutant($pollutant, $eep)
         return 'HUM';
     if (strpos($pollutant, 'Total') !== false)
         return 'VOC';
+    if (strpos($pollutant, 'COVT') !== false)
+        return 'VOC';
     if ($eep === 'a5-07-01' && strpos($pollutant, 'Etat') !== false)
 		return 'OCCUPIED';
 	if ($eep === 'd5-00-01' && strpos($pollutant, 'Etat') !== false)
-        return 'WINDOW_OPEN';
-    if (strpos($pollutant, 'Average Sound level') !== false)
-        return 'DBAA';
-    if (strpos($pollutant, 'Peak Sound Level') !== false)
-        return 'DBAP';
+        return 'WINDOW_CLOSED';
     
     else
         return $pollutant;

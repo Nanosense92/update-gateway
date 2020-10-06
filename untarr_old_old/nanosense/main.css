@@ -1,0 +1,167 @@
+body {
+    font-family: 'Source code pro', arial, serif;
+    margin: 0px;
+    padding: 0px;
+}
+
+button {
+    background-color: #008CBA;
+    border: none;
+    color: white;
+    padding: 5px 5px;
+    cursor: pointer;
+    opacity: 0.9;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+}
+
+input[type=submit] {
+    background-color: #008CBA;
+    border: none;
+    color: white;
+    padding: 5px 5px;
+    cursor: pointer;
+    opacity: 0.9;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 15px;
+}
+
+button:hover {
+    opacity: 1;
+}
+
+nav {
+    width: 100%;
+    background-color: #424558;
+}
+
+nav a {
+    display: inline-block;
+    text-decoration: none;
+}
+
+nav li {
+    list-style-type: none;
+}
+
+nav li:hover .submenu {
+    display: inline-block;
+    position: absolute;
+    top: 100%;
+    left: 0px;
+    padding: 0px;
+    z-index: 100000;
+}
+
+nav > ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+nav > ul::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+nav > ul > li {
+    float:left;
+    position: relative;
+}
+
+nav > ul > li > a {
+    padding: 20px 30px;
+    color: #FFF;
+}
+
+nav > ul > li:hover a {
+    padding: 15px 30px 20px 30px;
+}
+
+.button-container form,
+.button-container form div {
+    display: inline;
+    padding: 5px;
+}
+
+.button-container button {
+    display: inline;
+    vertical-align: middle;
+}
+.close {
+    float: right;
+    color: #aaaaaa;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.menu-1:hover {
+    border-top: 5px solid #6EAAF0;
+    background-color: RGBa(0,0, 0, 0.15);
+}
+
+.menu-1 .submenu {
+    background-color: RGB(110, 170, 240);
+}
+
+.menu-1 .submenu li:hover {
+    background-color: RGB(50, 100, 150);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+.padding {
+    padding-top:100px;
+    margin: 80px;
+}
+
+.submenu {
+    display: none;
+}
+
+.submenu li {
+    border-bottom: 1px solid #FFF;
+}
+
+.submenu li a {
+    padding 15px 30px;
+    font-size: 13px;
+    color: #222538;
+    width: 270px;
+}
+
+.submenu li:hover a {
+    color:#EEE;
+    font-weight: bold;
+}
