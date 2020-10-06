@@ -59,7 +59,7 @@ then
     exit
 fi
 
-git add mailee
+git add $(hostname)
 if [ $? -ne 0 ]
 then
     echo "ERROR FAILED TO GIT ADD MAILEE"
