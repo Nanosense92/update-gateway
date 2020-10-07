@@ -16,7 +16,7 @@ then
     exit 1
 fi
 
-chown --verbose  pi:pi  /home/pi/.gitconfig
+chown --verbose  root:root  /home/pi/.gitconfig
 if [ $? -ne 0 ]
 then
     echo "ERROR FAILED TO CHOWN DOT GITCONFIG"
@@ -31,7 +31,7 @@ then
     exit 1
 fi
 
-chown --verbose  pi:pi  /home/pi/.git-credentials
+chown --verbose  root:root  /home/pi/.git-credentials
 if [ $? -ne 0 ]
 then
     echo "ERROR FAILED TO CHOWN DOT GIT-CREDENTIALS"
