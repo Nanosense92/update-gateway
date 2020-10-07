@@ -80,11 +80,11 @@ foreach($jsondec AS $key => $value){
         // refresh the datetime every second
         function refresh_datetime(){
             var refresh = 1000;
-            setTimeout('display_date()', refresh);
+            setTimeout('display_date("<?php echo gethostname(); ?>")', refresh);
         }
 
         // display the date on the page 
-        function display_date(){
+        function display_date(hostname){
             var offset = <?php echo $offset ?>; // offset of the timezone in hours (utc+2 = +2 hours)
             var cur_datetime = new Date();
             cur_datetime = new Date(Date.UTC(cur_datetime.getUTCFullYear(), cur_datetime.getUTCMonth(), cur_datetime.getUTCDate(),
@@ -113,8 +113,9 @@ foreach($jsondec AS $key => $value){
             if (cur_second < 10)
                 cur_second = "0" + cur_second;
 
+            
             // set the value of the html element with a good display
-            document.getElementById('datetime').innerHTML = cur_year + "-" + cur_month + "-" + cur_day + " " + cur_hour + ":" + cur_minute + ":" + cur_second + UTCString + offset;
+            document.getElementById('datetime').innerHTML = hostname + "<br>" + cur_year + "-" + cur_month + "-" + cur_day + " " + cur_hour + ":" + cur_minute + ":" + cur_second + UTCString + offset;
             refresh_datetime();
         }
 
@@ -129,7 +130,7 @@ foreach($jsondec AS $key => $value){
             <div align="right"><span id='datetime'></span></div> 
         </div>
     </head>
-    <body onload="display_date();">
+    <body onload="display_date('<?php echo gethostname(); ?>');">
         <nav>
             <ul>
                 <li class="menu-1"><a href="#">Database</a>
