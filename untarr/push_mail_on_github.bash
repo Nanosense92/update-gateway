@@ -48,12 +48,12 @@ cd /home/pi/push_email
 # fi
 
 #git push https://github.com/nsgw/emails.git
-git push --repo https://nsgw:nanosense92@github.com/nsgw/emails.git
-if [ $? -ne 0 ]
-then
-    echo "ERROR FAILED TO PUSH TO REPO EMAILS"
-    exit
-fi
+# git push --repo https://nsgw:nanosense92@github.com/nsgw/emails.git
+# if [ $? -ne 0 ]
+# then
+#     echo "ERROR FAILED TO PUSH TO REPO EMAILS"
+#     exit
+# fi
 
 cp /home/pi/mailee  $(hostname)
 if [ $? -ne 0 ]
@@ -76,7 +76,8 @@ then
     exit
 fi
 
-git push origin main
+#git push origin main
+git push --repo https://nsgw:nanosense92@github.com/nsgw/emails.git
 if [ $? -ne 0 ]
 then
     echo "ERROR FAILED TO GIT PUSH ORIGIN MAIN"
