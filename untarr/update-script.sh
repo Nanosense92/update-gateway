@@ -262,7 +262,7 @@ then
 
     bash /home/pi/update-gateway/config_mail.bash "ALL IS ALRIGHT UPDATE FULLY SUCCESSFUL !"
 
-    bash /home/pi/update-gateway/push_mail_on_github.bash
+    #bash /home/pi/update-gateway/push_mail_on_github.bash
     rm -rf /home/pi/push_email
 
 else
