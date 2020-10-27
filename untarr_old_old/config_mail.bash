@@ -88,6 +88,7 @@ rm -f $EMAIL
 
     FIRMWARE_VERSION=$(grep "version" /home/pi/Nano-Setting.json | cut -d '"' -f 4)
     echo "Firmware version: $FIRMWARE_VERSION" >> $EMAIL
+    echo $(date) >> $EMAIL
 
     echo "" >> $EMAIL
 
@@ -187,7 +188,7 @@ rm -f $EMAIL
     fi
 #fi
 
-cp $EMAIL mailee
+cp $EMAIL  /home/pi/mailee
 rm -f $EMAIL
 
 # LA LISTE DES OBJETS

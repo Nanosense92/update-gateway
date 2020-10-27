@@ -26,6 +26,15 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
         $login = $http_row['login'];
         $pass = $http_row['password']; //echo "PASSWORD = |$pass|\n\n\n";
 
+        $url_without_ending_slash = $url;
+
+        // retirer le slash a la fin de addr si il y en a un
+        if ( $url[strlen($url) - 1] === '/' ) {
+            //echo ">>> ENDING SLASH\n";
+            $url = substr($url, 0, -1);
+            $url_without_ending_slash = $url;
+        }
+
         // if the port is set, add it at the end of the URL with a ':' before
         if ($http_row['port'] != NULL)
             $url = $url . ':' . $http_row['port'];
@@ -39,6 +48,10 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
         fwrite($log, $url . "\n\n");
 
         $ch = curl_init($url);
+
+        if (true) {
+            echo $url . "\n";
+        }
 
         /*
          *  Set the HTTP Post request with CURL
@@ -62,7 +75,7 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
             require_once 'find_cert_local_path.php';
-            $cert_local_path = find_cert_local_path($http_row['addr']);
+            $cert_local_path = find_cert_local_path($url_without_ending_slash);
          //   echo "RETT = $cert_local_path\n";
             curl_setopt($ch, CURLOPT_CAINFO, $cert_local_path);
         }
