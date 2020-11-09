@@ -85,6 +85,9 @@ foreach($jsondec AS $key => $value){
 
         // display the date on the page 
         function display_date(hostname){
+
+            //return;
+
             var offset = <?php echo $offset ?>; // offset of the timezone in hours (utc+2 = +2 hours)
             var cur_datetime = new Date();
             cur_datetime = new Date(Date.UTC(cur_datetime.getUTCFullYear(), cur_datetime.getUTCMonth(), cur_datetime.getUTCDate(),
@@ -115,8 +118,10 @@ foreach($jsondec AS $key => $value){
 
             
             // set the value of the html element with a good display
-            document.getElementById('datetime').innerHTML = hostname + "<br>" + cur_year + "-" + cur_month + "-" + cur_day + " " + cur_hour + ":" + cur_minute + ":" + cur_second + UTCString + offset;
-            refresh_datetime();
+            
+            document.getElementById('datetime').innerHTML = hostname;
+            //document.getElementById('datetime').innerHTML = hostname + "<br>" + cur_year + "-" + cur_month + "-" + cur_day + " " + cur_hour + ":" + cur_minute + ":" + cur_second + UTCString + offset;
+            //refresh_datetime();
         }
 
         </script>
@@ -142,15 +147,13 @@ foreach($jsondec AS $key => $value){
                 <li class="menu-1"><a href="#">Physiological effects</a>
                     <ul class="submenu">
                         <li><a href="graphysio.php">Visualization</a></li>
-                        <li><a href="clean.php">Clean</a></li>
-                        <li><a href="clean_default.php">Clean default</a></li>
+                        <!-- <li><a href="clean.php">Clean</a></li>
+                        <li><a href="clean_default.php">Clean default</a></li> -->
                     </ul>
                 </li>
                 <li class="menu-1"><a href="#">Settings</a>
                     <ul class="submenu">
-                        <li><a href="update.php">Update</a></li>
-                        <li><a href="changelog.php">Changelog</a></li>
-                        <li><a href="hardupdate.php">Hard Update</a></li>
+                        <li><a href="force_update.php">Update</a></li>
                         <li><a href="backupversion.php">Return to previous version</a></li>
                         <li><a href="updatelog.php">Update Log</a></li>
                         <li><a href="showconfig.php">Show current configuration</a></li>

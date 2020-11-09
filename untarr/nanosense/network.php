@@ -23,15 +23,13 @@
             <li class="menu-1"><a href="#">Physiological effects</a>
                 <ul class="submenu">
                     <li><a href="graphysio.php">Visualization</a></li>
-                    <li><a href="clean.php">Clean</a></li>
-                    <li><a href="clean_default.php">Clean default</a></li>
+                    <!-- <li><a href="clean.php">Clean</a></li>
+                    <li><a href="clean_default.php">Clean default</a></li> -->
                 </ul>
             </li>
             <li class="menu-1"><a href="#">Settings</a>
                 <ul class="submenu">
-                    <li><a href="update.php">Update</a></li>
-                    <li><a href="changelog.php">Changelog</a></li>
-                    <li><a href="hardupdate.php">Hard Update</a></li>
+                    <li><a href="force_update.php">Update</a></li>
                     <li><a href="backupversion.php">Return to previous version</a></li>
                     <li><a href="updatelog.php">Update Log</a></li>
                     <li><a href="showconfig.php">Show current configuration</a></li>
