@@ -1,1 +1,1 @@
-22acc9e9ffbf9eca84f2bc5f0050f35631478445  update-gateway/update.tar
+d11f9bface5b579df0dc7c0d09663c328b26b5a2  update-gateway/update.tar
