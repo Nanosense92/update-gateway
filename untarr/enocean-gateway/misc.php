@@ -33,7 +33,7 @@ function eep_traduction($eep)
 
 
 // Rename the pollutant name 
-function setpollutant($pollutant, $eep)
+function setpollutant($pollutant, $eep, $eq_alias)
 {
     if ($pollutant == 'PM2.5')
         return 'PM2_5';
@@ -44,14 +44,31 @@ function setpollutant($pollutant, $eep)
     if (strpos($pollutant, 'Total') !== false)
         return 'VOC';
     if ($eep === 'a5-07-01' && strpos($pollutant, 'Etat') !== false)
-		return 'OCCUPIED';
-	if ($eep === 'd5-00-01' && strpos($pollutant, 'Etat') !== false)
-        return 'WINDOW_OPEN';
+	    return 'OCCUPIED';
+    if ($eep === 'd5-00-01' && strpos($pollutant, 'Etat') !== false && strpos($eq_alias, '-W') !== false)
+        return 'WINDOW_CLOSED';
+    if ($eep === 'd5-00-01' && strpos($pollutant, 'Etat') !== false && strpos($eq_alias, '-D') !== false)
+        return 'DOOR_CLOSED';
     if (strpos($pollutant, 'Average Sound level') !== false)
         return 'DBAA';
     if (strpos($pollutant, 'Peak Sound Level') !== false)
         return 'DBAP';
-    
+    // if (strpos($pollutant, 'Puissance 2') !== false)
+    //     return 'POWER_2';
+    // if (strpos($pollutant, 'Puissance 3') !== false)
+    //     return 'POWER_3';
+    // if (strpos($pollutant, 'Puissance 4') !== false)
+	//     return 'POWER_4';
+    // if (strpos($pollutant, 'Puissance') !== false)
+	//     return 'POWER_1';
+    // if (strpos($pollutant, 'Consommation 2') !== false)
+    //     return 'CONSUMPTION_2';
+    // if (strpos($pollutant, 'Consommation 3') !== false)
+    //     return 'CONSUMPTION_3';
+    // if (strpos($pollutant, 'Consommation 4') !== false)
+    //     return 'CONSUMPTION_4';
+    // if (strpos($pollutant, 'Consommation') !== false)
+    //     return 'CONSUMPTION_1';
     else
         return $pollutant;
 }

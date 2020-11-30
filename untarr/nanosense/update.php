@@ -22,7 +22,7 @@ $auto_update = (int)$jsondecode['auto-update'];
 
 chdir('/home/pi/');
 exec('sudo rm -rf ./update-gateway ./email');
-exec('sudo touch /home/pi/UPDATE.txt');
+exec('sudo rm -f /home/pi/UPDATE.txt');
 if ($auto_update == 1){
     exec('sudo echo "$(date): starting update" >> ' . $log_file);
     exec('sudo git clone https://github.com/Nanosense92/update-gateway.git update-gateway/', $git, $ret);
