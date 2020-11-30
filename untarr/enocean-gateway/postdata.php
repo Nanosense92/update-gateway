@@ -174,7 +174,7 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
     // $eep_before_parsing = $val_row['configuration'];
     
     $data_type = eep_traduction($eep); 
-    $pollutant = setpollutant($command_name, $eep); // set the pollutant name
+    $pollutant = setpollutant($command_name, $eep, $equipment_alias); // set the pollutant name
     
     fwrite($logfile, $equipment_alias . '-' . $pollutant . "\n");
 
