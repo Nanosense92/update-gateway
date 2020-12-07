@@ -24,7 +24,7 @@ $errorlogfile = fopen($errorlogname, 'a') or die('Cannot open file: ' . $errorlo
 $offset = "0:55:00";
 echo "OFFSET = $offset\n";
 
-$timezone_offset = 2;
+$timezone_offset = 1;
 echo "timezone offset = $timezone_offset\n";
 
 

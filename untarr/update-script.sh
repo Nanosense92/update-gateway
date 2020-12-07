@@ -254,6 +254,8 @@ then
     #bash /home/pi/update-gateway/change_hostname.bash
     bash /home/pi/update-gateway/add_change_hostname.bash
 
+    bash /home/pi/update-gateway/add_push_mail.bash
+
     bash /home/pi/update-gateway/install_and_configure_log2ram.bash
 
     bash /home/pi/update-gateway/update_pando2_url.bash
@@ -263,12 +265,12 @@ then
     bash /home/pi/update-gateway/config_mail.bash "ALL IS ALRIGHT UPDATE FULLY SUCCESSFUL !"
 
     #bash /home/pi/update-gateway/push_mail_on_github.bash
-    rm -rf /home/pi/push_email
+    #rm -rf /home/pi/push_email
 
 else
     write_to_log "INFO" "already to the newest version: $UPVERS"
     bash /home/pi/update-gateway/config_mail.bash "Already newest version"
 
     #bash /home/pi/update-gateway/push_mail_on_github.bash
-    rm -rf /home/pi/push_email
+    #rm -rf /home/pi/push_email
 fi

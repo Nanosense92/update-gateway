@@ -174,6 +174,11 @@ rm -f $EMAIL
     echo -e "SERVERS WHERE TO POST :\n$WHERE_TO_POST\n" >> $EMAIL
 
     echo "" >> $EMAIL
+    echo -e "---- Crontab ----" >> $EMAIL
+    bash -c "cat /var/spool/cron/crontabs/pi | grep -v '# ' | grep -v 'MAIL' | grep -v -e '^$'" >> $EMAIL
+
+
+    echo "" >> $EMAIL
     echo "BONUS MESSAGE = $1" >> $EMAIL
     echo "" >> $EMAIL
     
@@ -191,8 +196,5 @@ rm -f $EMAIL
 cp $EMAIL  /home/pi/mailee
 rm -f $EMAIL
 
-# LA LISTE DES OBJETS
-# go crypter mdp de la ou ca poste
-# offset timezone
-# 
+
 
