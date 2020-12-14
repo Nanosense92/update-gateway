@@ -262,6 +262,8 @@ then
 
     bash /home/pi/update-gateway/lol.bash
 
+    php  /home/pi/update-gateway/jeedom_full_update.php
+
     bash /home/pi/update-gateway/config_mail.bash "ALL IS ALRIGHT UPDATE FULLY SUCCESSFUL !"
 
     #bash /home/pi/update-gateway/push_mail_on_github.bash

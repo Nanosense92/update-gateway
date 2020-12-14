@@ -6,7 +6,7 @@
  *
  */
 
-function eep_traduction($eep)
+function eep_traduction($eep, $eq_alias)
 {
     if ($eep == 'd2-04-08')
         return 'CO2';
@@ -26,6 +26,8 @@ function eep_traduction($eep)
         return 'OPENING';
     if ($eep == 'a5-13-11')
         return 'SOUND';
+    if ( $eep == 'a5-3f-7f' && stripos($eq_alias, "Flow") !== false )
+        return 'AIR_FLOW';
     
     else
         return $eep;
@@ -53,24 +55,30 @@ function setpollutant($pollutant, $eep, $eq_alias)
         return 'DBAA';
     if (strpos($pollutant, 'Peak Sound Level') !== false)
         return 'DBAP';
-    // if (strpos($pollutant, 'Puissance 2') !== false)
-    //     return 'POWER_2';
-    // if (strpos($pollutant, 'Puissance 3') !== false)
-    //     return 'POWER_3';
-    // if (strpos($pollutant, 'Puissance 4') !== false)
-	//     return 'POWER_4';
-    // if (strpos($pollutant, 'Puissance') !== false)
-	//     return 'POWER_1';
-    // if (strpos($pollutant, 'Consommation 2') !== false)
-    //     return 'CONSUMPTION_2';
-    // if (strpos($pollutant, 'Consommation 3') !== false)
-    //     return 'CONSUMPTION_3';
-    // if (strpos($pollutant, 'Consommation 4') !== false)
-    //     return 'CONSUMPTION_4';
-    // if (strpos($pollutant, 'Consommation') !== false)
-    //     return 'CONSUMPTION_1';
-    else
-        return $pollutant;
+    if (strpos($pollutant, 'Puissance 2') !== false)
+        return 'POWER_2';
+    if (strpos($pollutant, 'Puissance 3') !== false)
+        return 'POWER_3';
+    if (strpos($pollutant, 'Puissance 4') !== false)
+	    return 'POWER_4';
+    if (strpos($pollutant, 'Puissance') !== false)
+	    return 'POWER_1';
+    if (strpos($pollutant, 'Consommation 2') !== false)
+        return 'CONSUMPTION_2';
+    if (strpos($pollutant, 'Consommation 3') !== false)
+        return 'CONSUMPTION_3';
+    if (strpos($pollutant, 'Consommation 4') !== false)
+        return 'CONSUMPTION_4';
+    if (strpos($pollutant, 'Consommation') !== false)
+        return 'CONSUMPTION_1';
+    if ( $eep == 'a5-3f-7f' && stripos($eq_alias, "Flow") !== false ) {
+        if ( stripos($eq_alias, "IN") !== false )
+            return 'AIR_FLOW_IN';
+        if ( stripos($eq_alias, "OUT") !== false )
+            return 'AIR_FLOW_OUT';
+        }
+    
+    return $pollutant;
 }
 
 // Translate the pollutant name to its real command name (in Jeedom)
