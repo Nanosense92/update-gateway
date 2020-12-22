@@ -1,5 +1,5 @@
 <?php
-require_once "./class_jeedom.php";
+require_once "/home/pi/update-gateway/class_jeedom.php";
 
 /* IP ADDRESS */
 $exec_output = array();
