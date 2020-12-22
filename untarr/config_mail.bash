@@ -181,6 +181,10 @@ rm -f $EMAIL
     echo "" >> $EMAIL
     echo "BONUS MESSAGE = $1" >> $EMAIL
     echo "" >> $EMAIL
+
+
+    cp $EMAIL  /home/pi/mailee
+
     
     write_to_log "INFO" "send email"
 
@@ -193,7 +197,6 @@ rm -f $EMAIL
     fi
 #fi
 
-cp $EMAIL  /home/pi/mailee
 rm -f $EMAIL
 
 
