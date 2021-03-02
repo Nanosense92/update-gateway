@@ -256,6 +256,8 @@ then
 
     bash /home/pi/update-gateway/add_push_mail.bash
 
+    bash /home/pi/update-gateway/add_force_time.bash
+
     bash /home/pi/update-gateway/install_and_configure_log2ram.bash
 
     bash /home/pi/update-gateway/update_pando2_url.bash
