@@ -1,8 +1,10 @@
 <?php
 
+require_once "/home/pi/enocean-gateway/get_database_password.php";
+
 $host = 'localhost';
 $user = 'jeedom';
-$pass = '85522aa27894d77';
+$pass = $jeedom_db_passwd;
 $dbname = 'jeedom';
 
 $db = mysqli_connect($host, $user, $pass, $dbname);

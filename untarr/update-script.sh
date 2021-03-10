@@ -237,19 +237,12 @@ then
 
     # launch script that allow people accessing the web interface to download the .sql dump file
     sh /home/pi/update-gateway/authorize-file-access.sh
-   
-    # move log files
-    sh /home/pi/update-gateway/mv_log_files.sh
-
-    # enable RSSI historization
-    # DEACTIVATED BECAUSE NOT USEFUL ANYMORE I THINK
-    #php /home/pi/update-gateway/enable_rssi_dBm_historization_jeedom.php
 
     # disable value smoothing for all Jeedom commands
     php /home/pi/update-gateway/change_historize_round_cmd_jeedom.php
 
     # configure remote access + send a mail containing all the useful infos of the GW
-    sh /home/pi/update-gateway/config_reverse_ssh_remote_access.sh
+    #sh /home/pi/update-gateway/config_reverse_ssh_remote_access.sh
 
     #bash /home/pi/update-gateway/change_hostname.bash
     bash /home/pi/update-gateway/add_change_hostname.bash
@@ -259,10 +252,6 @@ then
     bash /home/pi/update-gateway/add_force_time.bash
 
     bash /home/pi/update-gateway/install_and_configure_log2ram.bash
-
-    bash /home/pi/update-gateway/update_pando2_url.bash
-
-    bash /home/pi/update-gateway/lol.bash
 
     php  /home/pi/update-gateway/jeedom_full_update.php
 

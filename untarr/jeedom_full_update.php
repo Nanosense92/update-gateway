@@ -1,4 +1,6 @@
 <?php
+require_once "/home/pi/enocean-gateway/get_database_password.php";
+
 require_once "/home/pi/update-gateway/class_jeedom.php";
 
 /* IP ADDRESS */
@@ -12,7 +14,7 @@ $jeedom_ip = $exec_output[0];
 
 
 /* API KEY */
-$db = mysqli_connect('localhost', 'jeedom', '85522aa27894d77', 'jeedom');
+$db = mysqli_connect('localhost', 'jeedom', $jeedom_db_passwd, 'jeedom');
 if ($db->connect_errno){
     die("FATAL ERROR: FAILED TO CONNECT TO JEEDOM DATABASE\n");
 }

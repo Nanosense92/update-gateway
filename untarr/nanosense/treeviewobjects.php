@@ -2,7 +2,10 @@
 /*
  * script that display the tree view of the different objects
  * */
-$db = mysqli_connect('localhost', 'jeedom', '85522aa27894d77', 'jeedom');
+
+require_once "/home/pi/enocean-gateway/get_database_password.php";
+
+$db = mysqli_connect('localhost', 'jeedom', $jeedom_db_passwd, 'jeedom');
 if ($db->connect_errno){
     printf('connection failed to db');
     exit;

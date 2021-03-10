@@ -71,7 +71,7 @@ function setpollutant($pollutant, $eep, $eq_alias)
         return 'CONSUMPTION_4';
     if (strpos($pollutant, 'Consommation') !== false)
         return 'CONSUMPTION_1';
-    if ( $eep == 'a5-3f-7f' && stripos($eq_alias, "Flow") !== false ) {
+    if ( $eep == 'a5-3f-7f' && stripos($eq_alias, "Flow") !== false && $pollutant !== "dBm" ) {
         if ( stripos($eq_alias, "IN") !== false )
             return 'AIR_FLOW_IN';
         if ( stripos($eq_alias, "OUT") !== false )

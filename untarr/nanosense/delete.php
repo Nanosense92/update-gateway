@@ -2,10 +2,13 @@
 /*
  * script to delete line in nanodb which contain reference for http post
  * */
+
+require_once "/home/pi/enocean-gateway/get_database_password.php";
+
 $id = '';
 
 if (isset($_POST['db_id2'])){
-    $db = mysqli_connect('localhost', 'jeedom', '85522aa27894d77', 'jeedom');// connect to the db
+    $db = mysqli_connect('localhost', 'jeedom', $jeedom_db_passwd, 'jeedom');// connect to the db
     if($db->connect_errno){
         echo 'connection to db failed'; 
         exit;

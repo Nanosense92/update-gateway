@@ -2,8 +2,11 @@
 /*
  * script that create a json fromated variable for google chart
  * */
+
+require_once "/home/pi/enocean-gateway/get_database_password.php";
+
 $option = 'None';
-$db = mysqli_connect('localhost', 'jeedom', '85522aa27894d77', 'jeedom');
+$db = mysqli_connect('localhost', 'jeedom', $jeedom_db_passwd, 'jeedom');
 if ($db->connect_errno){
 	printf('connection failed to db');
 	exit;

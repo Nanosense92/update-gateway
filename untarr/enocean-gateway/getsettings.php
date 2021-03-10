@@ -69,9 +69,12 @@ else{
 /*
  * Database identification
  */
+
+require_once "/home/pi/enocean-gateway/get_database_password.php";
+
 $hostname = 'localhost';
 $username = 'jeedom';
-$password = '85522aa27894d77';
+$password = $jeedom_db_passwd;
 $db = 'jeedom';
 
 // Connect to the database

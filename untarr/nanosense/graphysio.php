@@ -471,7 +471,8 @@
         <form id="data_form" method="post" action="graphysio.php">
             <select id="select_loc" name="select_loc" class="selection">
             <?php
-            $conn = mysqli_connect('localhost','jeedom','85522aa27894d77','jeedom');
+            require_once "/home/pi/enocean-gateway/get_database_password.php";
+            $conn = mysqli_connect('localhost','jeedom',$jeedom_db_passwd,'jeedom');
             $res = $conn->query("SELECT location, date(min(datetime)) AS min_date, date(max(datetime)) AS max_date FROM impact GROUP BY location");
             $isFirst = true;
             $first_min = '';

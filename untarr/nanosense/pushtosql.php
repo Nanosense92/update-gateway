@@ -8,8 +8,10 @@ $port = '';
 $path = '';
 $key = '';
 
+require_once "/home/pi/enocean-gateway/get_database_password.php";
+
 // connect to the database
-$db = mysqli_connect('localhost', 'jeedom', '85522aa27894d77', 'jeedom');
+$db = mysqli_connect('localhost', 'jeedom', $jeedom_db_passwd, 'jeedom');
 
 if($db->connect_errno){
     echo 'connection to db failed'; 
