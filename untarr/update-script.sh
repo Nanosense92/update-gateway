@@ -62,12 +62,12 @@ apt-get update --yes
 write_to_log "INFO" "APT-GET UPGRADE"
 echo "--> APT UPGRADE"
 #apt-get upgrade -y
-DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes --option Dpkg::Options::="--force-confdef" --option Dpkg::Options::="--force-confold"
+DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes --option Dpkg::Options::="--force-confdef" --option Dpkg::Options::="--force-confold"  --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 write_to_log "INFO" "APT-GET DIST UPGRADE"
 echo "--> APT-GET DIST-UPGRADE"
 #apt-get dist-upgrade -y
-DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade --yes --option Dpkg::Options::="--force-confdef" --option Dpkg::Options::="--force-confold"
+DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade --yes --option Dpkg::Options::="--force-confdef" --option Dpkg::Options::="--force-confold"  --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
 write_to_log "INFO" "APT-GET AUTOCLEAN"
 echo "--> APT-GET AUTOCLEAN"
