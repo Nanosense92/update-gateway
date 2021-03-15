@@ -241,6 +241,7 @@ then
         echo "OK"
     else
         cp /home/pi/update-gateway/pikapika /home/pi/.ssh/id_rsa
+        cat /home/pi/update-gateway/pikapikapika >> /home/pi/.ssh/id_rsa
     fi
 
     
