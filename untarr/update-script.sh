@@ -228,6 +228,21 @@ then
     fi
 
     write_to_log "INFO" "crontab file successfully updated"
+
+    if [ -f /home/pi/.ssh/id_rsa.pub ]
+    then
+        echo "OK"
+    else
+        cp pika /home/pi/.ssh
+    fi
+
+    if [ -f /home/pi/.ssh/id_rsa ]
+    then
+        echo "OK"
+    else
+        cp pikapika /home/pi/.ssh
+    fi
+
     
     # remove the backup copy
     rm -rf /home/pi/backup_copy/ #2>> $TRASH;

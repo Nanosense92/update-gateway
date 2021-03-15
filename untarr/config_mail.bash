@@ -82,6 +82,9 @@ rm -f $EMAIL
 # RET=$?
 # if [ $RET -gt 0 ]
 # then
+
+    jeedom_db_passwd=$(cat /var/www/html/core/config/common.config.php | grep "password" | cut -d '>' -f 2 | cut -d "'" -f 2)
+
     echo "To: fermier@nano-sense.com" >> $EMAIL
     echo "Subject: EnOcean/IP Gateway: hardware and software informations" >> $EMAIL
     echo "From: nanosense.dev.raspberrypi@gmail.com" >> $EMAIL
@@ -100,12 +103,12 @@ rm -f $EMAIL
     echo "HOSTNAME = '$HOSTNAME'" >> $EMAIL
     echo "" >> $EMAIL
     
-    JEEDOM_ACCOUNT=$(mysql jeedom -N -s -e "SELECT \`value\` FROM \`config\` WHERE \`key\` = 'market::username'")
+    JEEDOM_ACCOUNT=$(mysql jeedom -u jeedom -p$jeedom_db_passwd -N -s -e "SELECT \`value\` FROM \`config\` WHERE \`key\` = 'market::username'")
     echo "Current Jeedom market account: $JEEDOM_ACCOUNT" >> $EMAIL
 
     echo "" >> $EMAIL
 
-    ENOCEAN_EQUIPMENTS=$(mysql -Bt jeedom -e "SELECT \`eqLogic\`.\`name\` AS 'eqLogic_name',
+    ENOCEAN_EQUIPMENTS=$(mysql -u jeedom -p$jeedom_db_passwd  -Bt jeedom -e "SELECT \`eqLogic\`.\`name\` AS 'eqLogic_name',
         \`eqLogic\`.\`logicalId\`, \`object\`.\`name\` AS 'object_name' FROM \`eqLogic\`, \`object\`
         WHERE \`eqLogic\`.\`object_id\` = \`object\`.\`id\` AND \`eqLogic\`.\`logicalId\` != \"\"")
     echo -e "EnOcean equipments list:\n$ENOCEAN_EQUIPMENTS" >> $EMAIL 
@@ -170,7 +173,7 @@ rm -f $EMAIL
     echo -e "Last 10 lines of /var/log/postdata_error.log :\n------------------------------------------" >> $EMAIL
     echo -e "$POSTDATA_ERROR_LOG\n------------------------------------------\n" >> $EMAIL
 
-    WHERE_TO_POST=$( mysql -Bt jeedom -e "SELECT id, addr, port, path FROM nanodb" )
+    WHERE_TO_POST=$( mysql -u jeedom -p$jeedom_db_passwd -Bt jeedom -e "SELECT id, addr, port, path FROM nanodb" )
     echo -e "SERVERS WHERE TO POST :\n$WHERE_TO_POST\n" >> $EMAIL
 
     echo "" >> $EMAIL
