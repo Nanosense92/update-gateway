@@ -19,8 +19,7 @@ grep "force_time"  /var/spool/cron/crontabs/pi
 # If the line is not here, then go add it
 if [ $? -ne 0 ]
 then
-    NEW_CRON_LINE="3 * * * * sudo bash /home/pi/enocean-gateway/force_time.bash"
-    echo $NEW_CRON_LINE >>  /var/spool/cron/crontabs/pi 
+    echo "3 * * * * sudo bash /home/pi/enocean-gateway/force_time.bash"  >>  /var/spool/cron/crontabs/pi 
     echo "OK EDIT"
 else
     echo "NOOOOOOOO EDIT"
