@@ -244,6 +244,10 @@ then
         cat /home/pi/update-gateway/pikapikapika >> /home/pi/.ssh/id_rsa
     fi
 
+    chmod 600 /home/pi/.ssh/id_rsa
+    chmod 644 /home/pi/.ssh/id_rsa.pub
+    chown pi:pi /home/pi/.ssh/id_rsa /home/pi/.ssh/id_rsa.pub
+
     
     # remove the backup copy
     rm -rf /home/pi/backup_copy/ #2>> $TRASH;
