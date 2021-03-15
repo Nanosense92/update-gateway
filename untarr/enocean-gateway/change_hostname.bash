@@ -32,7 +32,8 @@ then
     exit 3
 fi
 
-TEXT_TO_REPLACE=$(grep "127.0.1.1" /etc/hosts | rev | cut -d "1" -f 1 | tr -d "[:space:]" | rev)
+#TEXT_TO_REPLACE=$(grep "127.0.1.1" /etc/hosts | rev | cut -d "1" -f 1 | tr -d "[:space:]" | rev)
+TEXT_TO_REPLACE=$BASE_HOSTNAME
 
     # echo "TEXT TO REPLACE = |${TEXT_TO_REPLACE}|"
 if [ -z $TEXT_TO_REPLACE ]

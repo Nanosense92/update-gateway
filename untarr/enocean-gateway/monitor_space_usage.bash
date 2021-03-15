@@ -1,5 +1,11 @@
 #!/bin/bash
 
+bash /home/pi/enocean-gateway/is_raspi.bash
+if [ $? -ne 0 ]
+then
+    exit 0;
+fi
+
 # This script verifies the amount of used memory on the hard drive.
 # If the amount of used memory is too high, then this script reduces the memory usage
 #   with several ways : Removing and/or reducing some cache-files ;

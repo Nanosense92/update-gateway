@@ -1,5 +1,12 @@
 #!/bin/bash
 
+bash /home/pi/enocean-gateway/is_raspi.bash
+if [ $? -ne 0 ]
+then
+    exit 0;
+fi
+
+
 if [ -f /etc/log2ram.conf ]
 then
     exit 0

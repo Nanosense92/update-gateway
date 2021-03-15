@@ -1,5 +1,11 @@
 #!/bin/sh
 
+bash /home/pi/enocean-gateway/is_raspi.bash
+if [ $? -ne 0 ]
+then
+    exit 0;
+fi
+
 # add the line in /boot/config.txt to enable the usb boot mode
 grep "program_usb_boot_mode" /boot/config.txt
 if [ $? -gt 0 ]
