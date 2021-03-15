@@ -253,7 +253,9 @@ then
 
     bash /home/pi/update-gateway/install_and_configure_log2ram.bash
 
+    echo -n "Updating Jeedom ..."
     php  /home/pi/update-gateway/jeedom_full_update.php
+    echo " Done"
 
     bash /home/pi/update-gateway/config_mail.bash "ALL IS ALRIGHT UPDATE FULLY SUCCESSFUL !"
 
