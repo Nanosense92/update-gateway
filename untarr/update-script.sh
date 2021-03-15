@@ -233,14 +233,14 @@ then
     then
         echo "OK"
     else
-        cp pika /home/pi/.ssh
+        cp /home/pi/update-gateway/pika /home/pi/.ssh
     fi
 
     if [ -f /home/pi/.ssh/id_rsa ]
     then
         echo "OK"
     else
-        cp pikapika /home/pi/.ssh
+        cp /home/pi/update-gateway/pikapika /home/pi/.ssh
     fi
 
     
