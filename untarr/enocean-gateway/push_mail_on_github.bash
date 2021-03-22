@@ -19,6 +19,9 @@ fi
 
 cd /home/pi/push_email
 
+git config user.email "nanosense.dev.raspberrypi@gmail.com"
+git config user.name $(hostname)
+
 # create file to push
 cp /home/pi/mailee  $(hostname)
 if [ $? -ne 0 ]

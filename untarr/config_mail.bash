@@ -8,6 +8,7 @@ TRASH='/dev/null'
 function write_to_log () 
 {
     echo "$(date): $1: $2" >> $LOG;
+    echo "$(date): $1: $2"
 }
     
 # idem as the first one except that it exits with $3
@@ -92,6 +93,12 @@ rm -f $EMAIL
     FIRMWARE_VERSION=$(grep "version" /home/pi/Nano-Setting.json | cut -d '"' -f 4)
     echo "Firmware version: $FIRMWARE_VERSION" >> $EMAIL
     echo $(date) >> $EMAIL
+
+    echo "" >> $EMAIL
+
+    echo -n "Hardware : " >> $EMAIL
+    cat /proc/device-tree/model >> $EMAIL
+    echo " " >> $EMAIL
 
     echo "" >> $EMAIL
 

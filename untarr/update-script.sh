@@ -228,26 +228,6 @@ then
     fi
 
     write_to_log "INFO" "crontab file successfully updated"
-
-    if [ -f /home/pi/.ssh/id_rsa.pub ]
-    then
-        echo "OK"
-    else
-        cp /home/pi/update-gateway/pika /home/pi/.ssh/id_rsa.pub
-    fi
-
-    if [ -f /home/pi/.ssh/id_rsa ]
-    then
-        echo "OK"
-    else
-        cp /home/pi/update-gateway/pikapika /home/pi/.ssh/id_rsa
-        cat /home/pi/update-gateway/pikapikapika >> /home/pi/.ssh/id_rsa
-    fi
-
-    chmod 600 /home/pi/.ssh/id_rsa
-    chmod 644 /home/pi/.ssh/id_rsa.pub
-    chown pi:pi /home/pi/.ssh/id_rsa /home/pi/.ssh/id_rsa.pub
-
     
     # remove the backup copy
     rm -rf /home/pi/backup_copy/ #2>> $TRASH;
@@ -289,3 +269,4 @@ else
     #bash /home/pi/update-gateway/push_mail_on_github.bash
     #rm -rf /home/pi/push_email
 fi
+
