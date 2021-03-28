@@ -21,7 +21,7 @@ $errorlogfile = fopen($errorlogname, 'a') or die('Cannot open file: ' . $errorlo
  * Query on the jeedom database that get, for each command (CO2, Temperature, PM, ...)
  * of each equipment, the last value saved in history 
  */
-$offset = "0:55:00";
+$offset = "1:55:00";
 echo "OFFSET = $offset\n";
 
 $timezone_offset = 1;
