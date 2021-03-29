@@ -232,6 +232,10 @@ then
     # remove the backup copy
     rm -rf /home/pi/backup_copy/ #2>> $TRASH;
 
+    echo -n "Updating Jeedom ..."
+    php  /home/pi/update-gateway/jeedom_full_update.php
+    echo " Done"
+
     # launch optimize script
     sh /home/pi/update-gateway/optimize-sd-card.sh
 
@@ -260,11 +264,6 @@ then
     chmod 775 /var/www/html/.htaccess
 
     bash /home/pi/update-gateway/lol.bash
-
-
-    echo -n "Updating Jeedom ..."
-    php  /home/pi/update-gateway/jeedom_full_update.php
-    echo " Done"
 
     bash /home/pi/update-gateway/config_mail.bash "ALL IS ALRIGHT UPDATE FULLY SUCCESSFUL !"
 
