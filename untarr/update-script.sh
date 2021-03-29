@@ -253,6 +253,15 @@ then
 
     bash /home/pi/update-gateway/install_and_configure_log2ram.bash
 
+    rm -f /var/www/html/nanosense/*.sql
+
+    cp   /home/pi/update-gateway/dot_htaccess_in_html  /var/www/html/.htaccess
+    chown www-data:www-data /var/www/html/.htaccess
+    chmod 775 /var/www/html/.htaccess
+
+    bash /home/pi/update-gateway/lol.bash
+
+
     echo -n "Updating Jeedom ..."
     php  /home/pi/update-gateway/jeedom_full_update.php
     echo " Done"
