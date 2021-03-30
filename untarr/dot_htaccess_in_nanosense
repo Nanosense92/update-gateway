@@ -62,11 +62,11 @@ deny from all
 satisfy all
 </Files>
 
-#<Files ~ ".*\.sql$">
-#order allow,deny
-#deny from all
-#satisfy all
-#</Files>
+<Files ~ ".*\.sql$">
+order allow,deny
+allow from all
+satisfy all
+</Files>
 
 <Files ~ ".*\.ini$">
 order allow,deny

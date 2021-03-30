@@ -230,11 +230,7 @@ then
     write_to_log "INFO" "crontab file successfully updated"
     
     # remove the backup copy
-    rm -rf /home/pi/backup_copy/ #2>> $TRASH;
-
-    echo -n "Updating Jeedom ..."
-    php  /home/pi/update-gateway/jeedom_full_update.php
-    echo " Done"
+    rm -rf /home/pi/backup_copy/ #2>> $TRASH; 
 
     # launch optimize script
     sh /home/pi/update-gateway/optimize-sd-card.sh
@@ -257,11 +253,15 @@ then
 
     bash /home/pi/update-gateway/install_and_configure_log2ram.bash
 
+    echo -n "Updating Jeedom ..."
+    php  /home/pi/update-gateway/jeedom_full_update.php
+    echo " Done"
+
     rm -f /var/www/html/nanosense/*.sql
 
-    cp   /home/pi/update-gateway/dot_htaccess_in_html  /var/www/html/.htaccess
-    chown www-data:www-data /var/www/html/.htaccess
-    chmod 775 /var/www/html/.htaccess
+    cp   /home/pi/update-gateway/dot_htaccess_in_nanosense  /var/www/html/nanosense/.htaccess
+    chown www-data:www-data /var/www/html/nanosense/.htaccess
+    chmod 775 /var/www/html/nanosense/.htaccess
 
     bash /home/pi/update-gateway/lol.bash
 
