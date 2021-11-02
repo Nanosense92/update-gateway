@@ -61,8 +61,8 @@ include('modifysql.php')
                 <label for="port"><b>Port (required)</b></label>
                 <input type="number" min="0" max="65535" placeholder="Enter port" name="port" value="<?php echo $port?>" required>
 
-                <label for="path"><b>Api path (required)</b></label>
-                <input type="text" placeholder="Enter path" name="path" value="<?php echo $path?>" required>
+                <label for="path"><b>Api path (optional)</b></label>
+                <input type="text" placeholder="Enter path" name="path" value="<?php echo $path?>" optional>
 
                 <label for="key"><b>EnOcean box location/key (optional)</b></label>
                 <input type="text" placeholder="Enter key" name="key" value="<?php echo $loc?>" optional>

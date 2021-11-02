@@ -36,8 +36,8 @@
                 <label for="port"><b>Port (required)</b></label>
                 <input type="number" min="0" max="65535" placeholder="Enter port" name="port" required>
 
-                <label for="path"><b>Api path (required)</b></label>
-                <input type="text" placeholder="Enter path" name="path" required>
+                <label for="path"><b>Api path (optional)</b></label>
+                <input type="text" placeholder="Enter path" name="path" optional>
 
                 <label for="key"><b>EnOcean box location/key (optional)</b></label>
                 <input type="text" placeholder="Enter key" name="key" optional>

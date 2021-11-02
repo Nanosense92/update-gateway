@@ -35,6 +35,56 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
             $url_without_ending_slash = $url;
         }
 
+
+        if ( strpos($url, "ftp") !== false ) {
+
+            $protocol = "FTP";
+            if ( strpos($url, "sftp") !== false ) {
+                $protocol = "SFTP";
+            }
+            if ( strpos($url, "ftps") !== false ) {
+                $protocol = "FTPS";
+            }
+
+            $ftp_url = $url_without_ending_slash;
+
+            if ($http_row['path'] != NULL) {
+                if ($http_row['path'][0] != '/') {
+                    $ftp_url = $url_without_ending_slash . '/';
+                }
+                $ftp_url = $ftp_url . $http_row['path'];
+                if ( $ftp_url[strlen($ftp_url) - 1] !== '/' ) {
+                    $ftp_url = $ftp_url . '/';
+                }
+            }
+            else {
+                $ftp_url = $ftp_url . '/';
+            }
+            
+            $ftp_port = 21;
+            if ($protocol === "SFTP") {
+                $ftp_port = 22;
+            }
+            if ($http_row['port'] != NULL) {
+                $ftp_port = $http_row['port'];
+            }
+
+            $user = "";
+            $passwd = "";
+            $user_and_passwd = NULL;
+            if ($http_row['login'] != NULL) {
+                $user = $http_row['login'];
+                if ($http_row['password'] != NULL) {
+                    $passwd = $http_row['password'];
+                    $user_and_passwd = $user . ':' . $passwd;
+                }
+            }
+            
+            ftp_request($data, $ftp_url, $ftp_port, $alias, $pollutant, $user_and_passwd, $protocol);
+            continue ;
+        } // if() ftp
+
+
         // if the port is set, add it at the end of the URL with a ':' before
         if ($http_row['port'] != NULL)
             $url = $url . ':' . $http_row['port'];
@@ -95,7 +145,7 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
         
         //if ( true && (strpos($data, 'big_presence') !== FALSE 
         //|| strpos($data, 'beige') !== FALSE) )
-        if (true)
+        if (false)
         {
             echo "\nDEBUG ** JSON ---- BEGIN ----\n";
             echo $data . "\n";
@@ -127,5 +177,75 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
 
         curl_close($ch);
    } // end while()
-} // end function
+} // end function http_request()
+
+
+
+
+
+function ftp_request($data, $ftp_url, $ftp_port, $alias, $pollutant, $user_and_passwd, $protocol)
+{
+    echo "FUNC FTP REQUEST()\nprotocol = $protocol\nURL = $ftp_url\nport = $ftp_port\nalias = $alias\nuserpasswd = $user_and_passwd\n";
+    // open tmp file
+    // write json into tmp file
+    // upload tmp file
+
+    $ftp_tmp_file = "/tmp/tmp_ftp.json";
+    $fp_ftp_tmp_file = fopen($ftp_tmp_file, 'w');
+    if ($fp_ftp_tmp_file === FALSE) {
+        echo "FATAL ERROR FOPEN FAILED (w)\n";
+        return ;
+    }
+    $ret = fwrite($fp_ftp_tmp_file, $data);  //echo "WRITE RETURNED $ret\n";
+    fclose($fp_ftp_tmp_file);
+
+    chmod($ftp_tmp_file, 777);
+
+    clearstatcache(true, $ftp_tmp_file);
+
+    $fp_ftp_tmp_file = fopen($ftp_tmp_file, 'r');
+    if ($fp_ftp_tmp_file === FALSE) {
+        echo "FATAL ERROR FOPEN FAILED (r)\n";
+        return ;
+    }
+
+
+    $outfile = "nanosense__" . $alias . "__" . $pollutant . "__" . date("YmdHis", time());
+    echo "FTP OUTFILE = '$outfile'\n";
+
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $ftp_url . $outfile);
+    curl_setopt($ch, CURLOPT_PORT, $ftp_port);
+    if ($user_and_passwd !== NULL) {
+        curl_setopt($ch, CURLOPT_USERPWD, $user_and_passwd);
+    }
+    curl_setopt($ch, CURLOPT_UPLOAD, 1);
+    if ($protocol === "SFTP") {
+        curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_SFTP);
+    }
+    curl_setopt($ch, CURLOPT_INFILE, $fp_ftp_tmp_file);
+    curl_setopt($ch, CURLOPT_INFILESIZE, filesize($ftp_tmp_file));
+    if ($protocol === "FTPS") {
+        curl_setopt($ch, CURLOPT_FTP_SSL, TRUE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
+        //curl_setopt($ch, CURLOPT_VERBOSE, TRUE);
+    }
+    curl_exec ($ch);
+    $error_no = curl_errno($ch);
+    if ($error_no) {
+        echo 'File Upload CURL error: '. curl_error($ch) . "\n";
+    } 
+    else {
+        echo "File uploaded succesfully\n";
+    }
+
+    curl_close ($ch);
+    fclose($fp_ftp_tmp_file);
+
+
+} // end function ftp_request()
+
+
 ?>

@@ -34,7 +34,7 @@ if (isset($_POST['reg_db'])) {
     $key = mysqli_real_escape_string($db, $_POST['key']);
 }
 
-if ($addr != '' && $path != '' && $port != '')
+if ($addr != '' && $port != '')
 {
     $insertquery = "INSERT INTO nanodb (login, password, addr, port, path, location) VALUES('$login', '$pass', '$addr', '$port', '$path', '$key')";
     $dblog = mysqli_query($db, $insertquery);

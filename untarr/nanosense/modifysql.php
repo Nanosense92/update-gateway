@@ -16,7 +16,7 @@ if (isset($_POST['reg_db'])){
     $path = mysqli_real_escape_string($db, $_POST['path']);
     $loc = mysqli_real_escape_string($db, $_POST['key']);
 
-    if ($addr != '' && $path != '' && $port != ''){
+    if ($addr != '' && $port != ''){
         $modify_table = "UPDATE nanodb SET login = '$login', password = '$pass', addr = '$addr', port = '$port', path = '$path', location = '$loc' WHERE id = '$db_id'";
         $dbres = $db->query($modify_table);
         $db->close();
