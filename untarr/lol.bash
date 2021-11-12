@@ -6,7 +6,7 @@ jeedom_db_passwd=$(cat /var/www/html/core/config/common.config.php | grep "passw
 
 # passerelle modbus bouygues avec 1 QAA
 # need garder ce lol fix pour au moins tout le mois de novembre 2021 (ensuite la gw bouygues devrait etre reparee)
-if [ "$hostnamee" = "nsgw-001e0637bf11" ]
+if [ "$hostnamee" = "nsgw-001e0637eb5f" ]
 then
     crontab -u pi -l | grep -i "modbus"
     if [ $? -ne 0 ]
