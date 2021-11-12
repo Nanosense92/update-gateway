@@ -208,6 +208,15 @@ then
     
     write_to_log "INFO" "updating crontab file..."
     
+    # keep modbus command in a tmp file
+    touch /tmp/ns_modbus_cmd.txt
+    crontab -u pi -l | grep -i "modbus"
+    if [ $? -eq 0 ]
+    then
+        touch /tmp/ns_modbus_cmd.txt
+        crontab -u pi -l | grep -i "modbus" > /tmp/ns_modbus_cmd.txt
+    fi
+
     ERROR=$(cp --force update-gateway/crontabs/pi /var/spool/cron/crontabs/ 2>&1) # 1>>$TRASH)
     RET=$?
     if [ $RET -gt 0 ]
@@ -225,6 +234,11 @@ then
     then
         write_to_log "ERROR" "error while reloading the crontab file"
         write_to_log_restore2_and_exit "ERROR" "$ERROR" "$RET" "ERROR AT LINE $LINENO IN FILE $0"
+    fi
+
+    if [ -f /tmp/ns_modbus_cmd.txt ]
+    then
+        cat /tmp/ns_modbus_cmd.txt >> /var/spool/cron/crontabs/pi
     fi
 
     write_to_log "INFO" "crontab file successfully updated"

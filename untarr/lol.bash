@@ -4,20 +4,20 @@ hostnamee=$(hostname)
 
 jeedom_db_passwd=$(cat /var/www/html/core/config/common.config.php | grep "password" | cut -d '>' -f 2 | cut -d "'" -f 2)
 
-# wibrain ip 14
+# passerelle modbus bouygues avec 1 QAA
+# need garder ce lol fix pour au moins tout le mois de novembre 2021 (ensuite la gw bouygues devrait etre reparee)
 if [ "$hostnamee" = "nsgw-001e0637bf11" ]
 then
-    mysql -u jeedom -p$jeedom_db_passwd -D jeedom  -e "UPDATE config SET value='-3 month' WHERE \`key\`='historyPurge';"
+    crontab -u pi -l | grep -i "modbus"
+    if [ $? -ne 0 ]
+    then
+        echo "* * * * * sudo /home/pi/modbus_ns/a.out RETRIEVE RTU QAA 4 6 7 8 10 11 3 4" >> /var/spool/cron/crontabs/pi
+    fi
+
+    sudo cp  ./a.out  /home/pi/modbus_ns/
     exit 0
 fi
 
 
-# madi B
-if [ "$hostnamee" = "nsgw-b827eb23f075" ]
-then
-    mysql -u jeedom -p$jeedom_db_passwd -D jeedom  -e "UPDATE config SET value='-3 month' WHERE \`key\`='historyPurge';"
-    exit 0
-fi
 
-
-exit 0
+exit 0  

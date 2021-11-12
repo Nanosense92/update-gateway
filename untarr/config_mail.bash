@@ -97,8 +97,8 @@ rm -f $EMAIL
     echo "" >> $EMAIL
 
     echo -n "Hardware : " >> $EMAIL
-    cat /proc/device-tree/model >> $EMAIL
-    echo " " >> $EMAIL
+    CURRENT_HARDWARE=$(cat /proc/device-tree/model)
+    echo $CURRENT_HARDWARE >> $EMAIL
 
     echo "" >> $EMAIL
 
@@ -115,9 +115,10 @@ rm -f $EMAIL
 
     echo "" >> $EMAIL
 
-    ENOCEAN_EQUIPMENTS=$(mysql -u jeedom -p$jeedom_db_passwd  -Bt jeedom -e "SELECT \`eqLogic\`.\`name\` AS 'eqLogic_name',
-        \`eqLogic\`.\`logicalId\`, \`object\`.\`name\` AS 'object_name' FROM \`eqLogic\`, \`object\`
-        WHERE \`eqLogic\`.\`object_id\` = \`object\`.\`id\` AND \`eqLogic\`.\`logicalId\` != \"\"")
+    ENOCEAN_EQUIPMENTS=$(mysql -u jeedom -p8007f680c36b1d8  -Bt jeedom -e "SELECT DISTINCT 
+    \`eqLogic\`.\`name\` AS 'eqLogic_name', \`eqLogic\`.\`logicalId\`, \`object\`.\`name\` AS 'object_name', 
+    history.datetime FROM \`eqLogic\`, \`object\`, history  WHERE \`eqLogic\`.\`object_id\` = \`object\`.\`id\` 
+    AND \`eqLogic\`.\`logicalId\` != \"\" ORDER BY \`datetime\` DESC LIMIT 10")
     echo -e "EnOcean equipments list:\n$ENOCEAN_EQUIPMENTS" >> $EMAIL 
    
     echo "" >> $EMAIL
@@ -197,14 +198,15 @@ rm -f $EMAIL
 
     
     write_to_log "INFO" "send email"
+    write_to_log "INFO" "ok email is prepared"
 
-    ERROR=$(sendmail -t < $EMAIL)
-    RET=$?
-    if [ $RET -gt 0 ]
-    then
-        write_to_log "ERROR" "error while sending mail"
-        write_to_log_and_exit "ERROR" "$ERROR" "$RET"
-    fi
+    #ERROR=$(sendmail -t < $EMAIL)
+    #RET=$?
+    #if [ $RET -gt 0 ]
+    #then
+    #    write_to_log "ERROR" "error while sending mail"
+    #    write_to_log_and_exit "ERROR" "$ERROR" "$RET"
+    #fi
 #fi
 
 rm -f $EMAIL

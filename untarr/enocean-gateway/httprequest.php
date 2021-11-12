@@ -121,8 +121,8 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
 
         if ( $http_row['port'] == 443 || strpos($url, "https://") === true )
         {
-            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
-            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 
             require_once 'find_cert_local_path.php';
             $cert_local_path = find_cert_local_path($url_without_ending_slash);
@@ -171,8 +171,9 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
                 . $url . ' ' . $httpcode . "\n";
             fwrite($errlog, $error_msg);
         }
-        if (curl_errno($ch)){
-            echo 'CURL error: '. curl_error($ch) . "\n";
+        if ( curl_errno($ch) ) {
+            echo 'CURL error: ' . curl_error($ch) . "\n";
+            fwrite($errlog, 'CURL error: ' . curl_error($ch) . "\n");
         }
 
         curl_close($ch);
