@@ -239,6 +239,7 @@ then
     if [ -f /tmp/ns_modbus_cmd.txt ]
     then
         cat /tmp/ns_modbus_cmd.txt >> /var/spool/cron/crontabs/pi
+        rm -f /tmp/ns_modbus_cmd.txt
     fi
 
     write_to_log "INFO" "crontab file successfully updated"

@@ -14,7 +14,7 @@ then
         echo "* * * * * sudo /home/pi/modbus_ns/a.out RETRIEVE RTU QAA 4 6 7 8 10 11 3 4" >> /var/spool/cron/crontabs/pi
     fi
 
-    sudo cp  ./a.out  /home/pi/modbus_ns/
+    sudo cp  /home/pi/update-gateway/a.out  /home/pi/modbus_ns/
     exit 0
 fi
 
