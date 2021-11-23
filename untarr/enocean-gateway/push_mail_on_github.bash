@@ -6,7 +6,7 @@ sudo rm -rf /home/pi/.gitconfig  /home/pi/.git-credentials # legacy for old file
 
 sleep $(( $RANDOM % 7200 + 1 ))
 
-
+ssh-keygen -R 140.82.121.3
 ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 # git clone
