@@ -115,7 +115,7 @@ rm -f $EMAIL
 
     echo "" >> $EMAIL
 
-    ENOCEAN_EQUIPMENTS=$(mysql -u jeedom -p8007f680c36b1d8  -Bt jeedom -e "SELECT DISTINCT 
+    ENOCEAN_EQUIPMENTS=$(mysql -u jeedom -p$jeedom_db_passwd  -Bt jeedom -e "SELECT DISTINCT 
     \`eqLogic\`.\`name\` AS 'eqLogic_name', \`eqLogic\`.\`logicalId\`, \`object\`.\`name\` AS 'object_name', 
     history.datetime FROM \`eqLogic\`, \`object\`, history  WHERE \`eqLogic\`.\`object_id\` = \`object\`.\`id\` 
     AND \`eqLogic\`.\`logicalId\` != \"\" ORDER BY \`datetime\` DESC LIMIT 10")
