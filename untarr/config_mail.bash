@@ -115,10 +115,13 @@ rm -f $EMAIL
 
     echo "" >> $EMAIL
 
+    NUMBER_OF_ENOCEAN_EQUIP=$(mysql jeedom -u jeedom -p$jeedom_db_passwd -N -s -e "SELECT COUNT(*) FROM eqLogic WHERE eqType_name = 'openenocean'")
+    
     ENOCEAN_EQUIPMENTS=$(mysql -u jeedom -p$jeedom_db_passwd  -Bt jeedom -e "SELECT DISTINCT 
     \`eqLogic\`.\`name\` AS 'eqLogic_name', \`eqLogic\`.\`logicalId\`, \`object\`.\`name\` AS 'object_name', 
     history.datetime FROM \`eqLogic\`, \`object\`, history  WHERE \`eqLogic\`.\`object_id\` = \`object\`.\`id\` 
-    AND \`eqLogic\`.\`logicalId\` != \"\" ORDER BY \`datetime\` DESC LIMIT 10")
+    AND \`eqLogic\`.\`logicalId\` != \"\" ORDER BY \`datetime\` DESC LIMIT $NUMBER_OF_ENOCEAN_EQUIP")
+   
     echo -e "EnOcean equipments list:\n$ENOCEAN_EQUIPMENTS" >> $EMAIL 
    
     echo "" >> $EMAIL

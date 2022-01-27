@@ -1,26 +1,37 @@
 <?php
-require_once "/home/pi/enocean-gateway/get_database_password.php";
+//require_once "/home/pi/enocean-gateway/get_database_password.php";
 
 if (isset($_POST['db_id'])){
     $db_id = $_POST['db_id'];
 
-    $db = mysqli_connect('localhost', 'jeedom', $jeedom_db_passwd, 'jeedom');
-    if ($db->connect_errno){
-        echo 'connection to db failed';
-        exit;
-    }
+    // $db = mysqli_connect('localhost', 'jeedom', $jeedom_db_passwd, 'jeedom');
+    // if ($db->connect_errno){
+    //     echo 'connection to db failed';
+    //     exit;
+    // }
 
-    $nanodb_table = 'SELECT login, password, addr, port, path, location FROM nanodb WHERE id = ' . $db_id;
-    $dbres = $db->query($nanodb_table);
-    $row = $dbres->fetch_array(MYSQLI_BOTH);
-    $login = $row[0];
-    $pass = $row[1];
-    $addr = $row[2];
-    $port = $row[3];
-    $path = $row[4];
-    $loc = $row[5];
+    // $nanodb_table = 'SELECT login, password, addr, port, path, location FROM nanodb WHERE id = ' . $db_id;
+    // $dbres = $db->query($nanodb_table);
+    // $row = $dbres->fetch_array(MYSQLI_BOTH);
     
-    $db->close();
+    $push_infos_array = file("/var/www/html/nanosense/pushtocloud.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if ($push_infos_array === false) {
+        echo "FATAL ERROR: failed to open file pushtocloud.conf (4)\n";
+        exit ;
+    }
+    $exploded = explode(' ', $push_infos_array[$db_id]);
+    for ($j = 0 ; $j < count($exploded) ; $j++) {
+        $exploded[$j] = trim($exploded[$j], "'");
+    }
+    
+    $login = $exploded[0];
+    $pass  = $exploded[1];
+    $addr  = $exploded[2];
+    $port  = $exploded[3];
+    $path  = $exploded[4];
+    $loc   = $exploded[5];
+    
+    // $db->close();
 }
 include('modifysql.php')
 ?>

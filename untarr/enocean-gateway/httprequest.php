@@ -18,8 +18,30 @@
 function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
 { 
     // get all the informations about the URL where the data will be sent
-    $http_query = $dbconnect->query('SELECT * FROM nanodb');
-    while ($http_row = $http_query->fetch_array(MYSQLI_BOTH)) {
+    $push_infos_array = file("/var/www/html/nanosense/pushtocloud.conf", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    if ($push_infos_array === false) {
+        echo "FATAL ERROR: failed to open file pushtocloud.conf (3)\n";
+        exit ;
+    }
+
+    //$http_query = $dbconnect->query('SELECT * FROM nanodb');
+    $nb_lines = count($push_infos_array);
+    //while ($http_row = $http_query->fetch_array(MYSQLI_BOTH)) {
+    for ($i = 0 ; $i < $nb_lines ; $i++) {
+        $exploded = explode(' ', $push_infos_array[$i]);
+        // retirer les quotes
+        for ($j = 0 ; $j < count($exploded) ; $j++) {
+            $exploded[$j] = trim($exploded[$j], "'");
+        }
+        // flemme de modifier tout le code qui suit du coup je recréé http_row[]
+        $http_row = array('login' => $exploded[0],
+                          'password' => $exploded[1],
+                          'addr' => $exploded[2],
+                          'port' => $exploded[3],
+                          'path' => $exploded[4],
+                          'location' => $exploded[5]
+                        );
+
 
         $token = $http_row['location'];
         $url = $http_row['addr'];
@@ -145,7 +167,7 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
         
         //if ( true && (strpos($data, 'big_presence') !== FALSE 
         //|| strpos($data, 'beige') !== FALSE) )
-        if (false)
+        if (true)
         {
             echo "\nDEBUG ** JSON ---- BEGIN ----\n";
             echo $data . "\n";
@@ -172,7 +194,7 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
             fwrite($errlog, $error_msg);
         }
         if ( curl_errno($ch) ) {
-            echo 'CURL error: ' . curl_error($ch) . "\n";
+            echo date('Y-m-d H:i:s') . ' CURL error: ' . curl_error($ch) . "\n";
             fwrite($errlog, 'CURL error: ' . curl_error($ch) . "\n");
         }
 
