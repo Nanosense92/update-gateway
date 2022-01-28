@@ -3,5 +3,5 @@
  
     $jeedom_db_passwd = $GLOBALS['CONFIG']['db']['password'];
 
-    echo $jeedom_db_passwd . "\n";    
+    //echo $jeedom_db_passwd . "\n";    
 ?>
