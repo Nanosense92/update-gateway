@@ -55,31 +55,31 @@ write_to_log_restore2_and_exit ()
 
 write_to_log "INFO" "starting update script"
 
-write_to_log "INFO" "APT-GET UPDATE"
-echo "--> APT-GET UPDATE"
-apt-get update --yes
+# write_to_log "INFO" "APT-GET UPDATE"
+# echo "--> APT-GET UPDATE"
+# apt-get update --yes
 
-write_to_log "INFO" "APT-GET UPGRADE"
-echo "--> APT UPGRADE"
-#apt-get upgrade -y
-DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes --option Dpkg::Options::="--force-confdef" --option Dpkg::Options::="--force-confold"  --allow-downgrades --allow-remove-essential --allow-change-held-packages
+# write_to_log "INFO" "APT-GET UPGRADE"
+# echo "--> APT UPGRADE"
+# #apt-get upgrade -y
+# DEBIAN_FRONTEND=noninteractive apt-get upgrade --yes --option Dpkg::Options::="--force-confdef" --option Dpkg::Options::="--force-confold"  --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
-write_to_log "INFO" "APT-GET DIST UPGRADE"
-echo "--> APT-GET DIST-UPGRADE"
-#apt-get dist-upgrade -y
-DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade --yes --option Dpkg::Options::="--force-confdef" --option Dpkg::Options::="--force-confold"  --allow-downgrades --allow-remove-essential --allow-change-held-packages
+# write_to_log "INFO" "APT-GET DIST UPGRADE"
+# echo "--> APT-GET DIST-UPGRADE"
+# #apt-get dist-upgrade -y
+# DEBIAN_FRONTEND=noninteractive apt-get dist-upgrade --yes --option Dpkg::Options::="--force-confdef" --option Dpkg::Options::="--force-confold"  --allow-downgrades --allow-remove-essential --allow-change-held-packages
 
-write_to_log "INFO" "APT-GET AUTOCLEAN"
-echo "--> APT-GET AUTOCLEAN"
-apt-get autoclean --yes
+# write_to_log "INFO" "APT-GET AUTOCLEAN"
+# echo "--> APT-GET AUTOCLEAN"
+# apt-get autoclean --yes
 
-write_to_log "INFO" "APT-GET AUTOREMOVE"
-echo "--> APT-GET AUTOREMOVE"
-apt-get autoremove --purge --yes
+# write_to_log "INFO" "APT-GET AUTOREMOVE"
+# echo "--> APT-GET AUTOREMOVE"
+# apt-get autoremove --purge --yes
 
-write_to_log "INFO" "DPKG --CONFIGURE -a"
-echo "--> DPKG --CONFIGURE -a"
-dpkg --configure -a --force-confdef --force-confold
+# write_to_log "INFO" "DPKG --CONFIGURE -a"
+# echo "--> DPKG --CONFIGURE -a"
+# dpkg --configure -a --force-confdef --force-confold
 
 
 
@@ -248,10 +248,10 @@ then
     rm -rf /home/pi/backup_copy/ #2>> $TRASH; 
 
     # launch optimize script
-    sh /home/pi/update-gateway/optimize-sd-card.sh
+    # sh /home/pi/update-gateway/optimize-sd-card.sh
 
     # launch script that allow people accessing the web interface to download the .sql dump file
-    sh /home/pi/update-gateway/authorize-file-access.sh
+    # sh /home/pi/update-gateway/authorize-file-access.sh
 
     # disable value smoothing for all Jeedom commands
     php /home/pi/update-gateway/change_historize_round_cmd_jeedom.php
@@ -268,15 +268,15 @@ then
 
     bash /home/pi/update-gateway/install_and_configure_log2ram.bash
 
-    echo -n "Updating Jeedom ..."
-    php  /home/pi/update-gateway/jeedom_full_update.php
-    echo " Done"
+    # echo -n "Updating Jeedom ..."
+    # php  /home/pi/update-gateway/jeedom_full_update.php
+    # echo " Done"
 
     rm -f /var/www/html/nanosense/*.sql
 
-    cp   /home/pi/update-gateway/dot_htaccess_in_nanosense  /var/www/html/nanosense/.htaccess
-    chown www-data:www-data /var/www/html/nanosense/.htaccess
-    chmod 775 /var/www/html/nanosense/.htaccess
+    # cp   /home/pi/update-gateway/dot_htaccess_in_nanosense  /var/www/html/nanosense/.htaccess
+    # chown www-data:www-data /var/www/html/nanosense/.htaccess
+    # chmod 775 /var/www/html/nanosense/.htaccess
 
     bash /home/pi/update-gateway/lol.bash
 

@@ -195,7 +195,7 @@ function http_request($dbconnect, $log, $data, $alias, $pollutant, $errlog)
         }
         if ( curl_errno($ch) ) {
             echo date('Y-m-d H:i:s') . ' CURL error: ' . curl_error($ch) . "\n";
-            fwrite($errlog, 'CURL error: ' . curl_error($ch) . "\n");
+            fwrite($errlog,  date('Y-m-d H:i:s') . ' CURL error: ' . curl_error($ch) . "\n");
         }
 
         curl_close($ch);

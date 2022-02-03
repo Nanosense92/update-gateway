@@ -16,6 +16,11 @@ ssh-keygen -R 140.82.121.4
 
 sleep 1
 
-php /home/pi/update-gateway/nanodb_to_file.php
+if [ ! -s /var/www/html/nanosense/pushtocloud.conf ]
+then
+    php /home/pi/update-gateway/nanodb_to_file.php
+else
+    echo carotte
+fi
 
 exit 0  

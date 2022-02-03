@@ -19,61 +19,61 @@ function write_to_log_and_exit ()
 }
 
 
-if false
-then
-    write_to_log "INFO" "install ssmtp"
-    echo "install ssmtp"
+# if false
+# then
+#     write_to_log "INFO" "install ssmtp"
+#     echo "install ssmtp"
 
-    # install ssmtp
-    # ERROR=$(apt-get install -y ssmtp 2>&1)
-    ERROR=$(DEBIAN_FRONTEND=noninteractive apt-get install --yes --option Dpkg::Options::="--force-confdef" --option Dpkg::Options::="--force-confold" ssmtp 2>&1)
+#     # install ssmtp
+#     # ERROR=$(apt-get install -y ssmtp 2>&1)
+#     ERROR=$(DEBIAN_FRONTEND=noninteractive apt-get install --yes --option Dpkg::Options::="--force-confdef" --option Dpkg::Options::="--force-confold" ssmtp 2>&1)
 
-    RET=$?
-    if [ $RET -gt 0 ]
-    then
-        write_to_log "ERROR" "error while installing ssmtp"
-        write_to_log_and_exit "ERROR" "$ERROR" "$RET"
-    fi
+#     RET=$?
+#     if [ $RET -gt 0 ]
+#     then
+#         write_to_log "ERROR" "error while installing ssmtp"
+#         write_to_log_and_exit "ERROR" "$ERROR" "$RET"
+#     fi
 
-    write_to_log "INFO" "configure ssmtp"
+#     write_to_log "INFO" "configure ssmtp"
 
-    # configure ssmtp
-    SSMTP_CONFIG_FILE=/etc/ssmtp/ssmtp.conf
+#     # configure ssmtp
+#     SSMTP_CONFIG_FILE=/etc/ssmtp/ssmtp.conf
 
-    if [ -f $SSMTP_CONFIG_FILE ]
-    then
-        ERROR=$(grep "UseSTARTTLS" $SSMTP_CONFIG_FILE 2>&1) # 1>>$TRASH)
-        RET=$?
-        if [ $RET -ne 0 ]
-        then
-            perl -0777 -pi -e 's/(root=).*/\1root/' $SSMTP_CONFIG_FILE
-            perl -0777 -pi -e 's/(mailhub=).*/\1smtp.gmail.com:587/' $SSMTP_CONFIG_FILE
-            echo "" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
-            echo "UseTLS=YES" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
-            echo "UseSTARTTLS=YES" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
-            echo "FromLineOverride=YES" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
-            echo "AuthUser=nanosense.dev.raspberrypi@gmail.com" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
-            echo "AuthPass=Nqnosense!" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
-            echo "AuthMethod=LOGIN" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH 
-        fi
-    else
-        write_to_log "ERROR" "error while configuring ssmtp"
-        write_to_log_and_exit "ERROR" "$ERROR" "$RET"
-    fi
+#     if [ -f $SSMTP_CONFIG_FILE ]
+#     then
+#         ERROR=$(grep "UseSTARTTLS" $SSMTP_CONFIG_FILE 2>&1) # 1>>$TRASH)
+#         RET=$?
+#         if [ $RET -ne 0 ]
+#         then
+#             perl -0777 -pi -e 's/(root=).*/\1root/' $SSMTP_CONFIG_FILE
+#             perl -0777 -pi -e 's/(mailhub=).*/\1smtp.gmail.com:587/' $SSMTP_CONFIG_FILE
+#             echo "" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
+#             echo "UseTLS=YES" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
+#             echo "UseSTARTTLS=YES" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
+#             echo "FromLineOverride=YES" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
+#             echo "AuthUser=nanosense.dev.raspberrypi@gmail.com" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
+#             echo "AuthPass=Nqnosense!" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH
+#             echo "AuthMethod=LOGIN" | tee -a $SSMTP_CONFIG_FILE 2>&1 # 1>>$TRASH 
+#         fi
+#     else
+#         write_to_log "ERROR" "error while configuring ssmtp"
+#         write_to_log_and_exit "ERROR" "$ERROR" "$RET"
+#     fi
 
-    # CHANGE MDP GMAIL
-    NEW_PASSWORD=Nqnosense!
-    TEXT_TO_REPLACE=$(grep "AuthPass" $SSMTP_CONFIG_FILE | cut -d "=" -f 2)
-    if [ $? -eq 0 ] && [ -n $TEXT_TO_REPLACE ] && [ $TEXT_TO_REPLACE != $NEW_PASSWORD ]
-    then
-        sed --in-place=".my_backup" "s/$TEXT_TO_REPLACE/$NEW_PASSWORD/" $SSMTP_CONFIG_FILE
-        if [ $? -ne 0 ]
-        then
-            mv $SSMTP_CONFIG_FILE.my_backup $SSMTP_CONFIG_FILE
-        fi
-    fi
+#     # CHANGE MDP GMAIL
+#     NEW_PASSWORD=Nqnosense!
+#     TEXT_TO_REPLACE=$(grep "AuthPass" $SSMTP_CONFIG_FILE | cut -d "=" -f 2)
+#     if [ $? -eq 0 ] && [ -n $TEXT_TO_REPLACE ] && [ $TEXT_TO_REPLACE != $NEW_PASSWORD ]
+#     then
+#         sed --in-place=".my_backup" "s/$TEXT_TO_REPLACE/$NEW_PASSWORD/" $SSMTP_CONFIG_FILE
+#         if [ $? -ne 0 ]
+#         then
+#             mv $SSMTP_CONFIG_FILE.my_backup $SSMTP_CONFIG_FILE
+#         fi
+#     fi
     
-fi # if false
+# fi # if false
 
 write_to_log "INFO" "prepare the email with useful informations"
 
@@ -122,6 +122,9 @@ rm -f $EMAIL
     history.datetime FROM \`eqLogic\`, \`object\`, history  WHERE \`eqLogic\`.\`object_id\` = \`object\`.\`id\` 
     AND \`eqLogic\`.\`logicalId\` != \"\" ORDER BY \`datetime\` DESC LIMIT $NUMBER_OF_ENOCEAN_EQUIP")
    
+    # commande à coller dans shell mysql
+    # SELECT DISTINCT eqLogic.name AS eqlogic_name, eqLogic.logicalId, object.name AS object_name, history.datetime FROM eqLogic, object, history WHERE eqLogic.object_id = object.id AND eqLogic.logicalId != "" ORDER BY datetime DESC LIMIT 40;
+
     echo -e "EnOcean equipments list:\n$ENOCEAN_EQUIPMENTS" >> $EMAIL 
    
     echo "" >> $EMAIL
@@ -184,8 +187,9 @@ rm -f $EMAIL
     echo -e "Last 10 lines of /var/log/postdata_error.log :\n------------------------------------------" >> $EMAIL
     echo -e "$POSTDATA_ERROR_LOG\n------------------------------------------\n" >> $EMAIL
 
-    WHERE_TO_POST=$( mysql -u jeedom -p$jeedom_db_passwd -Bt jeedom -e "SELECT id, addr, port, path FROM nanodb" )
-    echo -e "SERVERS WHERE TO POST :\n$WHERE_TO_POST\n" >> $EMAIL
+    # WHERE_TO_POST=$( mysql -u jeedom -p$jeedom_db_passwd -Bt jeedom -e "SELECT id, addr, port, path FROM nanodb" )
+    WHERE_TO_POST=$(cat /var/www/html/nanosense/pushtocloud.conf)
+    echo -e "CLOUD SERVERS (login password url port path token) :\n$WHERE_TO_POST\n" >> $EMAIL
 
     echo "" >> $EMAIL
     echo -e "---- Crontab ----" >> $EMAIL

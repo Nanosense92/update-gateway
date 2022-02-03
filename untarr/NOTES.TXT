@@ -1,0 +1,36 @@
+Il faut considerer que la table nanodb n'existe plus, d'ailleurs sur 
+les nouvelles box reçues, cette table n'existe pas !
+Du coup il faut modifier config_mail.bash pour arreter d'utiliser cette table
+et utiliser le fichier .conf à la place
+
+
+// Il faut arreter de faire des maj Linux, on laisse jeeddom s'en occuper !
+// Du coup je crois que je vais retirer les maj apt et dpkg
+
+
+// Hmmm ... on met notre propre fichier .htaccess et ça ça va pas plaire à
+// jeedom ! Faut que je vois à quoi sert notre htaccess, quelles sont les diff
+// avec le "vrai" et voir si on on peut arreter d'utiliser le notre.
+// -> notre htaccess sert uniquement à autoriser de DL de fichiers .sql
+// -> je desactive et on verra bien, de tt facon ya dataexport mtn
+
+// Faut check ce que fait authorize-file-access.sh car c'est un peu obscure 
+// Je sais pas si c'est encore necessaire, go comprendre ce que ça fait et
+// go voir si on peut s'en passer
+// -> je desactive et on verra bien
+
+
+// lol.bash attention si je push une nouvelle MAJ ça va duppliquer les URL
+// des cloud non ? Il faudrait que je modifie nanodb_to_file.php pour qu'il
+// ne fasse rien si le fichier .conf existe et n'est pas vide 
+
+
+// jeedom_full_update.php : Je desactive
+// ce script va chercher l'API key dans la BDD mais c'est pu au bon endroit donc
+// ça ne doit meme pu marcher à mon avis
+// de toute manière on en a pu besoin, on ne fait pu de jeedom DIY raspi etc
+
+
+
+
+
