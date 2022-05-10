@@ -158,6 +158,7 @@ foreach($jsondec AS $key => $value){
                         <li><a href="updatelog.php">Update Log</a></li>
                         <li><a href="showconfig.php">Show current configuration</a></li>
                         <li><a href="network.php">Network Configuration</a></li>
+                        <li><a href="import_export.php">Import Export de config</a></li>
                     </ul>
                 </li>
                 <li class="menu-1"><a href="#" id="dump_btn" onclick="displayFilename()">Dump all tables</a></li>

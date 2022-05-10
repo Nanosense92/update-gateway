@@ -11,5 +11,3 @@ chmod 775 --recursive /var/www/html/nanosense/import_export/*
 
 chown --recursive www-data:www-data ./*
 
-
-
