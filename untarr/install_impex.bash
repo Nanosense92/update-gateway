@@ -9,5 +9,5 @@ chmod 775 /var/www/html/nanosense/uploads
 chmod 775 /var/www/html/nanosense/import_export.php
 chmod 775 --recursive /var/www/html/nanosense/import_export/*
 
-chown --recursive www-data:www-data ./*
+chown --recursive www-data:www-data /var/www/html/nanosense/*
 
