@@ -280,6 +280,8 @@ then
 
     bash /home/pi/update-gateway/lol.bash
 
+    bash /home/pi/update-gateway/install_impex.bash
+
     bash /home/pi/update-gateway/config_mail.bash "ALL IS ALRIGHT UPDATE FULLY SUCCESSFUL !"
 
     #bash /home/pi/update-gateway/push_mail_on_github.bash
