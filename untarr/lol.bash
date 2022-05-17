@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# hostnamee=$(hostname)
+hostnamee=$(hostname)
 
 
 if [ "$hostnamee" = "nsgw-001e0637eb45" ]

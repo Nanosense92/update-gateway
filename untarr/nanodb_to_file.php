@@ -29,28 +29,30 @@ if ($fp === false) {
     exit(2);
 }
 
-while ( $http_row = $http_query->fetch_array(MYSQLI_BOTH) ) {
-    $token = $http_row['location'];
-    $url = $http_row['addr'];
-    $login = $http_row['login'];
-    $pass = $http_row['password'];
-    $path = $http_row['path'];
-    $port = $http_row['port'];
+if ($http_query !== false && $http_query !== true) {
+    while ( $http_row = $http_query->fetch_array(MYSQLI_BOTH) ) {
+        $token = $http_row['location'];
+        $url = $http_row['addr'];
+        $login = $http_row['login'];
+        $pass = $http_row['password'];
+        $path = $http_row['path'];
+        $port = $http_row['port'];
 
-    echo "WHILE = \n'$login'\n'$pass'\n'$url'\n'$port'\n'$path'\n'$token'\n\n";
+        echo "WHILE = \n'$login'\n'$pass'\n'$url'\n'$port'\n'$path'\n'$token'\n\n";
 
-    $str_infos_to_save = "'" . $login . "' " 
-    . "'" . $pass . "' " 
-    . "'" . $url . "' " 
-    . "'" . $port . "' " 
-    . "'" . $path . "' " 
-    . "'" . $token . "'\n" ;
-    if ( fwrite($fp, $str_infos_to_save) === false ) {
-        echo "nanodb-to-file: Failed to fwrite() in pushtocloud.conf\n";
-        fclose($fp);
-        exit(3);
-    }
-}
+        $str_infos_to_save = "'" . $login . "' " 
+        . "'" . $pass . "' " 
+        . "'" . $url . "' " 
+        . "'" . $port . "' " 
+        . "'" . $path . "' " 
+        . "'" . $token . "'\n" ;
+        if ( fwrite($fp, $str_infos_to_save) === false ) {
+            echo "nanodb-to-file: Failed to fwrite() in pushtocloud.conf\n";
+            fclose($fp);
+            exit(3);
+        }
+    } // end while()
+}// end if()
 
 fclose($fp);
 
