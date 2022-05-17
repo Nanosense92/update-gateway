@@ -2,13 +2,24 @@
 
 # hostnamee=$(hostname)
 
-# jeedom_db_passwd=$(cat /var/www/html/core/config/common.config.php | grep "password" | cut -d '>' -f 2 | cut -d "'" -f 2)
 
-# if [ "$hostnamee" = "nsgw-001e0637eb5f" ]
-# then
-    
-#     exit 0
-# fi
+if [ "$hostnamee" = "nsgw-001e0637eb45" ]
+then
+    cp /home/pi/update-gateway/a.out  /home/pi/tests/modbus_ns/
+    # exit 0
+fi
+
+if [ "$hostnamee" = "nsgw-001e0637eda0" ]
+then
+    cp /home/pi/update-gateway/a.out  /home/pi/tests/modbus_ns/
+    # exit 0
+fi
+
+if [ "$hostnamee" = "nsgw-0e0247932dad" ]
+then
+    cp /home/pi/update-gateway/a.out  /home/pi/tests/modbus_ns/
+    # exit 0
+fi
 
 #### MIGRATION DE NANODB VERS LE FICHIER PUSHTOCLOUD.CONF 
 
