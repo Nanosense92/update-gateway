@@ -191,6 +191,7 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
             //'pollutant' => $command_name, 
             //'id' => $equipment_ID,
             'id' => $equipment_ID . (($val_row['status'] === "modbus") ? ('-' . gethostname()) : ''),
+            'probe_id' => generate_probe_id($equipment_ID, $data_type, $equipment_alias),
             'id_room' => $id_room,
             'alias_room' => $alias_room,
             //'id_floor' => $id_floor,

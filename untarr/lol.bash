@@ -3,23 +3,12 @@
 hostnamee=$(hostname)
 
 
-if [ "$hostnamee" = "nsgw-001e0637eb45" ]
-then
-    cp /home/pi/update-gateway/a.out  /home/pi/tests/modbus_ns/
+#if [ "$hostnamee" = "nsgw-001e0637eb45" ]
+#then
+#    cp /home/pi/update-gateway/a.out  /home/pi/tests/modbus_ns/
     # exit 0
-fi
+#fi
 
-if [ "$hostnamee" = "nsgw-001e0637eda0" ]
-then
-    cp /home/pi/update-gateway/a.out  /home/pi/tests/modbus_ns/
-    # exit 0
-fi
-
-if [ "$hostnamee" = "nsgw-0e0247932dad" ]
-then
-    cp /home/pi/update-gateway/a.out  /home/pi/tests/modbus_ns/
-    # exit 0
-fi
 
 #### MIGRATION DE NANODB VERS LE FICHIER PUSHTOCLOUD.CONF 
 
