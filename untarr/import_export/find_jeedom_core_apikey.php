@@ -41,5 +41,6 @@ function find_jeedom_core_apikey()
     $res = openssl_decrypt(substr($ciphertext, 48), "AES-256-CBC", hash('sha256', $password, true), OPENSSL_RAW_DATA, substr($ciphertext, 0, 16));
 
     //echo "\nres = $res\n";
-    return res;
+    return $res;
+}
 ?>
