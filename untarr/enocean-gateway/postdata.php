@@ -1,4 +1,5 @@
-<?php
+<?php 
+error_reporting (E_ALL ^ E_NOTICE);
 /*
  * FILE : postdata.php
  */
@@ -21,28 +22,23 @@ $errorlogfile = fopen($errorlogname, 'a') or die('Cannot open file: ' . $errorlo
  * Query on the jeedom database that get, for each command (CO2, Temperature, PM, ...)
  * of each equipment, the last value saved in history 
  */
-$offset = "0:55:00";
+$offset = "1:55:00";
 echo "OFFSET = $offset\n";
 
 $timezone_offset = 1;
 echo "timezone offset = $timezone_offset\n";
 
+// quand on récupère des données en modbus ou enocean, on a une valeur en bdd qui contient une des deux valeurs selon le mode utilisé
+$TYPE_ENOCEAN = "openenocean";
+$TYPE_MODBUS = "modbus";
 
-
-$last_val_query = "SELECT `eqLogic`.`name` AS 'alias', `eqLogic`.`logicalId`, " 
-    . "`cmd`.`name`, MAX(`history`.`datetime`) AS 'max_datetime', `cmd`.`id`, "
-    . "`object`.`name` AS 'object_name' FROM `history`, `cmd`, `eqLogic`, `object` "
-    . "WHERE `history`.`cmd_id` = `cmd`.`id` AND `cmd`.`eqLogic_id` = `eqLogic`.`id` "
-    . "AND `eqLogic`.`object_id` = `object`.`id` "
-    . "AND `datetime` > ADDTIME(NOW(), '$offset') GROUP BY cmd.id";
-
+$last_val_query = "SELECT eqLogic.name AS 'alias', eqLogic.logicalId, cmd.name, MAX(history.datetime) AS 'max_datetime',"
+    . "cmd.id, cmd.eqType, object.name, eqLogic.object_id, eqLogic.configuration FROM cmd JOIN history ON history.cmd_id = cmd.id "
+    . "JOIN eqLogic ON cmd.eqLogic_id = eqLogic.id "
+    . "JOIN object ON object.id = eqLogic.object_id "
+    . "WHERE datetime > ADDTIME(NOW(), '$offset') GROUP BY cmd.id";
 
 //echo "\n\n============================\n$last_val_query\n\n";
-
-
-
-
-
 
 $last_val_cmd_query = $dbconnect->query($last_val_query);
 
@@ -55,7 +51,7 @@ $last_val_cmd_query = $dbconnect->query($last_val_query);
  */
 $table = array();
 while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
-    fwrite($logfile, date('Y-m-d H:i:s') . "\t");
+    //fwrite($logfile, date('Y-m-d H:i:s') . "\t");
     $value_array = array();   
     
     //  echo "\nDEBUG ** LAST VAL ROW ---- BEGIN ----\n";
@@ -66,8 +62,10 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
     $equipment_ID = $last_val_row[1];
     $command_name = $last_val_row[2];
     $command_ID = $last_val_row[4];
-    $object_name = $last_val_row[5];
-    
+    $plugin_type = $last_val_row[5]; //modbus ou openocean
+    $object_name = $last_val_row[6];
+    $id_room = $last_val_row[7];
+    $configuration = $last_val_row[8];
     
     if ($average_mode == 1) { // AVERAGE MODE        
         /* 
@@ -119,22 +117,26 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
     
     
     # chopper l'ID du premier pere, dans $id_room
-    $sql_query = "SELECT `object_id`, `configuration` FROM eqLogic WHERE eqLogic.logicalId = '$equipment_ID'";
+    /* $sql_query = "SELECT `object_id`, `configuration` FROM eqLogic WHERE eqLogic.logicalId = '$equipment_ID'";
     $result_cmd_query = $dbconnect->query($sql_query);
     $val_row = $result_cmd_query->fetch_array(MYSQLI_BOTH);
     //  echo "==========\n";  var_dump($val_row); echo "==========\n";
-    $id_room = $val_row['object_id'];    
-    $ret_json_decode = json_decode($val_row['configuration'], $assoc = TRUE);
-    if ($ret_json_decode === NULL) {
-        $eep = "";
-    }
-    $eep = $ret_json_decode['device'];
-
+    $ret_json_decode = json_decode($val_row['configuration'], $assoc = TRUE);*/
+    $ret_json_decode = json_decode($configuration, $assoc = TRUE);
+    $eep = "";
+    $usb_port = "";
+    $modbus_address = "";
+    if ($ret_json_decode != NULL && $plugin_type === $TYPE_ENOCEAN) {
+        $eep = $ret_json_decode['device'];
+    } else if ($ret_json_decode != NULL && $plugin_type === $TYPE_MODBUS) {
+        $usb_port = $ret_json_decode['portserial'];
+        $modbus_address=$ret_json_decode['unitID'];
+    };
     # chopper l'alias du premier pere, dans $alias_room
     $sql_query = "SELECT name, father_id FROM object WHERE object.id = '$id_room'";
     $result_cmd_query = $dbconnect->query($sql_query);
     $val_row = $result_cmd_query->fetch_array(MYSQLI_BOTH);
-    $alias_room = $val_row['name'];    
+    $alias_room = $val_row['name'];  
     
     # chopper l'ID du second pere, dans $id_floor
     // $sql_query = "SELECT father_id FROM object WHERE id = '$id_room'";
@@ -174,13 +176,14 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
     // $eep_before_parsing = $val_row['configuration'];
     
     $data_type = eep_traduction($eep, $equipment_alias); 
-    $pollutant = setpollutant($command_name, $eep, $equipment_alias); // set the pollutant name
+    $pollutant = ($plugin_type === $TYPE_ENOCEAN)? setpollutantEnOcean($command_name, $eep, $equipment_alias) : setpollutantModbus($command_name); // set the pollutant name
+    $id = ($plugin_type === $TYPE_MODBUS)? createModbusId(gethostname(), $modbus_address, $usb_port) : $equipment_ID; // id enocean
     
-    fwrite($logfile, $equipment_alias . '-' . $pollutant . "\n");
+    //fwrite($logfile, $equipment_alias . '-' . $pollutant . "\n");
 
-    $sql_query = "SELECT status FROM eqLogic";
+    /* $sql_query = "SELECT status FROM eqLogic";
     $result_cmd_query = $dbconnect->query($sql_query);
-    $val_row = $result_cmd_query->fetch_array(MYSQLI_BOTH);
+    $val_row = $result_cmd_query->fetch_array(MYSQLI_BOTH); */
 
     // Build the header of the JSON
     $table['version'] = '1.0.0';
@@ -190,15 +193,15 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
             //'location' => $object_name,
             //'pollutant' => $command_name, 
             //'id' => $equipment_ID,
-            'id' => $equipment_ID . (($val_row['status'] === "modbus") ? ('-' . gethostname()) : ''),
-            'probe_id' => generate_probe_id($equipment_ID, $data_type, $equipment_alias),
+            'id' =>  $id,
+            'probe_id' => ($plugin_type === $TYPE_MODBUS)? $id : generate_probe_id($equipment_ID, $data_type, $equipment_alias),
             'id_room' => $id_room,
             'alias_room' => $alias_room,
             //'id_floor' => $id_floor,
             //'alias_floor' => $alias_floor,
             //'id_building' => $id_building,
             //'alias_building' => $alias_building,
-            'data_type' => $data_type,
+            'data_type' => ($plugin_type === $TYPE_ENOCEAN)? $data_type : "EP5000M",
             'data_field' => $pollutant,
             'number_of_values' => count($value_array),
             'environment' => determine_environment_using_alias($equipment_alias),
@@ -218,8 +221,8 @@ while ( $last_val_row = $last_val_cmd_query->fetch_array(MYSQLI_BOTH) ) {
 } //// break
 
 // close all the currently opened resources
-fclose($logfile);
-fclose($errorlogfile);
+//fclose($logfile);
+//fclose($errorlogfile);
 ////
 
 mysqli_close($dbconnect);

@@ -110,7 +110,7 @@ function eep_traduction($eep, $eq_alias) // data_type
 
 
 // Rename the pollutant name 
-function setpollutant($pollutant, $eep, $eq_alias) // data_field
+function setpollutantEnOcean($pollutant, $eep, $eq_alias) // data_field
 {
     if ($pollutant == 'PM2.5')
         return 'PM2_5';
@@ -192,6 +192,102 @@ function setpollutant($pollutant, $eep, $eq_alias) // data_field
     return $pollutant;
 }
 
+/**
+ * renome en champs compréhensible par pando2
+ */
+function setpollutantModbus($pollutant) // data_field
+{
+    if (stripos($pollutant, 'Co2') !== false)
+        return 'CO2';
+    if (stripos($pollutant, 'Temperature') !== false)
+        return 'TMP';
+    if (stripos($pollutant, 'Humidite (RH)') !== false)
+        return 'HUM';
+    if (stripos($pollutant, 'Humidite (AH)') !== false)
+        return 'HUM_ABS';    
+    if (strcmp($pollutant, 'COV') === 0)
+        return 'VOCT';  
+    if (stripos($pollutant, 'Puissance 2') !== false)
+        return 'POWER_2';
+    if (stripos($pollutant, 'Puissance 3') !== false)
+        return 'POWER_3';
+    if (stripos($pollutant, 'Puissance 4') !== false)
+	    return 'POWER_4';
+    if (stripos($pollutant, 'Puissance') !== false)
+	    return 'POWER_1';
+    if (stripos($pollutant, 'Consommation 2') !== false)
+        return 'CONSUMPTION_2';
+    if (stripos($pollutant, 'Consommation 3') !== false)
+        return 'CONSUMPTION_3';
+    if (stripos($pollutant, 'Consommation 4') !== false)
+        return 'CONSUMPTION_4';
+    if (stripos($pollutant, 'Consommation') !== false)
+        return 'CONSUMPTION_1';
+    if ( stripos($pollutant, 'LUX') !== false )
+        return 'LIGHT_LUX';
+    if ( strcmp($pollutant, "T Light (Color)") === 0 )
+        return "LIGHT_TMP_COLOR";
+    if ( strcmp($pollutant, "ventil_1_speed") === 0 )
+        return "VENTIL_LOW_SPEED";
+    if ( strcmp($pollutant, "ventil_2_speed") === 0 )
+        return "VENTIL_HIGH_SPEED";
+    if ( strcmp($pollutant, "ventil_linear") === 0 )
+        return "VENTIL_LINEAR";
+    if ( strcmp($pollutant, "recycl_1_speed") === 0 )
+        return "RECYCL_LOW_SPEED";
+    if ( strcmp($pollutant, "recycl_2_speed") === 0 )
+        return "RECYCL_HIGH_SPEED";
+    if ( strcmp($pollutant, "recycl_linear") === 0 )
+        return "RECYCL_LINEAR";
+    if ( strcmp($pollutant, "heater_percent") === 0 )
+        return "HEATER_PERCENT";
+    if ( strcmp($pollutant, "cooling_percent") === 0 )
+        return "COOLING_PERCENT";
+    if ( strcmp($pollutant, "cooling_OnOff") === 0 )
+        return "COOOLING_BOOL";
+    if ( strcmp($pollutant, "heater_OnOff") === 0 )
+        return "HEATER_BOOL";
+    if ( strcmp($pollutant, "Atmospheric Pressure") === 0 )
+        return "ATM";
+    if ( strcmp($pollutant, "Productivity Index") === 0 )
+        return "NANOSENSE_COGNITIVITY_INDEX";
+    if ( strcmp($pollutant, "Short-term Exposure Health Index") === 0 )
+        return "NANOSENSE_HEALTH_INDEX";
+    if ( strcmp($pollutant, "Sleep Quality Index") === 0 )
+        return "NANOSENSE_SLEEP_INDEX";
+    if ( strcmp($pollutant, "Respiratory Irritation Index") === 0 )
+        return "NANOSENSE_RESPIRATORY_INDEX";
+    if ( strcmp($pollutant, "Building Health Index") === 0 )
+        return "NANOSENSE_BUILDING_HEALTH_INDEX";
+    if ( strcmp($pollutant, "Viral Diffusion Index") === 0 )
+        return "NANOSENSE_VIRUS_INDEX";               
+    if ( strcmp($pollutant, "Average Noise") === 0 )
+        return "DBAA"; 
+    if (stripos($pollutant, 'Peak Noise') !== false)
+        return 'DBAP';  
+    if ( strcmp($pollutant, "Linear Fan Control") === 0 )
+        return "AIR_FLOW_COMMAND";
+    if ( strcmp($pollutant, "Linear Air Conditioner Control") === 0 )
+        return "COOLING_COMMAND";    
+    if ( strcmp($pollutant, "Linear Heating Control") === 0 )
+        return "HEATING_COMMAND";   
+    if (strcmp($pollutant, 'PM2.5') === 0)
+        return 'PM2_5';
+    if (strcmp($pollutant, 'PM10') === 0)
+        return 'PM10';
+    if (strcmp($pollutant, 'PM1') === 0)
+        return 'PM1';
+    if (strcmp($pollutant, 'NOX') === 0)
+        return 'NOx';   
+    if (strcmp($pollutant, 'Ozone (03)') === 0)
+        return 'O3';
+    if (strcmp($pollutant, 'Type de COV') === 0)
+        return 'VOC_TYPE';     
+    if (strcmp($pollutant, 'Sulfur Odors') === 0)
+        return 'SULFURIC_ODOR';     
+    return $pollutant;
+}
+
 // Translate the pollutant name to its real command name (in Jeedom)
 function r_setpollutant($pollutant)
 {
@@ -217,5 +313,14 @@ function determine_environment_using_alias($equipment_alias)
     return "oaq";
 }
 
-
+/**
+ * crée  un id unique modbus à envoyer à pando2, l'id sera de la forme <Adresse MAC><Adresse Modbus><PortUSB>
+ */
+function createModbusId($hostname, $modbusadress, $usbport) {
+    $formatModbus = $modbusadress;
+    while (strlen($formatModbus) != 3) {
+        $formatModbus = '0' . $formatModbus;
+    }
+    return strtoupper(substr($hostname, strpos($hostname, "-") + 1) . $formatModbus . substr($usbport, -1));
+}
 ?>
