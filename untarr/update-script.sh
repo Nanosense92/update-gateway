@@ -81,6 +81,8 @@ write_to_log "INFO" "starting update script"
 # echo "--> DPKG --CONFIGURE -a"
 # dpkg --configure -a --force-confdef --force-confold
 
+#this line is for debug do not take attention.
+
 
 
 UPVERS=$(cat update-gateway/version-update.txt)
