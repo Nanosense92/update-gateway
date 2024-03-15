@@ -17,8 +17,8 @@ $logfile = fopen($logname, 'a') or die('Cannot open file: ' . $logname . "\n");
 $errorlogname = '/var/log/postdata_error.log';
 $errorlogfile = fopen($errorlogname, 'a') or die('Cannot open file: ' . $errorlogname . "\n");//echo "** DEBUG - OFFSET = $offset\n";
 
-// for automatic hour change --- SALAH EDDINE AIT ALLAOUA 13/03/2024 ---
-
+// --- SALAH EDDINE AIT ALLAOUA 13/03/2024 --- 
+// for automatic hour change
 // Exécute la commande shell pour obtenir les informations sur l'heure d'été/d'hiver pour l'année actuelle
 $command = 'zdump -v Europe/Paris | grep $(date +%Y)';
 $output = shell_exec($command);
