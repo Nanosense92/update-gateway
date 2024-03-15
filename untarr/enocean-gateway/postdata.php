@@ -17,12 +17,41 @@ $logfile = fopen($logname, 'a') or die('Cannot open file: ' . $logname . "\n");
 $errorlogname = '/var/log/postdata_error.log';
 $errorlogfile = fopen($errorlogname, 'a') or die('Cannot open file: ' . $errorlogname . "\n");//echo "** DEBUG - OFFSET = $offset\n";
 
+// for automatic hour change --- SALAH EDDINE AIT ALLAOUA 13/03/2024 ---
+
+// Exécute la commande shell pour obtenir les informations sur l'heure d'été/d'hiver pour l'année actuelle
+$command = 'zdump -v Europe/Paris | grep $(date +%Y)';
+$output = shell_exec($command);
+
+// Divise la sortie en lignes
+$lines = explode("\n", $output);
+
+// Récupère les informations de la première et de la troisième ligne
+$summer_time_info = explode(" ", $lines[1]); // Informations de la première ligne
+$winter_time_info = explode(" ", $lines[3]); // Informations de la troisième ligne
+
+// Récupère les dates de transition
+$summer_date = strtotime($summer_time_info[2] . " " . $summer_time_info[3] . " " . $summer_time_info[4]);
+$winter_date = strtotime($winter_time_info[2] . " " . $winter_time_info[3] . " " . $winter_time_info[4]);
+
+// Obtient la date actuelle
+$current_date = time();
+
+// Vérifie si la date actuelle est en heure d'été ou d'hiver
+$is_summer_time = ($current_date >= $summer_date && $current_date < $winter_date) ? 1 : 0;
+// Affiche le résultat
+echo $is_summer_time ? "Heure d'été\n" : "Heure d'hiver\n" ;
+
+//--------END--------
+
+
 
 /*
  * Query on the jeedom database that get, for each command (CO2, Temperature, PM, ...)
  * of each equipment, the last value saved in history 
  */
-$offset = "0:55:00";
+$offset = ($is_summer_time) ? "1:55:00" : "0:55:00";
+
 echo "OFFSET = $offset\n";
 
 $timezone_offset = 1;
